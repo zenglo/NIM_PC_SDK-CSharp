@@ -1,0 +1,6 @@
+E:\working projects\nim\Windows\sdk\bin\C#\config.json
+E:\working projects\nim\Windows\sdk\bin\C#\NimUtility.dll
+E:\working projects\nim\Windows\sdk\bin\C#\NimUtility.pdb
+E:\working projects\nim\Windows\true_trunk\trunk\libs\nim_sdk_desktop\nim_csharp_sdk\NimUtility\obj\x86\Debug\NimUtility.csprojResolveAssemblyReference.cache
+E:\working projects\nim\Windows\true_trunk\trunk\libs\nim_sdk_desktop\nim_csharp_sdk\NimUtility\obj\x86\Debug\NimUtility.dll
+E:\working projects\nim\Windows\true_trunk\trunk\libs\nim_sdk_desktop\nim_csharp_sdk\NimUtility\obj\x86\Debug\NimUtility.pdb
