@@ -31,10 +31,10 @@ namespace NIM
         public static extern void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_data_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb, IntPtr user_data);
+        public static extern void nim_vchat_set_audio_data_cb(bool capture, string json_extension, nim_vchat_audio_data_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_data_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb, IntPtr user_data);
+        public static extern void nim_vchat_set_video_data_cb(bool capture, string json_extension, nim_vchat_video_data_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_vchat_set_audio_volumn(byte volumn, bool capture);
@@ -156,7 +156,7 @@ namespace NIM
         public static void SetAudioCaptureDataCb(AudioDataHandler handler)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            nim_vchat_set_audio_data_cb(true, AudioDataCb, ptr);
+            nim_vchat_set_audio_data_cb(true, null, AudioDataCb, ptr);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace NIM
         public static void SetAudioReceiveDataCb(AudioDataHandler handler)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            nim_vchat_set_audio_data_cb(false, AudioDataCb, ptr);
+            nim_vchat_set_audio_data_cb(false, null, AudioDataCb, ptr);
         }
         /// <summary>
         /// 音频数据回调
@@ -193,7 +193,7 @@ namespace NIM
         public static void SetVideoCaptureDataCb(VideoDataHandler handler)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            nim_vchat_set_video_data_cb(true, VideoDataCb, ptr);
+            nim_vchat_set_video_data_cb(true, null, VideoDataCb, ptr);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace NIM
         public static void SetVideoReceiveDataCb(VideoDataHandler handler)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            nim_vchat_set_video_data_cb(false, VideoDataCb, ptr);
+            nim_vchat_set_video_data_cb(false, null, VideoDataCb, ptr);
         }
 
         /// <summary>

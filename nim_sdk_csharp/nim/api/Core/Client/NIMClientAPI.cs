@@ -19,7 +19,7 @@ namespace NIM
     /// <summary>
     /// NIM SDK提供的Client接口，主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
     /// </summary>
-    public static class ClientAPI
+    public class ClientAPI
     {
         
         public static EventHandler<LoginResultEventArgs> LoginResultHandler;
@@ -260,7 +260,7 @@ namespace NIM
         private static readonly NIMGlobal.JsonTransportCb MultiSpotLoginNotifyCallback = (jsonResult, handler) =>
         {
             var result = NIMMultiSpotLoginNotifyResult.Deserialize(jsonResult);
-            handler.InvokeOnce<MultiSpotLoginNotifyResultHandler>(result);
+            handler.Invoke<MultiSpotLoginNotifyResultHandler>(result);
         };
 
         private static readonly NIMGlobal.JsonTransportCb KickOtherClientCb = (jsonResult, handler) =>
