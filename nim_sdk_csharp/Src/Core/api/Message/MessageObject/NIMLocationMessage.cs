@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace NIM
 {
@@ -17,14 +13,15 @@ namespace NIM
         [JsonProperty("lng")]
         public double Longitude { get; set; }
     }
+
     public class NIMLocationMessage : NIMIMMessage
     {
-        [JsonProperty(AttachmentPath)]
-        public NIMLocationMsgInfo LocationInfo { get; set; }
-
         public NIMLocationMessage()
         {
             MessageType = NIMMessageType.kNIMMessageTypeLocation;
         }
+
+        [JsonProperty(AttachmentPath)]
+        public NIMLocationMsgInfo LocationInfo { get; set; }
     }
 }

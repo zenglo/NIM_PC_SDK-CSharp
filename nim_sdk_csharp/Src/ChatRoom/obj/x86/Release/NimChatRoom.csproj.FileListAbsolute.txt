@@ -1,0 +1,5 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Bin\Release\NimChatRoom.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Bin\Release\NimChatRoom.pdb
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\ChatRoom\obj\x86\Release\NimChatRoom.csprojResolveAssemblyReference.cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\ChatRoom\obj\x86\Release\NimChatRoom.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\ChatRoom\obj\x86\Release\NimChatRoom.pdb

@@ -6,24 +6,27 @@
   */
 
 
+using NimUtility;
+
 namespace NIM.DataSync
 {
     public delegate void DataSyncDelegate(NIMDataSyncType syncType, NIMDataSyncStatus status, string jsonAttachment);
+
     public class DataSyncAPI
     {
+        private static readonly DataSyncCb OnDataSyncCompleted = (syncType, status, jsonAttachment, ptr) =>
+        {
+            ptr.Invoke<DataSyncDelegate>(syncType, status, jsonAttachment);
+        };
+
         /// <summary>
-        /// 注册数据同步完成的回调函数   
+        ///     注册数据同步完成的回调函数
         /// </summary>
         /// <param name="cb">数据同步完成的回调函数</param>
         public static void RegCompleteCb(DataSyncDelegate cb)
         {
-            var userData = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var userData = DelegateConverter.ConvertToIntPtr(cb);
             DataSyncNativeMethods.nim_data_sync_reg_complete_cb(OnDataSyncCompleted, userData);
         }
-
-        private static readonly DataSyncCb OnDataSyncCompleted = (syncType, status, jsonAttachment, ptr) =>
-        {
-            NimUtility.DelegateConverter.InvokeOnce<DataSyncDelegate>(ptr, syncType, status, jsonAttachment);
-        };
     }
 }

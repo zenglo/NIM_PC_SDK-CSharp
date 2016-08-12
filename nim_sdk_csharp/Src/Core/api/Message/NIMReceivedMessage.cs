@@ -7,11 +7,16 @@
 
 using System;
 using Newtonsoft.Json;
+using NimUtility;
 
 namespace NIM
 {
-    public class NIMReceivedMessage : NimUtility.NimJsonObject<NIMReceivedMessage>
+    public class NIMReceivedMessage : NimJsonObject<NIMReceivedMessage>
     {
+        internal const string MessageContentPath = "content";
+        internal const string ResCodePath = "rescode";
+        internal const string FeaturePath = "feature";
+
         [JsonProperty(MessageContentPath)]
         public NIMIMMessage MessageContent { get; set; }
 
@@ -20,48 +25,44 @@ namespace NIM
 
         [JsonProperty(ResCodePath)]
         public ResponseCode ResponseCode { get; set; }
-
-        internal const string MessageContentPath = "content";
-        internal const string ResCodePath = "rescode";
-        internal const string FeaturePath = "feature";
     }
 
     public class ReceiveMessageArgs : EventArgs
     {
-        public NIMIMMessage Message { get; set; }
-
         public ReceiveMessageArgs(NIMIMMessage msg)
         {
             Message = msg;
         }
+
+        public NIMIMMessage Message { get; set; }
     }
 
     public class NIMReceiveMessageEventArgs : EventArgs
     {
-        public NIMReceivedMessage Message { get; set; }
-
         public NIMReceiveMessageEventArgs(NIMReceivedMessage msg)
         {
             Message = msg;
         }
+
+        public NIMReceivedMessage Message { get; set; }
     }
 
-    public class MessageAck : NimUtility.NimJsonObject<MessageAck>
+    public class MessageAck : NimJsonObject<MessageAck>
     {
         /// <summary>
-        /// 会话ID
-        /// </summary> 
+        ///     会话ID
+        /// </summary>
         [JsonProperty("talk_id")]
         public string TalkId { get; set; }
 
         /// <summary>
-        ///消息ID 
+        ///     消息ID
         /// </summary>
         [JsonProperty("msg_id")]
         public string MsgId { get; set; }
 
         /// <summary>
-        ///错误码 
+        ///     错误码
         /// </summary>
         [JsonProperty("rescode")]
         public ResponseCode Response { get; set; }
@@ -69,11 +70,11 @@ namespace NIM
 
     public class MessageArcEventArgs : EventArgs
     {
-        public MessageAck ArcInfo { get; private set; }
-
         public MessageArcEventArgs(MessageAck arc)
         {
             ArcInfo = arc;
         }
+
+        public MessageAck ArcInfo { get; private set; }
     }
 }

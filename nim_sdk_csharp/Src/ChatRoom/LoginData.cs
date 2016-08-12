@@ -21,7 +21,7 @@ namespace NIMChatRoom
         /// <summary>
         /// 进入聊天室后展示的头像,选填
         /// </summary>
-        [JsonProperty("avator")]
+        [JsonProperty("avatar")]
         public string Icon { get; set; }
 
         /// <summary>

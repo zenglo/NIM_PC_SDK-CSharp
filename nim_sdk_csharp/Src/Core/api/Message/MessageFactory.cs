@@ -17,35 +17,40 @@ namespace NIM
             var msgType = msgTypeToken.ToObject<NIMMessageType>();
             NIMIMMessage message = null;
             ConvertAttachStringToObject(token);
+            var msgJsonValue = token.ToString(Formatting.None);
             switch (msgType)
             {
                 case NIMMessageType.kNIMMessageTypeAudio:
-                    message = token.ToObject<NIMAudioMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMAudioMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeFile:
-                    message = token.ToObject<NIMFileMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMFileMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeImage:
-                    message = token.ToObject<NIMImageMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMImageMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeLocation:
-                    message = token.ToObject<NIMLocationMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMLocationMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeText:
-                    message = token.ToObject<NIMTextMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMTextMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeVideo:
-                    message = token.ToObject<NIMVedioMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMVedioMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeNotification:
-                    message = token.ToObject<NIMTeamNotificationMessage>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMTeamNotificationMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeCustom:
-                    message = token.ToObject<NIMCustomMessage<object>>();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMCustomMessage<object>>(msgJsonValue);
+                    break;
+                case NIMMessageType.kNIMMessageTypeTips:
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMTipMessage>(msgJsonValue);
                     break;
                 default:
-                    message = new NIMUnknownMessage();
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMUnknownMessage>(msgJsonValue);
                     ((NIMUnknownMessage) message).RawMessage = token.ToString(Formatting.None);
+                    NimUtility.NimLogManager.NimCoreLog.InfoFormat("NIMUnknownMessage:{0}", msgJsonValue);
                     break;
             }
             return message;
@@ -53,8 +58,16 @@ namespace NIM
 
         internal static NIMIMMessage CreateMessage(string json)
         {
-            var token = Newtonsoft.Json.Linq.JObject.Parse(json);
-            return CreateMessage(token);
+            try
+            {
+                var token = Newtonsoft.Json.Linq.JObject.Parse(json);
+                return CreateMessage(token);
+            }
+            catch (Exception e)
+            {
+                NimUtility.NimLogManager.NimCoreLog.ErrorFormat("CreateMessage failed:{0} {1}", json, e.Message);
+            }
+            return null;
         }
 
         static void ConvertAttachStringToObject(Newtonsoft.Json.Linq.JObject token)

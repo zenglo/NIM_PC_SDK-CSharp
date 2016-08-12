@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
+using NimUtility;
 
 namespace NIM
 {
     namespace NIMRts
     {
         /// <summary>
-        /// 创建通道返回结果
+        ///     创建通道返回结果
         /// </summary>
         /// <param name="code">调用结果</param>
         /// <param name="sessionId">会话id</param>
@@ -20,11 +18,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsStartCbFunc(int code, string sessionId, int channelType, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 收到对方创建通道通知
+        ///     收到对方创建通道通知
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型 如要tcp+音视频，则channel_type=kNIMRtsChannelTypeTcp|kNIMRtsChannelTypeVchat</param>
@@ -32,15 +30,15 @@ namespace NIM
         /// <param name="customInfo">透传数据</param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnStartNotify(string sessionId, int channelType, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string customInfo);
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string customInfo);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsStartNotifyCbFunc(string sessionId, int channelType, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 回复收到邀请的结果
+        ///     回复收到邀请的结果
         /// </summary>
         /// <param name="code">调用结果</param>
         /// <param name="sessionId">会话id</param>
@@ -51,11 +49,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsAckResCbFunc(int code, string sessionId, int channelType, bool accept,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 收到对方回复邀请的通知
+        ///     收到对方回复邀请的通知
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型</param>
@@ -66,11 +64,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsAckNotifyCbFunc(string sessionId, int channelType, bool accept, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 收到本人在其他端回复邀请的同步通知
+        ///     收到本人在其他端回复邀请的同步通知
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型</param>
@@ -81,11 +79,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsSyncAckNotifyCbFunc(string sessionId, int channelType, bool accept,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 通道连接状态通知
+        ///     通道连接状态通知
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型</param>
@@ -95,11 +93,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void NimRtsConnectNotifyCbFunc(string sessionId, int channelType, int code,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 通道连接成员变化通知
+        ///     通道连接成员变化通知
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型</param>
@@ -110,11 +108,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsMemberChangeCbFunc(string sessionId, int channelType, int type, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 控制接口调用结果
+        ///     控制接口调用结果
         /// </summary>
         /// <param name="code">调用结果</param>
         /// <param name="sessionId">会话id</param>
@@ -124,12 +122,12 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsControlResCbFunc(int code, string sessionId,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string info,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 控制消息通知回调
+        ///     控制消息通知回调
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="info">透传数据</param>
@@ -138,14 +136,14 @@ namespace NIM
         public delegate void OnControlNotify(string sessionId, string info, string uid);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void NimRtsControlNotifyCbFunc(string sessionId, 
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string info,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+        internal delegate void NimRtsControlNotifyCbFunc(string sessionId,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string uid,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 挂断会话调用结果
+        ///     挂断会话调用结果
         /// </summary>
         /// <param name="code">调用结果</param>
         /// <param name="sessionId">会话id</param>
@@ -154,11 +152,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsHangupResCbFunc(int code, string sessionId,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 挂断会话通知回调
+        ///     挂断会话通知回调
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="uid">对方帐号</param>
@@ -167,11 +165,11 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsHangupNotifyCbFunc(string sessionId, string uid,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
         /// <summary>
-        /// 数据监听回调
+        ///     数据监听回调
         /// </summary>
         /// <param name="sessionId">会话id</param>
         /// <param name="channelType">通道类型</param>
@@ -183,10 +181,10 @@ namespace NIM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsRecDataCbFunc(string sessionId, int channelType, string uid, IntPtr data, int size,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string jsonExtension,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
-        class RtsNativeMethods
+        internal class RtsNativeMethods
         {
             //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
 
@@ -194,7 +192,7 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_start", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_start(int channel_type, string uid,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsStartCbFunc cb, IntPtr user_data);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_start_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -202,7 +200,7 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_ack", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_ack(string session_id, int channel_type, bool accept,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsAckResCbFunc cb, IntPtr user_data);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_ack_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -219,8 +217,8 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_control", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_control(string session_id,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string info,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsControlResCbFunc cb, IntPtr user_data);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_control_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -228,11 +226,11 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_vchat_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_vchat_mode(string session_id, int mode,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension);
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_hangup", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_hangup(string session_id,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsHangupResCbFunc cb, IntPtr user_data);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_hangup_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -240,7 +238,7 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_send_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_send_data(string session_id, int channel_type, IntPtr data, int size,
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension);
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension);
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_rec_data_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_rec_data_cb_func(NimRtsRecDataCbFunc cb, IntPtr user_data);

@@ -12,25 +12,50 @@ namespace NIM
         #region NIM C SDK native methods
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_enum_device_devpath", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_enum_device_devpath(NIMDeviceType type, string json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, IntPtr user_data);
+        internal static extern void nim_vchat_enum_device_devpath(NIMDeviceType type,
+           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_enum_device_devpath_sync_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_start_device", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_start_device(NIMDeviceType type, string device_path, uint fps, string json_extension, nim_vchat_start_device_cb_func cb, IntPtr user_data);
+        internal static extern void nim_vchat_start_device(NIMDeviceType type,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path, uint fps,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_start_device_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_end_device", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_end_device(NIMDeviceType type, string json_extension);
+        internal static extern void nim_vchat_end_device(NIMDeviceType type,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_start_device", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_add_device_status_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_remove_device_status_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_data_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_set_audio_data_cb(bool capture, string json_extension, nim_vchat_audio_data_cb_func cb, IntPtr user_data);
+		[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_start_extend_camera", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_start_extend_camera(
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string id,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path,
+			uint fps,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+			nim_vchat_start_device_cb_func cb,
+			IntPtr user_data);
+
+		[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_stop_extend_camera", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_stop_extend_camera(
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string id,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
+
+
+		[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_data_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_set_audio_data_cb(bool capture,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_audio_data_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_data_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_set_video_data_cb(bool capture, string json_extension, nim_vchat_video_data_cb_func cb, IntPtr user_data);
+        internal static extern void nim_vchat_set_video_data_cb(bool capture,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_video_data_cb_func cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_audio_volumn(byte volumn, bool capture);
@@ -44,11 +69,15 @@ namespace NIM
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_get_audio_input_auto_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_vchat_get_audio_input_auto_volumn();
 
+		//自定义音频数据
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_custom_audio_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_vchat_custom_audio_data(ulong time, IntPtr data, uint size, string json_extension);
-
+        internal static extern bool nim_vchat_custom_audio_data(ulong time, IntPtr data, uint size,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
+		
+		//自定义视频数据
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_custom_video_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_vchat_custom_video_data(ulong time, IntPtr data, uint size, uint width, uint height, string json_extension);
+        internal static extern bool nim_vchat_custom_video_data(ulong time, IntPtr data, uint size, uint width, uint height,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
 
         #endregion
     }

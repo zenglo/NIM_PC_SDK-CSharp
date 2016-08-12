@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace NIM
 {
@@ -20,12 +16,12 @@ namespace NIM
 
     public class NIMVedioMessage : NIMIMMessage
     {
-        [JsonProperty(AttachmentPath)]
-        public NIMVedioAttachment VedioAttachment { get; set; }
-
         public NIMVedioMessage()
         {
             MessageType = NIMMessageType.kNIMMessageTypeVideo;
         }
+
+        [JsonProperty(AttachmentPath)]
+        public NIMVedioAttachment VedioAttachment { get; set; }
     }
 }

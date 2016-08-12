@@ -6,65 +6,72 @@
   */
 
 using System;
-using Newtonsoft.Json;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
+using NimUtility;
 
 namespace NIM
 {
     /// <summary>
-    /// AppData类型
+    ///     AppData类型
     /// </summary>
     public enum NIMAppDataType
     {
         /// <summary>
-        /// 其他资源文件（除了消息历史文件和已知类型之外的消息数据缓存文件）
+        ///     其他资源文件（除了消息历史文件和已知类型之外的消息数据缓存文件）
         /// </summary>
-	    kNIMAppDataTypeUnknownOtherRes	= 0,	
+        kNIMAppDataTypeUnknownOtherRes = 0,
+
         /// <summary>
-        /// 图片消息文件
+        ///     图片消息文件
         /// </summary>
-	    kNIMAppDataTypeImage			= 1,	
+        kNIMAppDataTypeImage = 1,
+
         /// <summary>
-        /// 语音消息文件
+        ///     语音消息文件
         /// </summary>
-	    kNIMAppDataTypeAudio			= 2,	
+        kNIMAppDataTypeAudio = 2,
+
         /// <summary>
-        /// 视频消息文件
+        ///     视频消息文件
         /// </summary>
-	    kNIMAppDataTypeVideo			= 3,	
-    };
-    
+        kNIMAppDataTypeVideo = 3
+    }
+
     /// <summary>
-    /// 语音信息，用于语音转文字
+    ///     语音信息，用于语音转文字
     /// </summary>
-    public class NIMAudioInfo : NimUtility.NimJsonObject<NIMAudioInfo>
+    public class NIMAudioInfo : NimJsonObject<NIMAudioInfo>
     {
         /// <summary>
-        /// 语音类型
+        ///     语音类型
         /// </summary>
         [JsonProperty(PropertyName = "mime", NullValueHandling = NullValueHandling.Ignore)]
         public string MimeType { get; set; }
+
         /// <summary>
-        /// 采样率
+        ///     采样率
         /// </summary>
         [JsonProperty(PropertyName = "samp", NullValueHandling = NullValueHandling.Ignore)]
         public string SampleRate { get; set; }
+
         /// <summary>
-        /// 上传云端后得到的下载地址
+        ///     上传云端后得到的下载地址
         /// </summary>
         [JsonProperty(PropertyName = "url", NullValueHandling = NullValueHandling.Ignore)]
         public string URL { get; set; }
+
         /// <summary>
-        /// 语音时长，毫秒
+        ///     语音时长，毫秒
         /// </summary>
         [JsonProperty(PropertyName = "dur", NullValueHandling = NullValueHandling.Ignore)]
         public long? Duration { get; set; }
-    };
+    }
 
     public class NIMTools
     {
         /// <summary>
-        /// 转换结果回调
+        ///     转换结果回调
         /// </summary>
         /// <param name="rescode">转换结果，成功200</param>
         /// <param name="text">语音文字</param>

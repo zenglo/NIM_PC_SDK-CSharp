@@ -16,27 +16,32 @@ namespace NIM.SysMessage
         /// <summary>
         /// 默认,未读
         /// </summary>
-        kNIMSysMsgStatusNone    = 0, 
+        kNIMSysMsgStatusNone = 0,
+
         /// <summary>
         /// 收到消息,通过
         /// </summary>
-        kNIMSysMsgStatusPass    = 1,       
+        kNIMSysMsgStatusPass = 1,
+
         /// <summary>
         /// 收到消息,拒绝
         /// </summary>
-        kNIMSysMsgStatusDecline = 2,     
+        kNIMSysMsgStatusDecline = 2,
+
         /// <summary>
         /// 收到消息,已读
         /// </summary>
-        kNIMSysMsgStatusRead    = 3,      
+        kNIMSysMsgStatusRead = 3,
+
         /// <summary>
         /// 已删
         /// </summary>
-        kNIMSysMsgStatusDeleted = 4,      
+        kNIMSysMsgStatusDeleted = 4,
+
         /// <summary>
         /// 已失效
         /// </summary>
-        kNIMSysMsgStatusInvalid = 5,     
+        kNIMSysMsgStatusInvalid = 5,
     };
 
     /// <summary>
@@ -47,38 +52,46 @@ namespace NIM.SysMessage
         /// <summary>
         /// 申请入群
         /// </summary>
-        kNIMSysMsgTypeTeamApply = 0,       
+        kNIMSysMsgTypeTeamApply = 0,
+
         /// <summary>
         /// 拒绝入群申请
         /// </summary>
-        kNIMSysMsgTypeTeamReject = 1,      
+        kNIMSysMsgTypeTeamReject = 1,
+
         /// <summary>
         /// 邀请进群
         /// </summary>
-        kNIMSysMsgTypeTeamInvite = 2,      
+        kNIMSysMsgTypeTeamInvite = 2,
+
         /// <summary>
         /// 拒绝邀请
         /// </summary>
-        kNIMSysMsgTypeTeamInviteReject = 3,   
+        kNIMSysMsgTypeTeamInviteReject = 3,
+
         /// <summary>
         /// 加好友
         /// </summary>
-        kNIMSysMsgTypeFriendAdd = 5,       
+        kNIMSysMsgTypeFriendAdd = 5,
+
         /// <summary>
         /// 删除好友
         /// </summary>
-        kNIMSysMsgTypeFriendDel = 6,      
+        kNIMSysMsgTypeFriendDel = 6,
+
         /// <summary>
         /// 点对点透传消息
         /// </summary>
-        kNIMSysMsgTypeCustomP2PMsg = 100,     
+        kNIMSysMsgTypeCustomP2PMsg = 100,
+
         /// <summary>
         /// 群透传消息
         /// </summary>
-        kNIMSysMsgTypeCustomTeamMsg = 101,   
+        kNIMSysMsgTypeCustomTeamMsg = 101,
+
         /// <summary>
         /// 未知类型，作为默认
         /// </summary>
-        kNIMSysMsgTypeUnknown = 1000,      
+        kNIMSysMsgTypeUnknown = 1000,
     };
 }

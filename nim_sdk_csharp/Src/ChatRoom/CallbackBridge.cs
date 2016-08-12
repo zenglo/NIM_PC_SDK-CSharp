@@ -5,6 +5,7 @@ using System.Text;
 
 namespace NIMChatRoom
 {
+    //如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限
     public delegate void ChatRoomLoginDelegate(NIMChatRoomLoginStep loginStep, NIM.ResponseCode errorCode, ChatRoomInfo roomInfo, MemberInfo memberInfo);
 
     public delegate void ExitChatRoomDelegate(long roomId, NIM.ResponseCode errorCode, NIMChatRoomExitReason reason);
@@ -21,7 +22,9 @@ namespace NIMChatRoom
 
     public delegate void GetRoomInfoDelegate(long roomId,NIM.ResponseCode errorCode,ChatRoomInfo info);
 
-    static class CallbackBridge
+    public delegate void TempMuteMemberDelegate(long roomId, NIM.ResponseCode errorCode, MemberInfo info);
+
+    internal static class CallbackBridge
     {
         public static readonly NimChatroomGetMembersCbFunc OnQueryChatMembersCompleted = (roomId, errorCode, result, jsonExtension, userData) =>
         {
@@ -70,6 +73,15 @@ namespace NIMChatRoom
         public static readonly NimChatroomKickMemberCbFunc OnRemoveMemberCompleted = (roomId, errorCode, jsonExtension, userData) =>
         {
             NimUtility.DelegateConverter.InvokeOnce<RemoveMemberDelegate>(userData, roomId, (NIM.ResponseCode)errorCode);
+        };
+
+        public static readonly nim_chatroom_temp_mute_member_cb_func TempMuteMemberCallback = (roomId, resCode, result, jsonExt, userData) =>
+        {
+            if (userData != IntPtr.Zero)
+            {
+                var info = MemberInfo.Deserialize(result);
+                NimUtility.DelegateConverter.InvokeOnce<TempMuteMemberDelegate>(userData, roomId, (NIM.ResponseCode)resCode, info);
+            }
         };
     }
 }

@@ -1,14 +1,17 @@
-﻿namespace NIM.Friend
+﻿using Newtonsoft.Json;
+using NimUtility;
+
+namespace NIM.Friend
 {
     public interface INIMFriendChangedInfo
     {
-        [Newtonsoft.Json.JsonIgnore]
-        NIMFriendChangeType ChangedType { get;}
+        [JsonIgnore]
+        NIMFriendChangeType ChangedType { get; }
     }
 
-    public class FriendDeletedInfo:NimUtility.NimJsonObject<FriendDeletedInfo>, INIMFriendChangedInfo
+    public class FriendDeletedInfo : NimJsonObject<FriendDeletedInfo>, INIMFriendChangedInfo
     {
-        [Newtonsoft.Json.JsonProperty("accid")]
+        [JsonProperty("accid")]
         public string AccountId { get; set; }
 
         public NIMFriendChangeType ChangedType
@@ -17,15 +20,15 @@
         }
     }
 
-    public class FriendRequestInfo:NimUtility.NimJsonObject<FriendRequestInfo>, INIMFriendChangedInfo
+    public class FriendRequestInfo : NimJsonObject<FriendRequestInfo>, INIMFriendChangedInfo
     {
-        [Newtonsoft.Json.JsonProperty("accid")]
+        [JsonProperty("accid")]
         public string AccountId { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("type")]
+        [JsonProperty("type")]
         public NIMVerifyType VerifyType { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("msg")]
+        [JsonProperty("msg")]
         public string Message { get; set; }
 
         public NIMFriendChangeType ChangedType
@@ -34,25 +37,25 @@
         }
     }
 
-    public class FriendListSyncInfo:NimUtility.NimJsonObject<FriendListSyncInfo>, INIMFriendChangedInfo
+    public class FriendListSyncInfo : NimJsonObject<FriendListSyncInfo>, INIMFriendChangedInfo
     {
+        [JsonProperty("list")]
+        public NIMFriendProfile[] ProfileCollection { get; set; }
+
         public NIMFriendChangeType ChangedType
         {
             get { return NIMFriendChangeType.kNIMFriendChangeTypeSyncList; }
         }
-        [Newtonsoft.Json.JsonProperty("list")]
-        public NIMFriendProfile[] ProfileCollection { get; set; }
-       
     }
 
-    public class FriendUpdatedInfo:NimUtility.NimJsonObject<FriendUpdatedInfo>, INIMFriendChangedInfo
+    public class FriendUpdatedInfo : NimJsonObject<FriendUpdatedInfo>, INIMFriendChangedInfo
     {
+        [JsonProperty("info")]
+        public NIMFriendProfile Profile { get; set; }
+
         public NIMFriendChangeType ChangedType
         {
             get { return NIMFriendChangeType.kNIMFriendChangeTypeUpdate; }
         }
-
-        [Newtonsoft.Json.JsonProperty("info")]
-        public NIMFriendProfile Profile { get; set; }
     }
 }

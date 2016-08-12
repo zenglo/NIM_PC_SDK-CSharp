@@ -1,12 +1,15 @@
-﻿/** @file NIMDeviceAPI.cs
-  * @brief NIM VChat提供的音视频设备相关接口，使用前请先调用NIMVChatAPI.cs中Init
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author gq
-  * @date 2015/12/8
-  */
+﻿
 
+using Newtonsoft.Json.Linq;
+/** @file NIMDeviceAPI.cs
+* @brief NIM VChat提供的音视频设备相关接口，使用前请先调用NIMVChatAPI.cs中Init
+* @copyright (c) 2015, NetEase Inc. All rights reserved
+* @author gq
+* @date 2015/12/8
+*/
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace NIM
 {
@@ -33,6 +36,7 @@ namespace NIM
             if (ret)
             {
                 _deviceList = NIMDeviceInfoList.Deserialize(jsonExtension);
+
             }
         }
 
@@ -154,10 +158,10 @@ namespace NIM
         /// 监听采集的视频数据
         /// </summary>
         /// <param name="handler">回调</param>
-        public static void SetVideoCaptureDataCb(VideoDataHandler handler)
+        public static void SetVideoCaptureDataCb(VideoDataHandler handler,string json_extention="")
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            DeviceNativeMethods.nim_vchat_set_video_data_cb(true, null, VideoDataCb, ptr);
+			DeviceNativeMethods.nim_vchat_set_video_data_cb(true, json_extention, VideoDataCb, ptr);
         }
 
         /// <summary>
@@ -177,14 +181,17 @@ namespace NIM
         /// <param name="data">数据指针， ARGB</param>
         /// <param name="size">数据长途sizeof(char)</param>
         /// <param name="width">画面宽</param>
-        /// <param name="rate">画面高</param>
-        public delegate void VideoDataHandler(ulong time, IntPtr data, uint size, uint width, uint height);
+        /// <param name="height">画面高</param>
+        /// <param name="json_extension">Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount</param>
+        /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
+        public delegate void VideoDataHandler(ulong time, IntPtr data, uint size, uint width, uint height, string json_extension, IntPtr user_data);
 
         private static void VideoDataCallback(ulong time, IntPtr data, uint size, uint width, uint height,
             string jsonExtension, IntPtr userData)
         {
-            NimUtility.DelegateConverter.Invoke<VideoDataHandler>(userData, time, data, size, width, height);
+            NimUtility.DelegateConverter.Invoke<VideoDataHandler>(userData, time, data, size, width, height, jsonExtension, userData);
         }
+
 
         /// <summary>
         /// 音频采集音量，默认255

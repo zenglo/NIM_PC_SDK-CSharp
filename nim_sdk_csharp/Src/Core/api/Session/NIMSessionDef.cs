@@ -144,27 +144,26 @@ namespace NIM.Session
         [Newtonsoft.Json.JsonProperty("msg_sub_status")]
         public Messagelog.NIMMsgLogSubStatus SubStatus { get; set; }
 
-        SessionInfo()
-        {
-            UnreadCount = 0;
-            Timetag = 0;
-            SessionType = Session.NIMSessionType.kNIMSessionTypeP2P;
-            Command = NIMSessionCommand.kNIMSessionCommandAdd;
-            MsgType = NIMMessageType.kNIMMessageTypeUnknown;
-            Status = Messagelog.NIMMsgLogStatus.kNIMMsgLogStatusNone;
-            SubStatus = Messagelog.NIMMsgLogSubStatus.kNIMMsgLogSubStatusNone;
-        }
+        /// <summary>
+        /// (批量)消息变更或增加时是否是最后一条变更的信息
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("last_updated_msg")]
+        public bool IsLast { get; set; }
 
         public void ParseAttachmentInfo()
         {
             if (MsgType != NIMMessageType.kNIMMessageTypeUnknown && !string.IsNullOrEmpty(Attach))
             {
-                //TODO:处理 kNIMMessageTypeNotification 会话消息
                 if (MsgType == NIMMessageType.kNIMMessageTypeNotification)
                     Attachment = NIM.Team.NIMTeamEventData.Deserialize(Attach);
                 else
                     Attachment = NIM.Message.MessageAttachmentFactory.CreateAttachment(MsgType, Attach);
             }
+        }
+
+        public SessionInfo()
+        {
+            MsgType = NIMMessageType.kNIMMessageTypeUnknown;
         }
     }
 

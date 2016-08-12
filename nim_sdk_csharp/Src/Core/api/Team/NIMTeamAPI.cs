@@ -26,34 +26,29 @@ namespace NIM.Team
 
     public class TeamAPI
     {
-        private static readonly TeamEventDelegate TeamEventNotificationDelegate;
-        private static readonly TeamOperationDelegate TeamChangedCallback;
-        private static readonly QueryMyTeamsDelegate QueryAllMyTeamsCompleted;
-        private static readonly QueryMyTeamsDetailInfoDelegate QueryMyTeamsInfoCompleted;
-        private static readonly QueryTeamMembersDelegate QueryTeamMembersCompleted;
-        private static readonly QuerySingleMemberDelegate QuerySingleMemberCompleted;
-        private static readonly QueryTeamInfoDelegate QueryCachedTeamInfoCompleted;
+        private static  TeamEventDelegate _teamEventNotificationDelegate;
+        private static  TeamOperationDelegate _teamChangedCallback;
+        private static  QueryMyTeamsDelegate _queryAllMyTeamsCompleted;
+        private static  QueryMyTeamsDetailInfoDelegate _queryMyTeamsInfoCompleted;
+        private static  QueryTeamMembersDelegate _queryTeamMembersCompleted;
+        private static  QuerySingleMemberDelegate _querySingleMemberCompleted;
+        private static  QueryTeamInfoDelegate _queryCachedTeamInfoCompleted;
 
         /// <summary>
         /// 群通知事件，注册该事件监听群信息变更
         /// </summary>
         public static EventHandler<NIMTeamEventArgs> TeamEventNotificationHandler;
 
-        static TeamAPI()
+        public static void RegisterCallbacks()
         {
-            TeamEventNotificationDelegate = new TeamEventDelegate(NotifyTeamEvent);
-            TeamChangedCallback = new TeamOperationDelegate(OnTeamChanged);
-            QueryAllMyTeamsCompleted = new QueryMyTeamsDelegate(OnQueryAllMyTeamsCompleted);
-            QueryMyTeamsInfoCompleted = new QueryMyTeamsDetailInfoDelegate(OnQueryMyTeamsInfoCompleted);
-            QueryTeamMembersCompleted = new QueryTeamMembersDelegate(OnQueryTeamMembersInfoCompleted);
-            QuerySingleMemberCompleted = new QuerySingleMemberDelegate(OnQuerySingleMemberCompleted);
-            QueryCachedTeamInfoCompleted = new QueryTeamInfoDelegate(OnQueryCachedTeamInfoCompleted);
-            RegTeamEventCb();
-        }
-
-        private static void RegTeamEventCb()
-        {
-            TeamNativeMethods.nim_team_reg_team_event_cb(null, TeamEventNotificationDelegate, IntPtr.Zero);
+            _teamEventNotificationDelegate = new TeamEventDelegate(NotifyTeamEvent);
+            _teamChangedCallback = new TeamOperationDelegate(OnTeamChanged);
+            _queryAllMyTeamsCompleted = new QueryMyTeamsDelegate(OnQueryAllMyTeamsCompleted);
+            _queryMyTeamsInfoCompleted = new QueryMyTeamsDetailInfoDelegate(OnQueryMyTeamsInfoCompleted);
+            _queryTeamMembersCompleted = new QueryTeamMembersDelegate(OnQueryTeamMembersInfoCompleted);
+            _querySingleMemberCompleted = new QuerySingleMemberDelegate(OnQuerySingleMemberCompleted);
+            _queryCachedTeamInfoCompleted = new QueryTeamInfoDelegate(OnQueryCachedTeamInfoCompleted);
+            TeamNativeMethods.nim_team_reg_team_event_cb(null, _teamEventNotificationDelegate, IntPtr.Zero);
         }
 
         private static void NotifyTeamEvent(int resCode, int nid, string tid, string result, string jsonExtension, IntPtr userData)
@@ -96,7 +91,7 @@ namespace NIM.Team
             var tinfoJson = teamInfo.Serialize();
             var idJson = NimUtility.Json.JsonParser.Serialize(idList);
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_create_team_async(tinfoJson, idJson, postscript, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_create_team_async(tinfoJson, idJson, postscript, null, _teamChangedCallback, ptr);
         }
 
         private static void OnTeamChanged(int resCode, int nid, string tid, string result, string jsonExtension, IntPtr userData)
@@ -119,7 +114,7 @@ namespace NIM.Team
         {
             var idJson = NimUtility.Json.JsonParser.Serialize(idList);
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_invite_async(tid, idJson, postscript, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_invite_async(tid, idJson, postscript, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -132,7 +127,7 @@ namespace NIM.Team
         {
             var idJson = NimUtility.Json.JsonParser.Serialize(idList);
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_kick_async(tid, idJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_kick_async(tid, idJson, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -143,7 +138,7 @@ namespace NIM.Team
         public static void LeaveTeam(string tid, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_leave_async(tid, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_leave_async(tid, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -154,7 +149,7 @@ namespace NIM.Team
         public static void DismissTeam(string tid, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_dismiss_async(tid, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_dismiss_async(tid, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -167,7 +162,7 @@ namespace NIM.Team
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             var infoJson = info.Serialize();
-            TeamNativeMethods.nim_team_update_team_info_async(tid, infoJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_update_team_info_async(tid, infoJson, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -179,7 +174,7 @@ namespace NIM.Team
         public static void ApplyForJoiningTeam(string tid, string reason, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_apply_join_async(tid, reason, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_apply_join_async(tid, reason, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -191,7 +186,7 @@ namespace NIM.Team
         public static void AgreeJoinTeamApplication(string tid, string uid, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_pass_join_apply_async(tid, uid, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_pass_join_apply_async(tid, uid, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -204,7 +199,7 @@ namespace NIM.Team
         public static void RejectJoinTeamApplication(string tid, string uid, string reason, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_reject_join_apply_async(tid, uid, reason, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_reject_join_apply_async(tid, uid, reason, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -217,7 +212,7 @@ namespace NIM.Team
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             var managersJson = NimUtility.Json.JsonParser.Serialize(managerIdArray);
-            TeamNativeMethods.nim_team_add_managers_async(tid, managersJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_add_managers_async(tid, managersJson, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -230,7 +225,7 @@ namespace NIM.Team
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             var managersJson = NimUtility.Json.JsonParser.Serialize(managerIdArray);
-            TeamNativeMethods.nim_team_remove_managers_async(tid, managersJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_remove_managers_async(tid, managersJson, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -243,7 +238,7 @@ namespace NIM.Team
         public static void TransferTeamAdmin(string tid, string newOwnerId, bool leaveTeam, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_transfer_team_async(tid, newOwnerId, leaveTeam, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_transfer_team_async(tid, newOwnerId, leaveTeam, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -255,7 +250,7 @@ namespace NIM.Team
         {
             var infoJson = info.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_update_my_property_async(infoJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_update_my_property_async(infoJson, null, _teamChangedCallback, ptr);
 
         }
 
@@ -268,7 +263,7 @@ namespace NIM.Team
         {
             var infoJson = info.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_update_other_nick_async(infoJson, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_update_other_nick_async(infoJson, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -280,7 +275,7 @@ namespace NIM.Team
         public static void AcceptTeamInvitation(string tid, string invitor, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_accept_invitation_async(tid, invitor, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_accept_invitation_async(tid, invitor, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -293,7 +288,7 @@ namespace NIM.Team
         public static void RejectTeamInvitation(string tid, string invitor, string reason, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_reject_invitation_async(tid, invitor, reason, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_reject_invitation_async(tid, invitor, reason, null, _teamChangedCallback, ptr);
         }
 
         /// <summary>
@@ -303,7 +298,7 @@ namespace NIM.Team
         public static void QueryAllMyTeams(QueryMyTeamsResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_all_my_teams_async(null, QueryAllMyTeamsCompleted, ptr);
+            TeamNativeMethods.nim_team_query_all_my_teams_async(null, _queryAllMyTeamsCompleted, ptr);
 
         }
 
@@ -324,7 +319,7 @@ namespace NIM.Team
         public static void QueryMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_all_my_teams_info_async(null, QueryMyTeamsInfoCompleted, ptr);
+            TeamNativeMethods.nim_team_query_all_my_teams_info_async(null, _queryMyTeamsInfoCompleted, ptr);
         }
 
         private static void OnQueryMyTeamsInfoCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
@@ -353,7 +348,7 @@ namespace NIM.Team
         public static void QueryTeamMembersInfo(string tid, QueryTeamMembersInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_team_members_async(tid, true, null, QueryTeamMembersCompleted, ptr);
+            TeamNativeMethods.nim_team_query_team_members_async(tid, true, null, _queryTeamMembersCompleted, ptr);
         }
 
         private static void OnQueryTeamMembersInfoCompleted(string tid, int memberCount, bool includeUserInfo, string result, string jsonExtension, IntPtr userData)
@@ -374,7 +369,27 @@ namespace NIM.Team
         public static void QuerySingleMemberInfo(string tid, string uid, QuerySingleMemberResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_team_member_async(tid, uid, null, QuerySingleMemberCompleted, ptr);
+            TeamNativeMethods.nim_team_query_team_member_async(tid, uid, null, _querySingleMemberCompleted, ptr);
+        }
+
+        /// <summary>
+        /// 查询(单个)群成员信息(同步版本，堵塞NIM内部线程，谨慎使用)
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public static NIMTeamMemberInfo QuerySingleMemberInfo(string tid, string uid)
+        {
+            NIMTeamMemberInfo info = null;
+            var ptr = TeamNativeMethods.nim_team_query_team_member_block(tid, uid);
+            if (ptr != IntPtr.Zero)
+            {
+                NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+                var infoObj = marshaler.MarshalNativeToManaged(ptr);
+                info = NIMTeamMemberInfo.Deserialize(infoObj.ToString());
+                GlobalAPI.FreeStringBuffer(ptr);
+            }
+            return info;
         }
 
         private static void OnQuerySingleMemberCompleted(string tid, string userId, string result, string jsonExtension, IntPtr userData)
@@ -394,7 +409,7 @@ namespace NIM.Team
         public static void QueryCachedTeamInfo(string tid, QueryCachedTeamInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_team_info_async(tid, null, QueryCachedTeamInfoCompleted, ptr);
+            TeamNativeMethods.nim_team_query_team_info_async(tid, null, _queryCachedTeamInfoCompleted, ptr);
         }
 
         private static void OnQueryCachedTeamInfoCompleted(string tid, string result, string jsonExtension, IntPtr userData)
@@ -414,7 +429,32 @@ namespace NIM.Team
         public static void QueryTeamInfoOnline(string tid, TeamChangedNotificationDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_team_info_online_async(tid, null, TeamChangedCallback, ptr);
+            TeamNativeMethods.nim_team_query_team_info_online_async(tid, null, _teamChangedCallback, ptr);
+        }
+
+        public static void SetMemberMuted(string tid, string memberId, bool muted, TeamChangedNotificationDelegate action)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
+            TeamNativeMethods.nim_team_mute_member_async(tid, memberId, muted, null, _teamChangedCallback, ptr);
+        }
+
+        /// <summary>
+        /// 本地查询群信息(同步版本，堵塞NIM内部线程，谨慎使用)
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static NIMTeamInfo QueryCachedTeamInfo(string tid)
+        {
+            var ptr = TeamNativeMethods.nim_team_query_team_info_block(tid);
+            if (ptr != IntPtr.Zero)
+            {
+                NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+                var tobj = marshaler.MarshalNativeToManaged(ptr);
+                var tinfo = NIMTeamInfo.Deserialize(tobj.ToString());
+                GlobalAPI.FreeStringBuffer(ptr);
+                return tinfo;
+            }
+            return null;
         }
     }
 }

@@ -6,16 +6,12 @@
   */
 
 using System;
+using NimUtility;
 
 namespace NIM.Session
 {
     public class SessionAPI
     {
-        static SessionAPI()
-        {
-            RegChangeCb();
-        }
-
         /// <summary>
         /// 会话列表变化事件，通过注册该事件来监听会话项变化
         /// </summary>
@@ -24,7 +20,7 @@ namespace NIM.Session
         /// <summary>
         /// 注册最近会话列表项变更通知
         /// </summary>
-        private static void RegChangeCb()
+        public static void RegisterCallbacks()
         {
             SessionNativeMethods.nim_session_reg_change_cb("", GlobalSessionChangedCb, IntPtr.Zero);
         }
@@ -59,6 +55,7 @@ namespace NIM.Session
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             SessionNativeMethods.nim_session_delete_recent_session_async((int)toType, id, "", SessionChangeCb, ptr);
+            NimLogManager.NimCoreLog.InfoFormat("DeleteRecentSession ID={0} Type={1}", id, toType);
         }
 
         /// <summary>
@@ -69,6 +66,7 @@ namespace NIM.Session
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             SessionNativeMethods.nim_session_delete_all_recent_session_async("", SessionChangeCb, ptr);
+            NimLogManager.NimCoreLog.InfoFormat("DeleteAllRecentSession");
         }
 
         /// <summary>
@@ -89,7 +87,7 @@ namespace NIM.Session
             if (userData != IntPtr.Zero)
             {
                 SessionInfo info = SessionInfo.Deserialize(result);
-                NimUtility.DelegateConverter.InvokeOnce<SessionChangeHandler>(userData, rescode, info, totalUnreadCounts);
+                userData.InvokeOnce<SessionChangeHandler>(rescode, info, totalUnreadCounts);
             }
         }
         static readonly NimSessionQueryRecentSessionCbFunc QueryRecentSessionCb = new NimSessionQueryRecentSessionCbFunc(QueryRecentSession);
@@ -98,7 +96,7 @@ namespace NIM.Session
             if (userData != IntPtr.Zero)
             {
                 SesssionInfoList infoList = SesssionInfoList.Deserialize(result);
-                NimUtility.DelegateConverter.InvokeOnce<QueryRecentHandler>(userData, totalUnreadCounts, infoList);
+                userData.InvokeOnce<QueryRecentHandler>(totalUnreadCounts, infoList);
             }
         }
     }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace NimUtility.Json
@@ -16,14 +14,23 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static T Deserialize<T>(string json)
         {
-            if (string.IsNullOrEmpty(json))
-                return default(T);
-            Newtonsoft.Json.JsonSerializerSettings setting = new Newtonsoft.Json.JsonSerializerSettings();
-            setting.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-            setting.DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore;
-            setting.Converters.Add(new Json.JExtConverter());
-            T ret = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json, setting);
-            return ret;
+            try
+            {
+                var setting = new JsonSerializerSettings();
+                setting.NullValueHandling = NullValueHandling.Ignore;
+                setting.Converters.Add(new JExtConverter());
+                T ret = JsonConvert.DeserializeObject<T>(json, setting);
+                return ret;
+            }
+            catch (JsonException jsonException)
+            {
+                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json);
+            }
+            catch (Exception e)
+            {
+                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json);
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -33,7 +40,23 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static IDictionary<string, object> FromJson(string json)
         {
-            return Deserialize(json) as IDictionary<string, object>;
+            try
+            {
+                var setting = new JsonSerializerSettings();
+                setting.NullValueHandling = NullValueHandling.Ignore;
+                setting.Converters.Add(new JsonKeyValuePairConverter());
+                var ret = JsonConvert.DeserializeObject<IDictionary<string, object>>(json, setting);
+                return ret;
+            }
+            catch (JsonException jsonException)
+            {
+                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json);
+            }
+            catch (Exception e)
+            {
+                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json);
+            }
+            return null;
         }
 
         /// <summary>
@@ -43,18 +66,12 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static object Deserialize(string json)
         {
-            if (string.IsNullOrEmpty(json))
-                throw new ArgumentException("JSON string can not be null or empty", "json");
-            var converters = new Newtonsoft.Json.JsonConverter[] {new JsonKeyValuePairConverter(), new JExtConverter()};
-            var v = JsonConvert.DeserializeObject<object>(json, converters);
-            return v;
+            return Deserialize<object>(json);
         }
 
         public static object DeserializeObject(string json)
         {
-            if (string.IsNullOrEmpty(json))
-                throw new ArgumentException("JSON string can not be null or empty", "json");
-            return JsonConvert.DeserializeObject(json);
+            return Deserialize(json);
         }
 
         /// <summary>
@@ -66,7 +83,7 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static T DeserializeAnonymousType<T>(string value, T anonymousType)
         {
-            return JsonConvert.DeserializeAnonymousType<T>(value, anonymousType);
+            return JsonConvert.DeserializeAnonymousType(value, anonymousType);
         }
 
         /// <summary>
@@ -76,11 +93,10 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static string Serialize(object obj)
         {
-            Newtonsoft.Json.JsonSerializerSettings setting = new Newtonsoft.Json.JsonSerializerSettings();
-            setting.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            JsonSerializerSettings setting = new JsonSerializerSettings();
+            setting.NullValueHandling = NullValueHandling.Ignore;
             setting.Converters.Add(new JExtConverter());
             return JsonConvert.SerializeObject(obj, Formatting.None, setting);
-
         }
 
         /// <summary>

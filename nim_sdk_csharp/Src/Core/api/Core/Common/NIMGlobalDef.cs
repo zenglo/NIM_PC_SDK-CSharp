@@ -10,10 +10,10 @@ using System.Runtime.InteropServices;
 
 namespace NIM
 {
-    class NIMGlobal
+    internal class NIMGlobal
     {
         /// <summary>
-        /// The NIM native DLL
+        ///     The NIM native DLL
         /// </summary>
 #if DEBUG
         public const string NIMNativeDLL = "nim.dll";

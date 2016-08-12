@@ -5,7 +5,6 @@
   * @date 2015/2/1
   */
 
-
 namespace NIM
 {
     /// <summary>
@@ -14,6 +13,7 @@ namespace NIM
     public enum ResponseCode
     {
         #region 通用错误码
+
         /// <summary>
         /// 没有错误，一切正常
         /// </summary>
@@ -65,9 +65,14 @@ namespace NIM
         kNIMResFrequently = 416,
 
         /// <summary>
-        /// 对象已经存在
+        /// 对象已经存在/重复操作
         /// </summary>
         kNIMResExist = 417,
+
+        /// <summary>
+        /// 超限
+        /// </summary>
+        kNIMResOverrun = 419,
 
         /// <summary>
         /// 帐号被禁用
@@ -93,9 +98,11 @@ namespace NIM
         /// 协议无效, 不允许访问的协议
         /// </summary>
         kNIMResInvalid = 509,
+
         #endregion
 
         #region 群错误码
+
         /// <summary>
         /// 已达到人数限制
         /// </summary>
@@ -145,9 +152,16 @@ namespace NIM
         /// 邀请成功
         /// </summary>
         kNIMResTeamInviteSuccess = 810,
+
+        /// <summary>
+        /// 强推列表账号数量超限
+        /// </summary>
+        kNIMResForcePushCountLimit = 811,
+
         #endregion
 
         #region 数据解编错误代码
+
         /// <summary>
         /// 协议已失效
         /// </summary>
@@ -162,13 +176,24 @@ namespace NIM
         /// 打包错误
         /// </summary>
         kNIMResEPacket = 999,
+
+        /// <summary>
+        /// 被接收方加入黑名单 SDK版本大于2.5.0支持
+        /// </summary>
+        kNIMResInBlack = 7101,
         #endregion
 
         #region 客户端自定义的错误号
+
         /// <summary>
         /// 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值
         /// </summary>
         kNIMLocalRes = 10000,
+
+        /// <summary>
+        /// 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限
+        /// </summary>
+        kNIMResRoomLocalNeedRequestAgain = 10001,
 
         /// <summary>
         /// 发送文件消息，NOS上传暂停
@@ -240,9 +265,26 @@ namespace NIM
         /// rts会话 通道不存在
         /// </summary>
         kNIMLocalResRtsChannelNotExist = 11510,
+
+        /// <summary>
+        /// 主链接错误
+        /// </summary>
+        kNIMResRoomLinkError = 13001,
+
+        /// <summary>
+        /// 聊天室状态异常
+        /// </summary>
+        kNIMResRoomError = 13002,
+
+        /// <summary>
+        /// 黑名单用户禁止进入
+        /// </summary>
+        kNIMResRoomBlackBeOut = 13003,
+
         #endregion
 
         #region 客户端自定义的api调用问题
+
         /// <summary>
         ///还未初始化或初始化未正常完成 
         /// </summary>
@@ -261,9 +303,8 @@ namespace NIM
         /// <summary>
         ///SDK版本不对，可能会引发其他问题 
         /// </summary>
-        kNIMLocalResAPIErrorVersionError = 20003, 
+        kNIMLocalResAPIErrorVersionError = 20003,
+
         #endregion
-
-
     }
 }

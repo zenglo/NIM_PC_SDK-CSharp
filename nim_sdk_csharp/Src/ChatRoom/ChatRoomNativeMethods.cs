@@ -42,10 +42,49 @@ namespace NIMChatRoom
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NimChatroomKickMemberCbFunc(long room_id, int error_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
-    internal static class ChatRoomNativeMethods
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void nim_chatroom_temp_mute_member_cb_func(long room_id, int error_code,
+       [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
+       string result,
+       [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
+       string json_extension,
+       IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_update_room_info_cb_func(long room_id, int error_code,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+	IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_update_my_role_cb_func(long room_id, int error_code,
+[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_queue_offer_cb_func(long room_id, int error_code,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+	 IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_queue_poll_cb_func(long room_id, int error_code,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_queue_list_cb_func(long room_id, int error_code,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+	IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void nim_chatroom_queue_drop_cb_func(long room_id, int error_code,
+[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+ IntPtr user_data);
+	internal static class ChatRoomNativeMethods
     {
 #if DEBUG
-        const string ChatRoomNativeDll = "nim_chatroom.dll";
+        private const string ChatRoomNativeDll = "nim_chatroom.dll";
 #else
         const string ChatRoomNativeDll = "nim_chatroom.dll";
 #endif
@@ -157,5 +196,100 @@ namespace NIMChatRoom
         /// </summary>
         [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_kick_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_chatroom_kick_member_async(long room_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string notify_ext, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension, NimChatroomKickMemberCbFunc cb, IntPtr user_data);
-    }
+
+		/// <summary>
+		/// 设置Chatroom SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_set_proxy", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_set_proxy(
+			NIMChatRoomProxyType type,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string host,
+			int port,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string user,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string password);
+
+		/// <summary>
+		/// 临时禁言/解禁 
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_temp_mute_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_chatroom_temp_mute_member_async(long room_id, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string id, 
+            long duration,
+            bool need_notify,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string notify_ext,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_chatroom_temp_mute_member_cb_func cb, 
+            IntPtr user_data);
+
+		/// <summary>
+		///  更新聊天室信息，目前只支持更新kNIMChatRoomInfoKeyName,kNIMChatRoomInfoKeyAnnouncement,kNIMChatRoomInfoKeyBroadcastUrl,kNIMChatRoomInfoKeyExt四个字段
+		/// </summary>
+		
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_update_room_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_update_room_info_async(
+			Int64 room_id,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string room_info_json_str,
+			bool need_notify,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string notify_ext,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+			nim_chatroom_update_room_info_cb_func cb,
+			IntPtr user_data);
+
+		/// <summary>
+		///  更新我的信息，目前只支持更新kNIMChatRoomMemberInfoKeyNick,kNIMChatRoomMemberInfoKeyAvatar,kNIMChatRoomMemberInfoKeyExt三个字段
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_update_my_role_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_update_my_role_async(
+			Int64 room_id,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string role_info_json_str,
+			bool need_notify,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string notify_ext,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+			nim_chatroom_update_my_role_cb_func cb,
+			IntPtr user_data);
+
+		/// <summary>
+		///  (聊天室管理员权限)新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_offer_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_queue_offer_async(
+		Int64 room_id,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_key,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_value,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		nim_chatroom_queue_offer_cb_func cb,
+		IntPtr user_data);
+
+
+		/// <summary>
+		///  ((聊天室管理员权限)取出麦序头元素 
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_poll_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_queue_poll_async(
+		Int64 room_id,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_key,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		nim_chatroom_queue_poll_cb_func cb,
+		IntPtr user_data);
+
+		/// <summary>
+		///  排序列出所有麦序元素 
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_list_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_queue_list_async(
+		Int64 room_id,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		nim_chatroom_queue_list_cb_func cb,
+		IntPtr user_data);
+
+		/// <summary>
+		/// (聊天室管理员权限)删除麦序队列
+		/// </summary>
+		[DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_drop_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_chatroom_queue_drop_async(
+		Int64 room_id,
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		nim_chatroom_queue_drop_cb_func cb,
+		IntPtr user_data);
+	}
 }

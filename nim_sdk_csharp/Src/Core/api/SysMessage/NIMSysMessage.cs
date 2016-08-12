@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace NIM.SysMessage
 {
-    public class NIMSysMessag:NimUtility.NimJsonObject<NIMSysMessag>
+    public class NIMSysMessag : NimUtility.NimJsonObject<NIMSysMessag>
     {
         /// <summary>
         ///通知错误码 
@@ -65,6 +65,12 @@ namespace NIM.SysMessage
         public string SenderId { get; set; }
 
         /// <summary>
+        /// 附言,按需填写
+        /// </summary>
+        [JsonProperty("msg")]
+        public string Message { get; set; }
+
+        /// <summary>
         /// 附件,按需填写
         /// </summary>
         [JsonProperty("attach")]
@@ -77,13 +83,13 @@ namespace NIM.SysMessage
         public long Id { get; set; }
 
         /// <summary>
-        /// 自定义通知消息是否存离线:0-不存（只发给在线用户）,1-存（可发给离线用户）
+        /// (选填)自定义通知消息是否存离线:0-不存（只发给在线用户）,1-存（可发给离线用户）
         /// </summary>
         [JsonProperty("custom_save_flag")]
         public NIMMessageSettingStatus SupportOffline { get; set; }
 
         /// <summary>
-        /// 自定义通知消息推送文本，不填则不推送
+        /// (选填)自定义通知消息推送文本，不填则不推送
         /// </summary>
         [JsonProperty("custom_apns_text")]
         public string PushContent { get; set; }
@@ -95,22 +101,22 @@ namespace NIM.SysMessage
         public NIMSysMsgStatus Status { get; set; }
 
         /// <summary>
-        /// 是否需要推送
+        /// (可选)是否需要推送, 0:不需要,1:需要,默认1
         /// </summary>
         [JsonProperty("push_enable")]
         public NIMMessageSettingStatus NeedPush { get; set; }
 
         /// <summary>
-        /// 是否要做消息计数
+        /// (可选)推送是否要做消息计数(角标)，0:不需要，1:需要，默认1
         /// </summary>
-        [JsonProperty("need_badge")]
+        [JsonProperty("push_need_badge")]
         public NIMMessageSettingStatus NeedPushCount { get; set; }
 
         /// <summary>
-        /// 需要推送昵称
+        /// (可选)推送需要前缀，0：不需要，1：需要，默认0
         /// </summary>
-        [JsonProperty("push_nick")]
-        public NIMMessageSettingStatus NeedPushNick { get; set; }
+        [JsonProperty("push_prefix")]
+        public NIMMessageSettingStatus NeedPushPrefix { get; set; }
 
         /// <summary>
         /// 本地定义的消息id,发送方必填,建议使用uuid
@@ -119,7 +125,7 @@ namespace NIM.SysMessage
         public string ClientMsgId { get; set; }
 
         /// <summary>
-        /// 第三方自定义的推送属性
+        /// (可选)第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048
         /// </summary>
         [JsonProperty("push_payload")]
         public NimUtility.Json.JsonExtension CustomPushContent { get; set; }
@@ -127,6 +133,13 @@ namespace NIM.SysMessage
         public string GenerateMsgId()
         {
             return NimUtility.Utilities.GenerateGuid();
+        }
+
+        public NIMSysMessageContent()
+        {
+            NeedPush = NIMMessageSettingStatus.kNIMMessageStatusSetted;
+            NeedPushCount = NIMMessageSettingStatus.kNIMMessageStatusSetted;
+            NeedPushPrefix = NIMMessageSettingStatus.kNIMMessageStatusNotSet;
         }
     }
 

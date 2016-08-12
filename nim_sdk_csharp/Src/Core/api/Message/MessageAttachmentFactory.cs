@@ -2,12 +2,12 @@
 
 namespace NIM.Message
 {
-    static class MessageAttachmentFactory
+    internal static class MessageAttachmentFactory
     {
-        public static NIMMessageAttachment CreateAttachment(NIMMessageType type,string attachmentJson)
+        public static NIMMessageAttachment CreateAttachment(NIMMessageType type, string attachmentJson)
         {
             NIMMessageAttachment attach = null;
-            JObject jObj = JObject.Parse(attachmentJson);
+            var jObj = JObject.Parse(attachmentJson);
             switch (type)
             {
                 case NIMMessageType.kNIMMessageTypeFile:

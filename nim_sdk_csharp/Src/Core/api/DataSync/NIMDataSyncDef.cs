@@ -14,14 +14,25 @@ namespace NIM.DataSync
     public enum NIMDataSyncType
     {
         /// <summary>
+        /// 未读消息同步
+        /// </summary>
+        kNIMDataSyncTypeUnreadMsg = 2,
+
+        /// <summary>
         /// 所有群的信息同步
         /// </summary>
-	    kNIMDataSyncTypeTeamInfo		= 3,		
+        kNIMDataSyncTypeTeamInfo = 3,
+
+        /// <summary>
+        /// 漫游消息同步,每个会话同步到漫游消息都会触发该类通知
+        /// </summary>
+        kNIMDataSyncTypeRoamMsg = 7,
+
         /// <summary>
         /// 群成员列表同步
         /// </summary>
-	    kNIMDataSyncTypeTeamUserList	= 1000,		
-    };
+        kNIMDataSyncTypeTeamUserList = 1000,		
+    }
 
     /// <summary>
     /// 数据同步状态
@@ -32,5 +43,5 @@ namespace NIM.DataSync
         /// 同步完成
         /// </summary>
 	    kNIMDataSyncStatusComplete = 1,		
-    };
+    }
 }

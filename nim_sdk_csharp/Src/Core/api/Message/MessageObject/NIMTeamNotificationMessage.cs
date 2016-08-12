@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using NimUtility;
+using NIM.Team;
 
 namespace NIM
 {
-    public class NIMTeamNotification : NimUtility.NimJsonObject<NIMTeamNotification>
+    public class NIMTeamNotification : NimJsonObject<NIMTeamNotification>
     {
         [JsonProperty("ids")]
         public List<string> IdCollection { get; set; }
@@ -15,10 +14,10 @@ namespace NIM
         public string Id { get; set; }
 
         [JsonProperty("tinfo")]
-        public Team.NIMTeamInfo TeamInfo { get; set; }
+        public NIMTeamInfo TeamInfo { get; set; }
 
         [JsonProperty("team_member")]
-        public Team.NIMTeamMemberInfo MemberInfo { get; set; }
+        public NIMTeamMemberInfo MemberInfo { get; set; }
     }
 
     public class NotificationData
@@ -27,7 +26,7 @@ namespace NIM
         public NIMTeamNotification Data { get; set; }
 
         [JsonProperty("id")]
-        public Team.NIMNotificationType NotificationId { get; set; }
+        public NIMNotificationType NotificationId { get; set; }
     }
 
     public class NIMTeamNotificationMessage : NIMIMMessage

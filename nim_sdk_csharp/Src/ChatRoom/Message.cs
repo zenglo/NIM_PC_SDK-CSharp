@@ -111,7 +111,7 @@ namespace NIMChatRoom
         public string LocalResourceId { get; set; }
     }
 
-    class QueryMessageHistoryParam : NimUtility.NimJsonObject<QueryMessageHistoryParam>
+    internal class QueryMessageHistoryParam : NimUtility.NimJsonObject<QueryMessageHistoryParam>
     {
         [JsonProperty("start")]
         public long StartTime { get; set; }

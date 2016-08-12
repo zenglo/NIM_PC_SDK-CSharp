@@ -8,33 +8,35 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using NimUtility;
 
 namespace NIM.User
 {
     /// <summary>
-    /// 用户特殊关系数据变更类型
+    ///     用户特殊关系数据变更类型
     /// </summary>
     public enum NIMUserRelationshipChangeType
     {
         /// <summary>
-        /// 添加删除黑名单
+        ///     添加删除黑名单
         /// </summary>
         AddRemoveBlacklist = 1,
+
         /// <summary>
-        /// 添加删除静音名单
+        ///     添加删除静音名单
         /// </summary>
         AddRemoveMute = 2,
+
         /// <summary>
-        /// 同步黑名单和静音名单
+        ///     同步黑名单和静音名单
         /// </summary>
-        SyncMuteAndBlackList = 3,
+        SyncMuteAndBlackList = 3
     }
 
     /// <summary>
-    /// 好友关系
+    ///     好友关系
     /// </summary>
-    public class UserSpecialRelationshipItem : NimUtility.NimJsonObject<UserSpecialRelationshipItem>
+    public class UserSpecialRelationshipItem : NimJsonObject<UserSpecialRelationshipItem>
     {
         [JsonProperty("accid")]
         public string AccountId { get; set; }
@@ -52,7 +54,7 @@ namespace NIM.User
         public bool IsMuted { get; set; }
     }
 
-    public class UserNameCard : NimUtility.NimJsonObject<UserNameCard>
+    public class UserNameCard : NimJsonObject<UserNameCard>
     {
         [JsonProperty("accid")]
         public string AccountId { get; set; }
@@ -86,42 +88,41 @@ namespace NIM.User
 
         [JsonProperty("update_timetag")]
         public long? UpdatedTime { get; set; }
-
     }
 
     public class UserNameCardChangedArgs : EventArgs
     {
-        public List<UserNameCard> UserNameCardList { get; private set; }
-
         public UserNameCardChangedArgs(List<UserNameCard> cards)
         {
             UserNameCardList = cards;
         }
+
+        public List<UserNameCard> UserNameCardList { get; private set; }
     }
 
     public class UserRelationshipSyncArgs : EventArgs
     {
-        public UserSpecialRelationshipItem[] Items { get; private set; }
-
         public UserRelationshipSyncArgs(UserSpecialRelationshipItem[] items)
         {
             Items = items;
         }
+
+        public UserSpecialRelationshipItem[] Items { get; private set; }
     }
 
     public class UserRelationshipChangedArgs : EventArgs
     {
-        public string AccountId { get; private set; }
-
-        public bool IsSetted { get; private set; }
-
-        public NIMUserRelationshipChangeType ChangedType { get; private set; }
-
-        public UserRelationshipChangedArgs(NIMUserRelationshipChangeType type,string id,bool value)
+        public UserRelationshipChangedArgs(NIMUserRelationshipChangeType type, string id, bool value)
         {
             ChangedType = type;
             IsSetted = value;
             AccountId = id;
         }
+
+        public string AccountId { get; private set; }
+
+        public bool IsSetted { get; private set; }
+
+        public NIMUserRelationshipChangeType ChangedType { get; private set; }
     }
 }

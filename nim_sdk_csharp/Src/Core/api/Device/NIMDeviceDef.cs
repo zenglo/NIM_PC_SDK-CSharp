@@ -32,7 +32,11 @@ namespace NIM
         /// 摄像头
         /// </summary>
         kNIMDeviceTypeVideo = 3,
-    };
+		/// <summary>
+		/// 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效
+		/// </summary>
+		kNIMDeviceTypeSoundcardCapturer = 4,   
+	};
 
     /// <summary>
     /// 设备状态类型
@@ -64,11 +68,29 @@ namespace NIM
         /// </summary>
         kNIMDeviceStatusEnd = 0x10,
     };
-    
-    /// <summary>
-    /// 设备属性
-    /// </summary>
-    public class NIMDeviceInfo : NimUtility.NimJsonObject<NIMDeviceInfo>
+
+	/// <summary>
+	/// NIMVideoSubType 视频格式类型
+	/// </summary>
+	public enum NIMVideoSubType
+	{
+		/// <summary>
+		/// 32位位图格式 存储 (B,G,R,A)...
+		/// </summary>
+		kNIMVideoSubTypeARGB = 0,   
+		/// <summary>
+		/// 24位位图格式 存储 (B,G,R)...
+		/// </summary>
+		kNIMVideoSubTypeRGB = 1,    
+		/// <summary>
+		/// YUV格式，存储 yyyyyyyy...uu...vv...
+		/// </summary>
+		kNIMVideoSubTypeI420 = 2,  
+	};
+	/// <summary>
+	/// 设备属性
+	/// </summary>
+	public class NIMDeviceInfo : NimUtility.NimJsonObject<NIMDeviceInfo>
     {
         /// <summary>
         /// 设备名
@@ -125,18 +147,26 @@ namespace NIM
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type, string json_extension, IntPtr user_data);
+    public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_start_device_cb_func(NIMDeviceType type, bool ret, string json_extension, IntPtr user_data);
+    public delegate void nim_vchat_start_device_cb_func(NIMDeviceType type, bool ret,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_device_status_cb_func(NIMDeviceType type, uint status, string device_path, string json_extension, IntPtr user_data);
+    public delegate void nim_vchat_device_status_cb_func(NIMDeviceType type, uint status,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_audio_data_cb_func(ulong time, IntPtr data, uint size, string json_extension, IntPtr user_data);
+    public delegate void nim_vchat_audio_data_cb_func(ulong time,
+	IntPtr  data, 
+	uint size,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_video_data_cb_func(ulong time, IntPtr data, uint size, uint width, uint height, string json_extension, IntPtr user_data);
+    public delegate void nim_vchat_video_data_cb_func(ulong time, IntPtr data, uint size, uint width, uint height,
+    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
 }

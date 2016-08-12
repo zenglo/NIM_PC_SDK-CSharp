@@ -1,0 +1,7 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimCore.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimCore.pdb
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\x86\Debug\NimCore.csprojResolveAssemblyReference.cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\x86\Debug\NIM.Properties.Resources.resources
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\x86\Debug\NimCore.csproj.GenerateResource.Cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\x86\Debug\NimCore.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\x86\Debug\NimCore.pdb

@@ -3,6 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace NIM
 {
+    //多端推送设置/同步回调
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    delegate void nim_client_multiport_push_config_cb_func(int rescode,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string content,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_params,
+        IntPtr user_data);
     class ClientNativeMethods
     {
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_client_init", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -39,5 +45,20 @@ namespace NIM
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_client_reg_kickout_other_client_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_client_reg_kickout_other_client_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, NIMGlobal.JsonTransportCb cb, IntPtr user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_client_reg_sync_multiport_push_config_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_client_reg_sync_multiport_push_config_cb(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            nim_client_multiport_push_config_cb_func cb, IntPtr user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_client_set_multiport_push_config", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_client_set_multiport_push_config(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string switch_content,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            nim_client_multiport_push_config_cb_func cb, IntPtr user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_client_get_multiport_push_config", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_client_get_multiport_push_config([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            nim_client_multiport_push_config_cb_func cb, IntPtr user_data);
     }
 }

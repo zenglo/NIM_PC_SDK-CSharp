@@ -41,7 +41,7 @@ namespace NIMChatRoom
             return result;
         }
 
-        List<ChatRoomInfo> ParseResponseJson(string jsonContent)
+        private List<ChatRoomInfo> ParseResponseJson(string jsonContent)
         {
             JObject jObj = JObject.Parse(jsonContent);
             var resToken = jObj.SelectToken("res");

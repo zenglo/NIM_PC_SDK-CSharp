@@ -11,24 +11,29 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using NimUtility;
 
 namespace NIM
 {
+    public delegate void ConfigMultiportPushDelegate(ResponseCode response,ConfigMultiportPushParam param);
     /// <summary>
     /// NIM SDK提供的Client接口，主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
     /// </summary>
     public class ClientAPI
     {
-        
         public static EventHandler<LoginResultEventArgs> LoginResultHandler;
         private static bool _sdkInitialized = false;
+
         public delegate void KickOtherClientResultHandler(NIMKickOtherResult result);
+
         public delegate void MultiSpotLoginNotifyResultHandler(NIMMultiSpotLoginNotifyResult result);
+
         public delegate void KickoutResultHandler(NIMKickoutResult result);
+
         public delegate void LogoutResultDelegate(NIMLogoutResult result);
+
         public delegate void LoginResultDelegate(NIMLoginResult result);
+
         /// <summary>
         /// SDK是否已经初始化
         /// </summary>
@@ -37,73 +42,40 @@ namespace NIM
             get { return _sdkInitialized; }
         }
 
-        static ClientAPI()
-        {
-        }
-
         /// <summary>
         /// NIM SDK初始化
         /// </summary>
-        /// <param name="config">The config.</param>
         /// <param name="appDataDir">使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！）.</param>
         /// <param name="appInstallDir">目前不需要传入（SDK可以自动获取）.</param>
+        /// <param name="config">The config.</param>
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
+            NimUtility.NimLogManager.NimCoreLog.Info("NIMCoreinit:"+_sdkInitialized.ToString());
             if (_sdkInitialized)
                 return true;
-           // CheckDependencyDll();
             string configJson = null;
             if (config != null && config.IsValiad())
                 configJson = config.Serialize();
-            return _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+            NimUtility.NimLogManager.NimCoreLog.Info("nim_client_init start");
+            _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+            NimUtility.NimLogManager.NimCoreLog.Info("nim_client_init end");
+            if (_sdkInitialized)
+            {
+                RegisterSdkCallbacks();
+            }
+            NimLogManager.NimCoreLog.InfoFormat("sdk init result:{0}", _sdkInitialized);
+            return _sdkInitialized;
         }
 
-        static void CheckDependencyDll()
+        private static void RegisterSdkCallbacks()
         {
-            var dependents = ConfigReader.GetDependentsInfo();
-            if (dependents == null)
-                return;
-            var executeDir = System.Environment.CurrentDirectory;
-            List<string> lostDll = new List<string>();
-            foreach (var d in dependents)
-            {
-                string path = Path.Combine(executeDir, d.Name);
-                if (File.Exists(path))
-                {
-                    CheckDependentVersion(path, d);
-                    continue;
-                }
-                lostDll.Add(path);
-            }
-            if (lostDll.Count > 0)
-            {
-                string msg = "can't find dlls:";
-                for (int i = 0; i < lostDll.Count; i++)
-                {
-                    msg += lostDll[i] + System.Environment.NewLine;
-                    if (i < lostDll.Count - 1)
-                        msg += ",  ";
-
-                }
-                throw new FileNotFoundException(msg);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        static void CheckDependentVersion(string path,NativeDependentInfo info)
-        {
-            FileVersionInfo verInfo = FileVersionInfo.GetVersionInfo(path);
-            if (verInfo.ProductVersion != info.Version)
-            {
-                throw new NimException.VersionUnmatchedException(path, info.Version);
-            }
-        }
-
-        internal static void GuaranteeInitialized()
-        {
-            if (!_sdkInitialized)
-                throw new NimException.SdkUninitializedException();
+            NIM.Friend.FriendAPI.RegisterCallbacks();
+            NIM.TalkAPI.RegisterCallbacks();
+            NIM.Session.SessionAPI.RegisterCallbacks();
+            NIM.SysMessage.SysMsgAPI.RegisterCallbacks();
+            NIM.Team.TeamAPI.RegisterCallbacks();
+            NIM.User.UserAPI.RegisterCallbacks();
         }
 
         /// <summary>
@@ -111,11 +83,11 @@ namespace NIM
         /// </summary>
         public static void Cleanup()
         {
-            if (_sdkInitialized)
-            {
-                ClientNativeMethods.nim_client_cleanup(null);
-                _sdkInitialized = false;
-            }
+            if (!_sdkInitialized) return;
+            NimLogManager.NimCoreLog.Info("cleanup executed");
+            ClientNativeMethods.nim_client_cleanup(null);
+            NimLogManager.NimCoreLog.Info("cleanup end");
+            _sdkInitialized = false;
         }
 
         /// <summary>
@@ -127,11 +99,11 @@ namespace NIM
         /// <param name="handler">登录流程的回调函数</param>
         public static void Login(string appKey, string account, string token, LoginResultDelegate handler = null)
         {
-            GuaranteeInitialized();
             if (!CheckLoginParams(appKey, account, token))
                 return;
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_login(appKey, account, token, null, LoginResultCallback, ptr);
+            NimLogManager.NimCoreLog.InfoFormat("account [{0}] begin to login", account);
         }
 
         static bool CheckLoginParams(string appkey, string account, string token)
@@ -159,6 +131,7 @@ namespace NIM
         {
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(@delegate);
             ClientNativeMethods.nim_client_logout(logoutType, null, LogoutResultCallback, ptr);
+            NimLogManager.NimCoreLog.InfoFormat("logout with type:{0}", logoutType);
         }
 
         /// <summary>
@@ -181,7 +154,6 @@ namespace NIM
         /// </param>
         public static void RegAutoReloginCb(LoginResultDelegate handler, string jsonExtension = null)
         {
-            GuaranteeInitialized();
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_reg_auto_relogin_cb(jsonExtension, LoginResultCallback, ptr);
         }
@@ -192,7 +164,6 @@ namespace NIM
         /// <param name="handler">被踢回调</param>
         public static void RegKickoutCb(KickoutResultHandler handler)
         {
-            GuaranteeInitialized();
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_reg_kickout_cb(null, BeKickedOfflineCallback, ptr);
         }
@@ -203,7 +174,6 @@ namespace NIM
         /// <param name="handler">掉线的回调函数.</param>
         public static void RegDisconnectedCb(Action handler)
         {
-            GuaranteeInitialized();
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_reg_disconnect_cb(null, DisconnectedCallback, ptr);
         }
@@ -214,7 +184,6 @@ namespace NIM
         /// <param name="handler">多点登录通知的回调函数.</param>
         public static void RegMultiSpotLoginNotifyCb(MultiSpotLoginNotifyResultHandler handler)
         {
-            GuaranteeInitialized();
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_reg_multispot_login_notify_cb(null, MultiSpotLoginNotifyCallback, ptr);
         }
@@ -225,11 +194,65 @@ namespace NIM
         /// <param name="handler">操作结果的回调函数.</param>
         public static void RegKickOtherClientCb(KickOtherClientResultHandler handler)
         {
-            GuaranteeInitialized();
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_reg_kickout_other_client_cb(null, KickOtherClientCb, ptr);
         }
 
+        /// <summary>
+        /// 开启多端推送
+        /// </summary>
+        /// <param name="cb">操作结果委托</param>
+        public static void EnableMultiportPush(ConfigMultiportPushDelegate cb)
+        {
+            ConfigMultiportPushParam param = new ConfigMultiportPushParam();
+            param.Enabled = true;
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_set_multiport_push_config(param.Serialize(),null, ConfigMultiportPushCb, ptr);
+        }
+
+        /// <summary>
+        /// 禁止多端推送
+        /// </summary>
+        /// <param name="cb">操作结果委托</param>
+        public static void DisableMultiportPush(ConfigMultiportPushDelegate cb)
+        {
+            ConfigMultiportPushParam param = new ConfigMultiportPushParam();
+            param.Enabled = false;
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_set_multiport_push_config(param.Serialize(), null, ConfigMultiportPushCb, ptr);
+        }
+
+        /// <summary>
+        /// 获取多端推送控制开关
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void IsMultiportPushEnabled(ConfigMultiportPushDelegate cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_get_multiport_push_config(null, ConfigMultiportPushCb, ptr);
+        }
+
+        /// <summary>
+        /// 注册多端推送设置同步回调
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void RegMulitiportPushEnableChangedCb(ConfigMultiportPushDelegate cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_reg_sync_multiport_push_config_cb(null, OnMultiportPushEnableChanged, ptr);
+        }
+
+        private static readonly nim_client_multiport_push_config_cb_func ConfigMultiportPushCb = (resCode,content,jsonExt,ptr) =>
+        {
+            ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);
+            ptr.InvokeOnce<ConfigMultiportPushDelegate>((ResponseCode) resCode, param);
+        };
+
+        private static readonly nim_client_multiport_push_config_cb_func OnMultiportPushEnableChanged = (resCode, content, jsonExt, ptr) =>
+        {
+            ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);
+            ptr.Invoke<ConfigMultiportPushDelegate>((ResponseCode)resCode, param);
+        };
 
         private static readonly NIMGlobal.JsonTransportCb LoginResultCallback = (jsonResult, ptr) =>
         {
@@ -239,6 +262,7 @@ namespace NIM
             {
                 LoginResultHandler(null, new LoginResultEventArgs(loginResult));
             }
+            NimLogManager.NimCoreLog.InfoFormat("login step:{0},result:{1}", loginResult.LoginStep, loginResult.Code);
         };
 
         private static readonly NIMGlobal.JsonTransportCb LogoutResultCallback = (jsonResult, ptr) =>
@@ -256,6 +280,7 @@ namespace NIM
         private static readonly NIMGlobal.JsonTransportCb DisconnectedCallback = (jsonResult, ptr) =>
         {
             ptr.Invoke<Action>();
+            NimLogManager.NimCoreLog.InfoFormat("disconnected:{0}", jsonResult);
         };
 
         private static readonly NIMGlobal.JsonTransportCb MultiSpotLoginNotifyCallback = (jsonResult, handler) =>

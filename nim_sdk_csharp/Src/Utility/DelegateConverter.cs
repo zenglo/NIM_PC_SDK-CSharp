@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace NimUtility
 {
+    /// <summary>
+    /// 转换 CLR Delegate 和 Native function pointer
+    /// </summary>
     public static class DelegateConverter
     {
-        const int DefaultDelegateSize = 64;
+        private const int DefaultDelegateSize = 64;
+
+        private static readonly Dictionary<IntPtr, string> _allocedMemDic = new Dictionary<IntPtr, string>();
 
         public static IntPtr ConvertToIntPtr(Delegate d)
         {
@@ -14,6 +20,7 @@ namespace NimUtility
             {
                 IntPtr ptr = AllocMem(DefaultDelegateSize);
                 Marshal.GetNativeVariantForObject(d, ptr);
+                _allocedMemDic[ptr] = d.Method.Name;
                 return ptr;
             }
             return IntPtr.Zero;
@@ -75,7 +82,8 @@ namespace NimUtility
         {
             try
             {
-                return Marshal.AllocCoTaskMem(bytes);
+                IntPtr ptr = Marshal.AllocCoTaskMem(bytes);
+                return ptr;
             }
             catch (OutOfMemoryException)
             {
@@ -86,9 +94,9 @@ namespace NimUtility
         static bool CheckDelegateParams(Delegate d,params object[] args)
         {
             var ps = d.Method.GetParameters();
-            if (args == null && ps.Any())
-                return false;
-            if (args != null && args.Count() != ps.Count())
+            if (args == null)
+                return true;
+            if (args.Count() != ps.Count())
                 return false;
             for (int i = 0; i < args.Count(); i++)
             {
@@ -100,8 +108,9 @@ namespace NimUtility
             return true;
         }
 
-        public static void FreeMem(this IntPtr ptr)
+        private static void FreeMem(this IntPtr ptr)
         {
+            _allocedMemDic.Remove(ptr);
             Marshal.FreeCoTaskMem(ptr);
         }
     }

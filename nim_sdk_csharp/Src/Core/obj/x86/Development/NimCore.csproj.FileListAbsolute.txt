@@ -1,0 +1,7 @@
+E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimCore.dll
+E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimCore.pdb
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Core\obj\x86\Development\NimCore.csprojResolveAssemblyReference.cache
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Core\obj\x86\Development\NIM.Properties.Resources.resources
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Core\obj\x86\Development\NimCore.csproj.GenerateResource.Cache
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Core\obj\x86\Development\NimCore.dll
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Core\obj\x86\Development\NimCore.pdb

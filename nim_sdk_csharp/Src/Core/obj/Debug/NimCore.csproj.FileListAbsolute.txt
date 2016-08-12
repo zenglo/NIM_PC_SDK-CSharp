@@ -1,0 +1,3 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\Debug\NimCore.csprojResolveAssemblyReference.cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\Debug\NIM.Properties.Resources.resources
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Core\obj\Debug\NimCore.csproj.GenerateResource.Cache

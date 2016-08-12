@@ -69,11 +69,6 @@ namespace NIMChatRoom
         /// </summary>
         public static event ReceiveNotificationDelegate ReceiveNotificationHandler;
 
-        static ChatRoomApi()
-        {
-            
-        }
-
         /// <summary>
         /// 初始化聊天实模块
         /// </summary>
@@ -102,6 +97,7 @@ namespace NIMChatRoom
                 loginJson = loginData.Serialize();
             }
             ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, null);
+            NimUtility.NimLogManager.NimCoreLog.InfoFormat("enter chatroom id={0}",roomId);
         }
 
         /// <summary>
@@ -111,6 +107,7 @@ namespace NIMChatRoom
         public static void Exit(long roomId)
         {
             ChatRoomNativeMethods.nim_chatroom_exit(roomId, null);
+            NimUtility.NimLogManager.NimCoreLog.InfoFormat("exit chatroom id={0}", roomId);
         }
 
         /// <summary>
@@ -137,7 +134,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterLoginCallback()
+        private static void RegisterLoginCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_enter_cb(null, ParaseChatRoomLoginResult, IntPtr.Zero);
         }
@@ -150,7 +147,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterExitChatRoomCallback()
+        private static void RegisterExitChatRoomCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_exit_cb(null, ParseExitChatRoomResult, IntPtr.Zero);
         }
@@ -165,7 +162,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterSendMsgArcCallback()
+        private static void RegisterSendMsgArcCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_send_msg_arc_cb(null, OnSendMsgCompleted, IntPtr.Zero);
         }
@@ -179,7 +176,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterReceiveMsgCallback()
+        private static void RegisterReceiveMsgCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_receive_msg_cb(null, OnReceiveChatRoomMessage, IntPtr.Zero);
         }
@@ -193,7 +190,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterReceiveNotificationMsgCallback()
+        private static void RegisterReceiveNotificationMsgCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_receive_notification_cb(null, OnReceiveChatRoomNotificationMsg, IntPtr.Zero);
         }
@@ -206,7 +203,7 @@ namespace NIMChatRoom
             }
         };
 
-        static void RegisterLinkStateChangedCallback()
+        private static void RegisterLinkStateChangedCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_link_condition_cb(null, OnChatRoomLinkStateChanged, IntPtr.Zero);
         }
@@ -320,6 +317,21 @@ namespace NIMChatRoom
         {
             msg.ClientMsgId = NimUtility.Utilities.GenerateGuid();
             ChatRoomNativeMethods.nim_chatroom_send_msg(roomId, msg.Serialize(), null);
+        }
+
+        /// <summary>
+        /// 临时禁言/解禁成员
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <param name="accid">成员ID</param>
+        /// <param name="duration">临时禁言时长（秒），解禁填0</param>
+        /// <param name="cb">操作结果回调</param>
+        /// <param name="notify">是否聊天室内广播通知</param>
+        /// <param name="notify_ext">通知中的自定义字段，长度限制2048</param>
+        public static void TempMuteMember(long roomId, string accid, long duration, TempMuteMemberDelegate cb, bool notify, string notify_ext)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            ChatRoomNativeMethods.nim_chatroom_temp_mute_member_async(roomId, accid, duration, notify, notify_ext, null, CallbackBridge.TempMuteMemberCallback, ptr);
         }
     }
 }

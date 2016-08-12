@@ -1,0 +1,5 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Bin\Release\NimHttp.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Bin\Release\NimHttp.pdb
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Http\obj\x86\Release\NimHttp.csprojResolveAssemblyReference.cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Http\obj\x86\Release\NimHttp.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Http\obj\x86\Release\NimHttp.pdb

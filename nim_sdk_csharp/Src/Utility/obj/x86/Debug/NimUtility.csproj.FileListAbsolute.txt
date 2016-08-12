@@ -1,0 +1,4 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimUtility.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimUtility.pdb
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Utility\obj\x86\Debug\NimUtility.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Utility\obj\x86\Debug\NimUtility.pdb

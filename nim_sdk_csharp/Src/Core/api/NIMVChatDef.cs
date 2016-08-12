@@ -25,8 +25,9 @@ namespace NIM
         kNIMVideoChatSessionTypeNetStatus = 9,		/**< 通话中网络状态 */
         kNIMVideoChatSessionTypeHangupRes = 10,		/**< 通话挂断结果 */
         kNIMVideoChatSessionTypeHangupNotify = 11,		/**< 通话被挂断通知 */
-        kNIMVideoChatSessionTypeSyncAckNotify = 12,		/**< 通话接听挂断同步通知 */
-    };
+        kNIMVideoChatSessionTypeSyncAckNotify = 12,     /**< 通话接听挂断同步通知 */
+		kNIMVideoChatSessionTypeMp4Notify = 13,     /**< 通知MP4录制状态，包括开始录制和结束录制 */
+	};
 
     /// <summary>
     /// 音视频通话控制类型
@@ -81,7 +82,15 @@ namespace NIM
         /// 告诉发送方自己已经收到请求了（用于通知发送方开始播放提示音）
         /// </summary>
         kNIMTagControlReceiveStartNotifyFeedback = 12,
-    };
+		/// <summary>
+		/// 告诉发送方自己开始录制 
+		/// </summary>
+		kNIMTagControlMp4StartRecord = 13,   
+		/// <summary>
+		/// 告诉发送方自己结束录制
+		/// </summary>
+		kNIMTagControlMp4StopRecord = 14,   
+	};
 
     /// <summary>
     /// 音视频通话类型
@@ -136,10 +145,72 @@ namespace NIM
         kNIMVideoChatSessionNetStatVeryBad = 3,
     };
 
-    /// <summary>
-    /// 音视频服务器连接状态类型
-    /// </summary>
-    public enum NIMVChatConnectErrorCode
+	/// <summary>
+	/// 视频通话分辨率，最终长宽比不保证
+	/// </summary>
+	public enum NIMVChatVideoQuality
+	{
+		/// <summary>
+		/// 视频默认分辨率 480x320
+		/// </summary>
+		kNIMVChatVideoQualityNormal = 0,
+		///<summary>
+		///视频低分辨率176x144
+		/// </summary>       
+		kNIMVChatVideoQualityLow = 1,
+		///<summary>
+		///视频中分辨率 352x288
+		/// </summary>      
+		kNIMVChatVideoQualityMedium = 2,      
+		///<summary>
+		///视频高分辨率 480x320
+		/// </summary>    
+		kNIMVChatVideoQualityHigh = 3,
+		///<summary>
+		///视频超高分辨率 640x480
+		/// </summary>       
+		kNIMVChatVideoQualitySuper = 4,
+		///<summary>
+		///用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 
+		/// </summary>    
+		kNIMVChatVideoQuality720p = 5,
+	};
+
+	/// <summary>
+	/// NIMVChatVideoFrameRate 视频通话帧率，实际帧率因画面采集频率和机器性能限制可能达不到期望值
+	/// </summary>
+	public enum NIMVChatVideoFrameRate
+	{
+		/// <summary>
+		/// 视频通话帧率默认值,最大取每秒15帧
+		/// </summary>
+		kNIMVChatVideoFrameRateNormal = 0,
+		/// <summary>
+		/// 视频通话帧率 最大取每秒5帧
+		/// </summary>
+		kNIMVChatVideoFrameRate5 = 1,
+		/// <summary>
+		/// 视频通话帧率 最大取每秒10帧
+		/// </summary>
+		kNIMVChatVideoFrameRate10 = 2,
+		/// <summary>
+		/// 视频通话帧率 最大取每秒15帧
+		/// </summary>
+		kNIMVChatVideoFrameRate15 = 3,
+		/// <summary>
+		/// 视频通话帧率 最大取每秒20帧
+		/// </summary>
+		kNIMVChatVideoFrameRate20 = 4,
+		/// <summary>
+		/// 视频通话帧率 最大取每秒25帧
+		/// </summary>
+		kNIMVChatVideoFrameRate25 = 5,
+	};
+
+	/// <summary>
+	/// 音视频服务器连接状态类型
+	/// </summary>
+	public enum NIMVChatConnectErrorCode
     {
         /// <summary>
         /// 断开连接
@@ -153,10 +224,26 @@ namespace NIM
         /// 超时
         /// </summary>
         kNIMVChatConnectTimeout = 101,
-        /// <summary>
-        /// 成功
-        /// </summary>
-        kNIMVChatConnectSuccess = 200,
+		/// <summary>
+		/// 会议模式错误
+		/// </summary>
+		kNIMVChatConnectMeetingModeError = 102,
+		/// <summary>
+		/// 非rtmp用户加入rtmp频道
+		/// </summary>	  
+		kNIMVChatConnectRtmpModeError = 103,
+		/// <summary>
+		/// 超过频道最多rtmp人数限制
+		/// </summary>
+		kNIMVChatConnectRtmpNodesError = 104, 
+		/// <summary>
+		/// 已经存在一个主播
+		/// </summary>     
+		kNIMVChatConnectRtmpHostError = 105,     
+		/// <summary>
+		/// 成功
+		/// </summary>
+		kNIMVChatConnectSuccess = 200,
         /// <summary>
         /// 错误参数
         /// </summary>
@@ -177,12 +264,65 @@ namespace NIM
         /// 退出
         /// </summary>
         kNIMVChatConnectLogout = 1001,
-    };
+		/// <summary>
+		/// 发起失败
+		/// </summary>
+		kNIMVChatChannelStartFail = 11000, 
+		/// <summary>
+		/// 断开连接
+		/// </summary>
+		kNIMVChatChannelDisconnected = 11001,
+		/// <summary>
+		/// 本人SDK版本太低不兼容
+		/// </summary>
+		kNIMVChatVersionSelfLow = 11002,
+		/// <summary>
+		/// 对方SDK版本太低不兼容
+		/// </summary>
+		kNIMVChatVersionRemoteLow = 11003,  
+	};
 
-    /// <summary>
-    /// 发起和接受通话时的参数
-    /// </summary>
-    public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
+	/// <summary>
+	/// NIMVChatMp4RecordCode mp4录制状态
+	/// </summary>
+	public enum NIMVChatMp4RecordCode
+	{
+		/// <summary>
+		/// MP4结束
+		/// </summary>
+		kNIMVChatMp4RecordClose = 0, 
+		/// <summary>
+		/// MP4结束，视频画面大小变化
+		/// </summary>	       
+		kNIMVChatMp4RecordVideoSizeError = 1, 
+		/// <summary>
+		/// MP4结束，磁盘空间不足
+		/// </summary>
+		kNIMVChatMp4RecordOutDiskSpace = 2, 
+		/// <summary>
+		/// MP4文件创建
+		/// </summary>    
+		kNIMVChatMp4RecordCreate = 200,     
+		/// <summary>
+		/// MP4文件已经存在
+		/// </summary>
+		kNIMVChatMp4RecordExsit = 400,   
+		/// <summary>
+		/// MP4文件创建失败
+		/// </summary>   
+		kNIMVChatMp4RecordCreateError = 403,
+		/// <summary>
+		/// 通话不存在
+		/// </summary>
+		kNIMVChatMp4RecordInvalid = 404,     
+	};
+
+
+
+	/// <summary>
+	/// 发起和接受通话时的参数
+	/// </summary>
+	public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
     {
         /// <summary>
         /// 成员id列表，主动发起非空
@@ -195,7 +335,7 @@ namespace NIM
         /// </summary>
         [Newtonsoft.Json.JsonProperty("custom_audio")]
         public int CustomAudio { get; set; }
-        
+
         /// <summary>
         /// 是否用自定义视频数据（i420）
         /// </summary>
@@ -209,30 +349,30 @@ namespace NIM
             Uids = null;
         }
     }
-    
+
     public class NIMVChatSessionInfo : NimUtility.NimJsonObject<NIMVChatSessionInfo>
     {
         [Newtonsoft.Json.JsonProperty(PropertyName = "uid", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Uid { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "status", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Status { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "record_addr", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RecordAddr { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RecordFile { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Type { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "time", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long Time { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "accept", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Accept { get; set; }
-        
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "client", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Client { get; set; }
 
@@ -337,7 +477,40 @@ namespace NIM
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_cb_func(NIMVideoChatSessionType type, long channel_id, int code,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
             IntPtr user_data);//通知客户端收到一条新聊天室通知消息
-    
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void nim_vchat_opt_cb_func(bool ret, int code,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+        IntPtr user_data); //操作回调，通用的操作回调接口
+
+
+    /// <summary>
+    /// NIM 操作回调，通用的操作回调接口
+    /// </summary>
+    /// <param name="code">code 结果代码，code==200表示成功</param>
+    /// <param name="channel_id">通道id</param>
+    /// <param name="json_extension"> 扩展字段</param>
+    /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void nim_vchat_opt2_cb_func(int code, Int64 channel_id,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+        IntPtr user_data); //操作回调，通用的操作回调接口
+
+    /// <summary>
+    /// NIM MP4操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
+    /// </summary>
+    /// <param name="ret">结果代码，true表示成功</param>
+    /// <param name="code">对应NIMVChatMp4RecordCode,用于获取失败时的错误原因</param>
+    /// <param name="file">文件路径</param>
+    /// <param name="time">录制结束时有效，对应毫秒级的录制时长</param>
+    /// <param name="json_extension">无效扩展字段</param>
+    /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void nim_vchat_mp4_record_opt_cb_func(bool ret, int code,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string file,
+        Int64 time,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+        IntPtr user_data);
 }

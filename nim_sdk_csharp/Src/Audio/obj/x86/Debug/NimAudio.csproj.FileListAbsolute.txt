@@ -1,0 +1,5 @@
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimAudio.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimAudio.pdb
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.csprojResolveAssemblyReference.cache
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.dll
+C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.pdb

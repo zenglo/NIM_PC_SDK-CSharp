@@ -100,7 +100,7 @@ namespace NIMChatRoom
         /// <summary>
         ///聊天室内的头像,预留字段, 可从Uinfo中取icon, [可以由用户进聊天室时提交] 
         /// </summary>
-        [JsonProperty("avator")]
+        [JsonProperty("avatar")]
         public string MemberIcon { get; set; }
 
         /// <summary>
@@ -145,6 +145,24 @@ namespace NIMChatRoom
         [JsonProperty("valid")]
         public bool IsValid { get; set; }
 
+        /// <summary>
+        /// 固定成员的记录更新时间,用于固定成员列表的排列查询
+        /// </summary>
+        [JsonProperty("update_timetag")]
+        public long UpdateTimetag { get; set; }
+
+        /// <summary>
+        /// 临时禁言
+        /// </summary>
+        [JsonProperty("temp_mute")]
+        public int TempMuted { get; set; }
+
+        /// <summary>
+        /// 临时禁言的解除时长,单位秒
+        /// </summary>
+        [JsonProperty("temp_mute_rest_duration")]
+        public long TempMuteRestDuration { get; set; }
+
         public MemberInfo()
         {
             MemberType = ChatRoomMemberType.Normal;
@@ -153,7 +171,7 @@ namespace NIMChatRoom
         }
     }
 
-    class QueryChatRoomMembersParam : NimUtility.NimJsonObject<QueryChatRoomMembersParam>
+    internal class QueryChatRoomMembersParam : NimUtility.NimJsonObject<QueryChatRoomMembersParam>
     {
         [JsonProperty("type")]
         public NIMChatRoomGetMemberType MemberType { get; set; }
@@ -165,7 +183,7 @@ namespace NIMChatRoom
         public int Count { get; set; }
     }
 
-    class ChatRoomLoginResultParam:NimUtility.NimJsonObject<ChatRoomLoginResultParam>
+    internal class ChatRoomLoginResultParam:NimUtility.NimJsonObject<ChatRoomLoginResultParam>
     {
         [JsonProperty("room_info")]
         internal ChatRoomInfo RoomInfo { get; set; }

@@ -177,5 +177,23 @@ namespace NIM.Team
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_team_info_online_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_mute_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void nim_team_mute_member_async(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
+            string tid,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
+            string memberId,
+            bool muted,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
+            string json_extension,
+            TeamOperationDelegate cb,IntPtr userData);
+
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_member_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr nim_team_query_team_member_block(string tid, string uid);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr nim_team_query_team_info_block(string tid);
+
     }
 }

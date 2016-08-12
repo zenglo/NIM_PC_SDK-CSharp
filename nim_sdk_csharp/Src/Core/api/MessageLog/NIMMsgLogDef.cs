@@ -138,6 +138,27 @@ namespace NIM.Messagelog
         /// </summary>
         kNIMMsgLogQueryRangeUnknown = 200
     }
+    public enum MsglogSearchDirection
+    {
+        kForward = 0,
+        kBackward = 1,
+        kBothway = 2,//暂时不支持
+    }
+
+    public class QueryMsglogParams
+    {
+        public string AccountId { get; set; }
+
+        public NIM.Session.NIMSessionType SessionType { get; set; }
+
+        public int CountLimit { get; set; }
+
+        public long MsgAnchorTimttag { get; set; }
+
+        public MsglogSearchDirection Direction { get; set; }
+
+        public bool Reverse { get; set; }
+    }
 
     public class MsglogQueryResult
     {
