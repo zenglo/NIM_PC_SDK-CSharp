@@ -472,7 +472,7 @@ namespace NIM
     /// <param name="time">毫秒级 时间戳</param>
     /// <param name="client">客户端类型</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void onSessionSyncAckNotify(long channel_id, string uid, int mode, bool accept, long time, int client);
+    public delegate void onSessionSyncAckNotify(long channel_id,int code, string uid, int mode, bool accept, long time, int client);
 
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

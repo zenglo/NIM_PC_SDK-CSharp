@@ -24,7 +24,15 @@ namespace NIMChatRoom
 
     public delegate void TempMuteMemberDelegate(long roomId, NIM.ResponseCode errorCode, MemberInfo info);
 
-    internal static class CallbackBridge
+	public delegate void ChatRoomQueueListDelegate(long room_id, NIM.ResponseCode error_code, string result, string json_extension, IntPtr user_data);
+
+	public delegate void ChatRoomQueueDropDelegate(long room_id, NIM.ResponseCode error_code);
+
+	public delegate void ChatRoomQueuePollDelegate(long room_id, int error_code,string result,string json_extension,IntPtr user_data);
+
+	public delegate void ChatRoomQueueOfferDelegate(long room_id, int error_code, string json_extension, IntPtr user_data);
+
+	internal static class CallbackBridge
     {
         public static readonly NimChatroomGetMembersCbFunc OnQueryChatMembersCompleted = (roomId, errorCode, result, jsonExtension, userData) =>
         {
@@ -83,5 +91,36 @@ namespace NIMChatRoom
                 NimUtility.DelegateConverter.InvokeOnce<TempMuteMemberDelegate>(userData, roomId, (NIM.ResponseCode)resCode, info);
             }
         };
-    }
+
+		public static readonly nim_chatroom_queue_list_cb_func ChatroomQueueListCallback = (room_id, error_code, result, json_extension, user_data) =>
+		  {
+			  if (user_data != IntPtr.Zero)
+			  {
+				  NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueListDelegate>(user_data, room_id, error_code, result, json_extension);
+			  }
+		  };
+
+		public static readonly nim_chatroom_queue_drop_cb_func ChatroomQueueDropCallback = (room_id, error_code, json_extension, user_data) =>
+		 {
+			 if (user_data != IntPtr.Zero)
+			 {
+				 NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueDropDelegate>(user_data, room_id, error_code, json_extension);
+			 }
+		 };
+
+		public static readonly nim_chatroom_queue_poll_cb_func ChatroomQueuePollCallback = (room_id, error_code, result, json_extension, user_data) =>
+		 {
+			 if (user_data != IntPtr.Zero)
+			 {
+				 NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueuePollDelegate>(user_data, room_id, error_code, result, json_extension);
+			 }
+		 };
+		public static readonly nim_chatroom_queue_offer_cb_func ChatroomQueueOfferCallback = (room_id, error_code, json_extension, user_data) =>
+		 {
+			 if (user_data != IntPtr.Zero)
+			 {
+				 NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueOfferDelegate>(user_data, room_id, error_code, json_extension);
+			 }
+		 };
+	}
 }

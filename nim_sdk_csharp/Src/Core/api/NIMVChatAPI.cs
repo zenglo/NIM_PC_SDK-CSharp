@@ -172,9 +172,9 @@ namespace NIM
              nim_vchat_opt2_cb_func cb,
              IntPtr user_data);
 
-		//通话中修改分辨率，只在多人中支持
+		//通话中修改分辨率
 		[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_quality", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void nim_vchat_set_video_quality(int video_quality,
+        private static extern void nim_vchat_set_video_quality(NIMVChatVideoQuality video_quality,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
             nim_vchat_opt_cb_func cb,
             IntPtr user_data);
@@ -504,13 +504,13 @@ namespace NIM
 		}
 
         /// <summary>
-        /// 通话中修改分辨率，只在多人中支持
+        /// 通话中修改分辨率
         /// </summary>
         /// <param name="video_quality"> 分辨率模式</param>
         /// <param name="json_extension">无效扩展字段</param>
         /// <param name="cb">返回的json_extension无效</param>
         /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void SetVideoQuality(int video_quality, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+        public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
             nim_vchat_set_video_quality(video_quality, json_extension, cb, user_data);
         }

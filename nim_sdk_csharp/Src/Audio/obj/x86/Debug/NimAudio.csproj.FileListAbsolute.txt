@@ -1,5 +1,5 @@
-C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimAudio.dll
-C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\bin\Debug\NimAudio.pdb
-C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.csprojResolveAssemblyReference.cache
-C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.dll
-C:\Users\鹏\Desktop\云信打包\08.11\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.pdb
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\bin\Debug\NimAudio.dll
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\bin\Debug\NimAudio.pdb
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.csprojResolveAssemblyReference.cache
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.dll
+E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Debug\NimAudio.pdb

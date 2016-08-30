@@ -11,7 +11,7 @@ namespace NimUtility
         string Serialize();
     }
 
-    public class NimJsonObject<T> : IJsonObject
+    public class NimJsonObject<T> : IJsonObject where T:NimJsonObject<T>
     {
         public virtual string Serialize()
         {
@@ -25,6 +25,7 @@ namespace NimUtility
             try
             {
                 T ret = NimUtility.Json.JsonParser.Deserialize<T>(json);
+                ret.RawJson = json;
                 return ret;
             }
             catch (Exception e)
@@ -33,5 +34,7 @@ namespace NimUtility
                 return default(T);
             }
         }
+
+        public string RawJson { get; private set; }
     }
 }

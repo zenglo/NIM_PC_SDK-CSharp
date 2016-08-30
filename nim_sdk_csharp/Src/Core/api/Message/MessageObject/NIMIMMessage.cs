@@ -62,7 +62,7 @@ namespace NIM
         /// <summary>
         /// 消息ID（客户端）
         /// </summary>
-        [JsonProperty("client_msg_id")]
+        [JsonProperty(ClientMessageId)]
         public string ClientMsgID { get; set; }
 
         /// <summary>
@@ -185,6 +185,7 @@ namespace NIM
         internal const string MessageTypePath = "msg_type";
         internal const string AttachmentPath = "msg_attach";
         internal const string MessageBodyPath = "msg_body";
+        internal const string ClientMessageId = "client_msg_id";
     }
 
     public class TeamForecePushMessage

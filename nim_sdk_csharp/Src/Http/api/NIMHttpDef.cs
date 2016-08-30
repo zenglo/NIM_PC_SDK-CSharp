@@ -44,7 +44,7 @@ namespace NIMHttp
         /// <param name="responseCode">http响应码</param>
         /// <param name="responseContent">http响应实体内容</param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void ResponseCb(IntPtr userData, bool result, int responseCode, string responseContent);
+        public delegate void ResponseCb(IntPtr userData, bool result, NIM.ResponseCode responseCode, string responseContent);
 
         /// <summary>
         /// http传输进度回调

@@ -56,7 +56,8 @@ namespace NIM.Team
             if (TeamEventNotificationHandler != null)
             {
                 NIMTeamEventData eventData = ParseTeamEventData(resCode, nid, tid, result);
-                TeamEventNotificationHandler.Invoke(null, new NIMTeamEventArgs(eventData));
+                if(eventData != null)
+                    TeamEventNotificationHandler.Invoke(null, new NIMTeamEventArgs(eventData));
             }
         }
 
@@ -64,18 +65,16 @@ namespace NIM.Team
         {
             NIMTeamEventData eventData = null;
             if (!string.IsNullOrEmpty(result))
+            {
                 eventData = NIMTeamEventData.Deserialize(result);
-            if (eventData == null)
-            {
-                eventData = new NIMTeamEventData();
+                if (eventData.TeamEvent == null)
+                {
+                    eventData.TeamEvent = new NIMTeamEvent();
+                }
+                eventData.TeamEvent.TeamId = tid;
+                eventData.TeamEvent.ResponseCode = (ResponseCode)Enum.Parse(typeof(ResponseCode), resCode.ToString());
+                eventData.TeamEvent.NotificationType = (NIMNotificationType)Enum.Parse(typeof(NIMNotificationType), nid.ToString());
             }
-            if (eventData.TeamEvent == null)
-            {
-                eventData.TeamEvent = new NIMTeamEvent();
-            }
-            eventData.TeamEvent.TeamId = tid;
-            eventData.TeamEvent.ResponseCode = (ResponseCode) Enum.Parse(typeof (ResponseCode), resCode.ToString());
-            eventData.TeamEvent.NotificationType = (NIMNotificationType) Enum.Parse(typeof (NIMNotificationType), nid.ToString());
             return eventData;
         }
 
@@ -318,8 +317,16 @@ namespace NIM.Team
         /// <param name="action"></param>
         public static void QueryMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
         {
+            QueryMyTeamsInfo(false, action);
+        }
+
+        public static void QueryMyTeamsInfo(bool includeInvalid, QueryMyTeamsInfoResultDelegate action)
+        {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_all_my_teams_info_async(null, _queryMyTeamsInfoCompleted, ptr);
+            Dictionary<string, object> extDic = new Dictionary<string, object>();
+            extDic["include_invalid"] = includeInvalid;
+            var ext = NimUtility.Json.JsonParser.Serialize(extDic);
+            TeamNativeMethods.nim_team_query_all_my_teams_info_async(ext, _queryMyTeamsInfoCompleted, ptr);
         }
 
         private static void OnQueryMyTeamsInfoCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
@@ -347,8 +354,16 @@ namespace NIM.Team
         /// <param name="action"></param>
         public static void QueryTeamMembersInfo(string tid, QueryTeamMembersInfoResultDelegate action)
         {
+            QueryTeamMembersInfo(tid, true, false, action);
+        }
+
+        public static void QueryTeamMembersInfo(string tid,bool includeMemberInfo,bool includeInvalidMember, QueryTeamMembersInfoResultDelegate action)
+        {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
-            TeamNativeMethods.nim_team_query_team_members_async(tid, true, null, _queryTeamMembersCompleted, ptr);
+            Dictionary<string, object> extDic = new Dictionary<string, object>();
+            extDic["include_invalid"] = includeInvalidMember;
+            var ext = NimUtility.Json.JsonParser.Serialize(extDic);
+            TeamNativeMethods.nim_team_query_team_members_async(tid, includeMemberInfo, ext, _queryTeamMembersCompleted, ptr);
         }
 
         private static void OnQueryTeamMembersInfoCompleted(string tid, int memberCount, bool includeUserInfo, string result, string jsonExtension, IntPtr userData)

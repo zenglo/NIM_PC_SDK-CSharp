@@ -36,6 +36,15 @@ namespace NIM.Team
 
         [JsonProperty("name_cards")]
         public List<User.UserNameCard> OperatorNameCards { get; set; }
+
+        [JsonProperty("mute")]
+        private int _mute { get; set; }
+
+        [JsonIgnore]
+        public bool IsMute
+        {
+            get { return _mute == 1; }
+        }
     }
 
     public class NIMTeamEventData : NimUtility.NimJsonObject<NIMTeamEventData>

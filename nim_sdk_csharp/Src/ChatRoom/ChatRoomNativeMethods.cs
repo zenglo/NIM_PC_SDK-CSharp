@@ -61,24 +61,24 @@ namespace NIMChatRoom
 IntPtr user_data);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void nim_chatroom_queue_offer_cb_func(long room_id, int error_code,
+	public  delegate void nim_chatroom_queue_offer_cb_func(long room_id, NIM.ResponseCode error_code,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
 	 IntPtr user_data);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void nim_chatroom_queue_poll_cb_func(long room_id, int error_code,
+	public delegate void nim_chatroom_queue_poll_cb_func(long room_id, NIM.ResponseCode error_code,
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
 		IntPtr user_data);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void nim_chatroom_queue_list_cb_func(long room_id, int error_code,
+	public  delegate void nim_chatroom_queue_list_cb_func(long room_id, NIM.ResponseCode error_code,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
 	IntPtr user_data);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void nim_chatroom_queue_drop_cb_func(long room_id, int error_code,
+	 public  delegate void nim_chatroom_queue_drop_cb_func(long room_id, NIM.ResponseCode error_code,
 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
  IntPtr user_data);
 	internal static class ChatRoomNativeMethods
@@ -110,8 +110,8 @@ IntPtr user_data);
         /// <summary>
         /// 注册全局发送消息回执回调
         /// </summary>
-        [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_reg_send_msg_arc_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_chatroom_reg_send_msg_arc_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension, NimChatroomSendmsgArcCbFunc cb, IntPtr user_data);
+        [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_reg_send_msg_ack_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_chatroom_reg_send_msg_ack_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension, NimChatroomSendmsgArcCbFunc cb, IntPtr user_data);
 
         /// <summary>
         /// 注册全局接收消息回调
@@ -135,7 +135,10 @@ IntPtr user_data);
         /// 聊天室登录
         /// </summary>
         [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_enter", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_chatroom_enter(long room_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string request_login_data, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string login_info, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension);
+        internal static extern bool nim_chatroom_enter(long room_id, 
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string request_login_data, 
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string login_info, 
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))] string json_extension);
 
         /// <summary>
         /// 聊天室登出

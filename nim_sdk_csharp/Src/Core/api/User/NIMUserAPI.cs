@@ -44,7 +44,9 @@ namespace NIM.User
         public static EventHandler<UserRelationshipSyncArgs> UserRelationshipListSyncHander;
         public static EventHandler<UserRelationshipChangedArgs> UserRelationshipChangedHandler;
 
-        private static readonly UserSpecialRelationshipChangedDelegate OnRelationshipChanged = (type, result, je, ptr) =>
+		private static readonly UserSpecialRelationshipChangedDelegate OnRelationshipChanged = OnRelationshipChangedCallback;
+
+		static void OnRelationshipChangedCallback(NIMUserRelationshipChangeType type,string result, string je,IntPtr ptr)
         {
             if (type == NIMUserRelationshipChangeType.SyncMuteAndBlackList)
             {
@@ -70,7 +72,7 @@ namespace NIM.User
                     UserRelationshipChangedHandler(null, args);
                 }
             }
-        };
+        }
 
         public static void RegisterCallbacks()
         {
@@ -99,7 +101,15 @@ namespace NIM.User
         /// <param name="cb">操作结果回调.</param>
         public static void SetBlacklist(string accountId, bool inBlacklist, UserOperationDelegate cb)
         {
-            UserNativeMethods.nim_user_set_black(accountId, inBlacklist, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            UserNativeMethods.nim_user_set_black(accountId, inBlacklist, null, ModifyBlacklistDelegate, ptr);
+        }
+        
+        private static readonly UserOperationDelegate ModifyBlacklistDelegate = OnModifyBlacklist;
+
+        private static void OnModifyBlacklist(ResponseCode response,string accid,bool opt, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<UserOperationDelegate>(response, accid, opt, jsonExtension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -110,7 +120,14 @@ namespace NIM.User
         /// <param name="cb">操作结果回调</param>
         public static void SetUserMuted(string accountId, bool isMuted, UserOperationDelegate cb)
         {
-            UserNativeMethods.nim_user_set_mute(accountId, isMuted, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            UserNativeMethods.nim_user_set_mute(accountId, isMuted, null, ModifyMutedlistDelegate, ptr);
+        }
+
+        private static readonly UserOperationDelegate ModifyMutedlistDelegate = OnModifyMutedlist;
+        private static void OnModifyMutedlist(ResponseCode response, string accid, bool opt, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<UserOperationDelegate>(response,accid,opt, jsonExtension, IntPtr.Zero);
         }
 
         /// <summary>

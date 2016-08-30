@@ -31,7 +31,7 @@ namespace NIM.User
         /// <param name="jsonExtension">json扩展数据（备用）</param>
         /// <param name="userData"></param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void UserOperationDelegate(ResponseCode response, string jsonExtension, IntPtr userData);
+        public delegate void UserOperationDelegate(ResponseCode response, string accid, bool opt, string jsonExtension, IntPtr userData);
 
         /// <summary>
         ///     获取黑名单、静音列表

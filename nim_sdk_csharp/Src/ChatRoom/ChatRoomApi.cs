@@ -96,8 +96,10 @@ namespace NIMChatRoom
             {
                 loginJson = loginData.Serialize();
             }
-            ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, null);
-            NimUtility.NimLogManager.NimCoreLog.InfoFormat("enter chatroom id={0}",roomId);
+			NimUtility.NimLogManager.NimCoreLog.InfoFormat("enter chatroom id={0}",roomId);
+			loginJson = "";
+			string json_ext = "";
+		    ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, json_ext);
         }
 
         /// <summary>
@@ -164,7 +166,7 @@ namespace NIMChatRoom
 
         private static void RegisterSendMsgArcCallback()
         {
-            ChatRoomNativeMethods.nim_chatroom_reg_send_msg_arc_cb(null, OnSendMsgCompleted, IntPtr.Zero);
+            ChatRoomNativeMethods.nim_chatroom_reg_send_msg_ack_cb(null, OnSendMsgCompleted, IntPtr.Zero);
         }
 
         private static readonly NimChatroomReceiveMsgCbFunc OnReceiveChatRoomMessage = (roomId, result, jsonExtension, userData) =>
@@ -333,5 +335,43 @@ namespace NIMChatRoom
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_temp_mute_member_async(roomId, accid, duration, notify, notify_ext, null, CallbackBridge.TempMuteMemberCallback, ptr);
         }
+
+		/// <summary>
+		/// 排序列出所有麦序元素 
+		/// </summary>
+		/// <param name="roomId">房间号</param>
+		/// <param name="cb"></param>
+		/// <param name="json_extension"></param>
+		public static void QueueListAsync(long roomId, nim_chatroom_queue_list_cb_func cb,string json_extension="")
+		{
+			//ChatRoomQueueListDelegate
+			// 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			// 			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
+			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
+		}
+
+		public static void QueueDropAsync(long roomId, nim_chatroom_queue_drop_cb_func cb,string json_extension="")
+		{
+			//ChatRoomQueueDropDelegate
+			// 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			// 			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
+			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
+		}
+
+
+		public static void QueuePollAsync(long roomId,string element_key, nim_chatroom_queue_poll_cb_func cb, string json_extension="")
+		{
+			//ChatRoomQueuePollDelegate
+			//var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			//ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
+			ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
+		}
+		public static void QueueOfferAsync(long roomId,string element_key,string elemnet_value, nim_chatroom_queue_offer_cb_func cb,string json_extension="")
+		{
+			//var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			//ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
+			ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
+		}
+
     }
 }

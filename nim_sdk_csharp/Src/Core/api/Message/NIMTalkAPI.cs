@@ -11,11 +11,24 @@ using System.Runtime.InteropServices;
 
 namespace NIM
 {
-    public delegate void ReportUploadProgressDelegate(long uploadedSize, long totalSize);
+    public delegate void ReportUploadProgressDelegate(long uploadedSize, long totalSize,object progressData);
 
     public delegate void ReceiveBatchMesaagesDelegate(List<NIMReceivedMessage> msgsList);
 
-    public delegate bool TeamNotificationFilterDelegate(NIMIMMessage msg,string jsonExtension);
+    public delegate bool TeamNotificationFilterDelegate(NIMIMMessage msg, string jsonExtension);
+
+    public delegate void RecallMessageDelegate(ResponseCode result, RecallNotification notify);
+
+    /// <summary>
+    /// nos 上传进度回调
+    /// </summary>
+    public class NimUploadProgressData
+    {
+        public NIMIMMessage Message { get; set; }
+
+        public ReportUploadProgressDelegate ProgressAction { get; set; }
+    }
+
     public class TalkAPI
     {
         private static IMReceiveMessageCallback _receivedMessageCallback;
@@ -46,8 +59,14 @@ namespace NIM
             System.Diagnostics.Debug.Assert(message != null && !string.IsNullOrEmpty(message.ReceiverID));
             var msg = message.Serialize();
             IntPtr ptr = IntPtr.Zero;
-            if(action != null)
-                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
+           
+            if (action != null)
+            {
+                NimUploadProgressData data = new NimUploadProgressData();
+                data.Message = message;
+                data.ProgressAction = action;
+                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
+            }
             TalkNativeMethods.nim_talk_send_msg(msg, null, _uploadFileProgressChanged, ptr);
         }
 
@@ -57,13 +76,18 @@ namespace NIM
         /// <param name="message">消息对象</param>
         /// <param name="forceMsg">强制推送内容</param>
         /// <param name="action">文件类消息附件上传进度</param>
-        public static void SendTeamFrocePushMessage(NIMIMMessage message,TeamForecePushMessage forceMsg, ReportUploadProgressDelegate action = null)
+        public static void SendTeamFrocePushMessage(NIMIMMessage message, TeamForecePushMessage forceMsg, ReportUploadProgressDelegate action = null)
         {
             System.Diagnostics.Debug.Assert(message != null && message.SessionType == Session.NIMSessionType.kNIMSessionTypeTeam);
             var msgJson = forceMsg.Serialize(message);
             IntPtr ptr = IntPtr.Zero;
             if (action != null)
-                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
+            {
+                NimUploadProgressData data = new NimUploadProgressData();
+                data.Message = message;
+                data.ProgressAction = action;
+                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
+            }
             TalkNativeMethods.nim_talk_send_msg(msgJson, null, _uploadFileProgressChanged, ptr);
         }
 
@@ -78,14 +102,20 @@ namespace NIM
             var msg = message.Serialize();
             IntPtr ptr = IntPtr.Zero;
             if (action != null)
-                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
+            {
+                NimUploadProgressData data = new NimUploadProgressData();
+                data.Message = message;
+                data.ProgressAction = action;
+                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
+            }
             TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
         }
 
         public static void RegTeamNotificationFilterCb(TeamNotificationFilterDelegate action)
         {
-            IntPtr ptr = Marshal.AllocCoTaskMem(64);
-            Marshal.GetNativeVariantForObject(action, ptr);
+            IntPtr ptr = IntPtr.Zero;
+            if (action != null)
+                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             TalkNativeMethods.nim_talk_reg_notification_filter_cb(null, TeamNotificationFilter, ptr);
         }
 
@@ -134,7 +164,12 @@ namespace NIM
 
         private static void OnUploadFileProgressChanged(long uploadedSize, long totalSize, string jsonExtension, IntPtr userData)
         {
-            NimUtility.DelegateConverter.Invoke<ReportUploadProgressDelegate>(userData, uploadedSize, totalSize);
+            var data = NimUtility.DelegateConverter.ConvertFromIntPtr(userData) as NimUploadProgressData;
+            if(data != null && data.ProgressAction != null)
+            {
+                data.ProgressAction(uploadedSize, totalSize, data.Message);
+            }
+            //NimUtility.DelegateConverter.Invoke<ReportUploadProgressDelegate>(userData, uploadedSize, totalSize);
         }
 
         private static void OnReceiveMessageAck(string arcResult, IntPtr userData)
@@ -191,5 +226,47 @@ namespace NIM
             }
             NimUtility.DelegateConverter.InvokeOnce<ReceiveBatchMesaagesDelegate>(userData, msgs);
         };
+
+        public static void RecallMessage(string msgId, string notify, RecallMessageDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic[NIMIMMessage.ClientMessageId] = msgId;
+            var json = NimUtility.Json.JsonParser.Serialize(paramDic);
+            TalkNativeMethods.nim_talk_recall_msg(json, notify, null, RecallMessageCb, ptr);
+        }
+
+        private static readonly nim_talk_recall_msg_func RecallMessageCb = OnRecallMessageCompleted;
+
+        private static void OnRecallMessageCompleted(int resCode, string content, string jsonExt, IntPtr userData)
+        {
+            var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);
+            if (data != null && data.Length > 0)
+                NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, data[0]);
+            else
+                NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
+        }
+
+        public static void RegRecallMessageCallback(RecallMessageDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TalkNativeMethods.nim_talk_reg_recall_msg_cb(null, GlobalRecallMessageCb, ptr);
+        }
+
+        private static readonly nim_talk_recall_msg_func GlobalRecallMessageCb = RecallMessageCallbackFunc;
+
+        private static void RecallMessageCallbackFunc(int resCode, string content, string jsonExt, IntPtr userData)
+        {
+            var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);
+            if (data != null && data.Length > 0)
+                NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, data[0]);
+            else
+                NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
+        }
+
+        public static void RecallMessage(string _lastSendedMsgId, object onRecallMessageCompleted)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -183,6 +183,7 @@ namespace NIMChatRoom
         public int Count { get; set; }
     }
 
+
     internal class ChatRoomLoginResultParam:NimUtility.NimJsonObject<ChatRoomLoginResultParam>
     {
         [JsonProperty("room_info")]

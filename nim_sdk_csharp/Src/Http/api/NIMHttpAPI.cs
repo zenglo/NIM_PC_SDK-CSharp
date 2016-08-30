@@ -41,8 +41,9 @@ namespace NIMHttp
             long range_start, NimHttpDef.CompletedCb complete_cb, IntPtr user_data);
 
         [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_create_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr nim_http_create_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url, 
-            IntPtr post_body, int post_body_size, NimHttpDef.ResponseCb response_cb, IntPtr user_data);
+        private static extern IntPtr nim_http_create_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string post_body, 
+			int post_body_size, NimHttpDef.ResponseCb response_cb, IntPtr user_data);
         
         [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_add_request_header", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_add_request_header(IntPtr request_handle,
@@ -131,7 +132,7 @@ namespace NIMHttp
         /// <param name="responseCb">结束回调，响应实体内容</param>
         /// <param name="userData">自定义数据</param>
         /// <returns>http任务句柄</returns>
-        public static IntPtr CreateRequest(string url, IntPtr postBody, int postBodySize, NimHttpDef.ResponseCb responseCb, IntPtr userData)
+        public static IntPtr CreateRequest(string url, string postBody, int postBodySize, NimHttpDef.ResponseCb responseCb, IntPtr userData)
         {
             return nim_http_create_request(url, postBody, postBodySize, responseCb, userData);
         }

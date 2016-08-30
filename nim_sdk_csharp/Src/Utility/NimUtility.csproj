@@ -152,9 +152,6 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.json" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="log4net.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

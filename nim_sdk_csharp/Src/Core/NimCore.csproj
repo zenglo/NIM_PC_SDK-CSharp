@@ -131,6 +131,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NimUtility, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\test\nim_sdk_csharp_demo\Dependents\NimUtility.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -165,6 +169,7 @@
     <Compile Include="api\Message\MessageObject\NIMVedioMessage.cs" />
     <Compile Include="api\Message\NIMMessageEnums.cs" />
     <Compile Include="api\Message\NIMReceivedMessage.cs" />
+    <Compile Include="api\Message\RecallNotification.cs" />
     <Compile Include="api\Message\TalkNativeMethods.cs" />
     <Compile Include="api\Core\Client\NIMClientAPI.cs" />
     <Compile Include="api\Core\Client\NIMClientDef.cs" />
@@ -217,12 +222,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utility\NimUtility.csproj">
-      <Project>{a9141f3e-b530-49ee-b959-16a49e1c98b1}</Project>
-      <Name>NimUtility</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

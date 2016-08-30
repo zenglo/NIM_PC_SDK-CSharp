@@ -1,10 +1,9 @@
 ﻿/** @file NIMToolsAPI.cs
-  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author Harrison
-  * @date 2015/12/8
-  */
-
+* @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+* @copyright (c) 2015, NetEase Inc. All rights reserved
+* @author Harrison
+* @date 2015/12/8
+*/
 using System;
 using System.Runtime.InteropServices;
 
@@ -20,7 +19,8 @@ namespace NIM
         public static string GetUserAppDataDir(string appAccount)
         {
             var outStrPtr = nim_tool_get_user_appdata_dir(appAccount);
-            var ret = Marshal.PtrToStringAuto(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -34,7 +34,8 @@ namespace NIM
         public static string GetUserSpecificAppDataDir(string appAccount, NIMAppDataType appdataType)
         {
             var outStrPtr = nim_tool_get_user_specific_appdata_dir(appAccount, appdataType);
-            var ret = Marshal.PtrToStringAuto(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -46,7 +47,8 @@ namespace NIM
         public static string GetLocalAppDataDir()
         {
             var outStrPtr = nim_tool_get_local_appdata_dir();
-            var ret = Marshal.PtrToStringAuto(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -58,7 +60,8 @@ namespace NIM
         public static string GetCurModuleDir()
         {
             var outStrPtr = nim_tool_get_cur_module_dir();
-            var ret = Marshal.PtrToStringAuto(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -71,7 +74,8 @@ namespace NIM
         public static string GetMd5(string input)
         {
             var outStrPtr = nim_tool_get_md5(input);
-            var ret = Marshal.PtrToStringAnsi(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -84,7 +88,8 @@ namespace NIM
         public static string GetFileMd5(string filePath)
         {
             var outStrPtr = nim_tool_get_file_md5(filePath);
-            var ret = Marshal.PtrToStringAnsi(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -96,7 +101,8 @@ namespace NIM
         public static string GetUuid()
         {
             var outStrPtr = nim_tool_get_uuid();
-            var ret = Marshal.PtrToStringAnsi(outStrPtr);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var ret = marshaler.MarshalNativeToManaged(outStrPtr) as string;
             GlobalAPI.FreeStringBuffer(outStrPtr);
             return ret;
         }
@@ -108,10 +114,18 @@ namespace NIM
         /// <param name="jsonExtension">json_extension json扩展参数（备用，目前不需要）</param>
         /// <param name="cb">语音转文字回调</param>
         /// <param name="userData">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
-        public static void GetAudioTextAsync(NIMAudioInfo audioInfo, string jsonExtension, NIMTools.GetAudioTextCb cb, IntPtr userData)
+        public static void GetAudioTextAsync(NIMAudioInfo audioInfo, string jsonExtension, NIMTools.GetAudioTextCb cb)
         {
             var json = audioInfo.Serialize();
-            nim_tool_get_audio_text_async(json, jsonExtension, cb, userData);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            nim_tool_get_audio_text_async(json, jsonExtension, ConverteAudio2TextDelegate, ptr);
+        }
+
+        private static readonly NIMTools.GetAudioTextCb ConverteAudio2TextDelegate = OnConverteAudio2TextCompleted;
+
+        private static void OnConverteAudio2TextCompleted(int rescode, string text, string json_extension, IntPtr user_data)
+        {
+            NimUtility.DelegateConverter.InvokeOnce<NIMTools.GetAudioTextCb>(user_data, rescode, text, json_extension, IntPtr.Zero);
         }
 
         #region NIM C SDK native methods

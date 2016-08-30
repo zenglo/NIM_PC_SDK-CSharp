@@ -10,28 +10,44 @@ namespace NimUtility
     /// </summary>
     public static class DelegateConverter
     {
-        private const int DefaultDelegateSize = 64;
-
         private static readonly Dictionary<IntPtr, string> _allocedMemDic = new Dictionary<IntPtr, string>();
 
         public static IntPtr ConvertToIntPtr(Delegate d)
         {
             if (d != null)
             {
-                IntPtr ptr = AllocMem(DefaultDelegateSize);
-                Marshal.GetNativeVariantForObject(d, ptr);
+                GCHandle gch = GCHandle.Alloc(d);
+                IntPtr ptr = GCHandle.ToIntPtr(gch);
                 _allocedMemDic[ptr] = d.Method.Name;
                 return ptr;
             }
             return IntPtr.Zero;
         }
 
-        public static TDelegaet ConvertFromIntPtr<TDelegaet>(IntPtr ptr)
+        public static IntPtr ConvertToIntPtr(object obj)
+        {
+            if (obj != null)
+            {
+                GCHandle gch = GCHandle.Alloc(obj);
+                IntPtr ptr = GCHandle.ToIntPtr(gch);
+                _allocedMemDic[ptr] = obj.ToString();
+                return ptr;
+            }
+            return IntPtr.Zero;
+        }
+
+        public static T ConvertFromIntPtr<T>(IntPtr ptr)
         {
             if (ptr == IntPtr.Zero)
-                return default(TDelegaet);
-            var x = (TDelegaet)Marshal.GetObjectForNativeVariant(ptr);
+                return default(T);
+            GCHandle handle = GCHandle.FromIntPtr(ptr);
+            var x = (T)handle.Target;
             return x;
+        }
+
+        public static object ConvertFromIntPtr(IntPtr ptr)
+        {
+            return ConvertFromIntPtr<object>(ptr);
         }
 
         public static void Invoke<TDelegate>(this IntPtr ptr,params object[] args)
@@ -78,19 +94,6 @@ namespace NimUtility
             }
         }
 
-        static IntPtr AllocMem(int bytes)
-        {
-            try
-            {
-                IntPtr ptr = Marshal.AllocCoTaskMem(bytes);
-                return ptr;
-            }
-            catch (OutOfMemoryException)
-            {
-                return IntPtr.Zero;
-            }
-        }
-
         static bool CheckDelegateParams(Delegate d,params object[] args)
         {
             var ps = d.Method.GetParameters();
@@ -111,7 +114,8 @@ namespace NimUtility
         private static void FreeMem(this IntPtr ptr)
         {
             _allocedMemDic.Remove(ptr);
-            Marshal.FreeCoTaskMem(ptr);
+            GCHandle handle = GCHandle.FromIntPtr(ptr);
+            handle.Free();
         }
     }
 }

@@ -30,10 +30,10 @@ namespace NIM.Plugin
         /// </summary>
         /// <param name="roomId">房间ID</param>
         /// <param name="cb">操作结果委托</param>
-        public static void RequestLoginInfo(long roomId, RequestChatRoomLoginInfoDelegate cb)
+        public static void RequestLoginInfo(long roomId, RequestChatRoomLoginInfoDelegate cb,string json_ext="")
         {
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
-            nim_plugin_chatroom_request_enter_async(roomId, null, OnRequestLoginInfoCompleted, ptr);
+            nim_plugin_chatroom_request_enter_async(roomId, json_ext, OnRequestLoginInfoCompleted, ptr);
         }
     }
 }
