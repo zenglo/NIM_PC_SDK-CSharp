@@ -11,6 +11,9 @@ using NIM.Friend.Delegate;
 
 namespace NIM.Friend
 {
+    /// <summary>
+    /// 提供好友相关功能
+    /// </summary>
     public class FriendAPI
     {
         private static FriendInfoChangedDelegate _friendInfoChangedHandler;
@@ -26,7 +29,7 @@ namespace NIM.Friend
             }
         };
 
-        public static void RegisterCallbacks()
+        internal static void RegisterCallbacks()
         {
             _friendInfoChangedHandler = OnFriendInfoChanged;
             _getFriendProfileCompleted = OnGetFriendProfileCompleted;

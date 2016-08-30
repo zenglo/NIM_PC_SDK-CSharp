@@ -29,6 +29,9 @@ namespace NIM
         public ReportUploadProgressDelegate ProgressAction { get; set; }
     }
 
+    /// <summary>
+    /// 消息相关api
+    /// </summary>
     public class TalkAPI
     {
         private static IMReceiveMessageCallback _receivedMessageCallback;
@@ -38,9 +41,13 @@ namespace NIM
         /// 接收消息事件通知
         /// </summary>
         public static EventHandler<NIMReceiveMessageEventArgs> OnReceiveMessageHandler { get; set; }
+
+        /// <summary>
+        /// 发送消息结果通知
+        /// </summary>
         public static EventHandler<MessageArcEventArgs> OnSendMessageCompleted { get; set; }
 
-        public static void RegisterCallbacks()
+        internal static void RegisterCallbacks()
         {
             _receivedMessageCallback = new IMReceiveMessageCallback(OnReceiveIMMessage);
             _messageArcCallback = new IMMessageArcCallback(OnReceiveMessageAck);
@@ -59,7 +66,6 @@ namespace NIM
             System.Diagnostics.Debug.Assert(message != null && !string.IsNullOrEmpty(message.ReceiverID));
             var msg = message.Serialize();
             IntPtr ptr = IntPtr.Zero;
-           
             if (action != null)
             {
                 NimUploadProgressData data = new NimUploadProgressData();
@@ -96,21 +102,26 @@ namespace NIM
         /// </summary>
         /// <param name="message">消息体</param>
         /// <param name="action">附件上传进度回调</param>
+        [Obsolete("不再提供该接口")]
         public static void StopSendMessage(NIMIMMessage message, ReportUploadProgressDelegate action = null)
         {
-            System.Diagnostics.Debug.Assert(message != null);
-            var msg = message.Serialize();
-            IntPtr ptr = IntPtr.Zero;
-            if (action != null)
-            {
-                NimUploadProgressData data = new NimUploadProgressData();
-                data.Message = message;
-                data.ProgressAction = action;
-                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
-            }
-            TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
+            //System.Diagnostics.Debug.Assert(message != null);
+            //var msg = message.Serialize();
+            //IntPtr ptr = IntPtr.Zero;
+            //if (action != null)
+            //{
+            //    NimUploadProgressData data = new NimUploadProgressData();
+            //    data.Message = message;
+            //    data.ProgressAction = action;
+            //    ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
+            //}
+            //TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
         }
 
+        /// <summary>
+        /// 注册接收群通知是否需要过滤的回调
+        /// </summary>
+        /// <param name="action"></param>
         public static void RegTeamNotificationFilterCb(TeamNotificationFilterDelegate action)
         {
             IntPtr ptr = IntPtr.Zero;
@@ -227,12 +238,31 @@ namespace NIM
             NimUtility.DelegateConverter.InvokeOnce<ReceiveBatchMesaagesDelegate>(userData, msgs);
         };
 
+        /// <summary>
+        /// 撤回消息
+        /// </summary>
+        /// <param name="msgId">消息 id</param>
+        /// <param name="notify">自定义通知</param>
+        /// <param name="cb"></param>
         public static void RecallMessage(string msgId, string notify, RecallMessageDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             Dictionary<string, object> paramDic = new Dictionary<string, object>();
             paramDic[NIMIMMessage.ClientMessageId] = msgId;
             var json = NimUtility.Json.JsonParser.Serialize(paramDic);
+            TalkNativeMethods.nim_talk_recall_msg(json, notify, null, RecallMessageCb, ptr);
+        }
+
+        /// <summary>
+        /// 撤回消息
+        /// </summary>
+        /// <param name="message">NIMIMMessage 对象</param>
+        /// <param name="notify">自定义通知</param>
+        /// <param name="cb"></param>
+        public static void RecallMessage(NIMIMMessage message, string notify, RecallMessageDelegate cb)
+        {
+            var json = message.Serialize();
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             TalkNativeMethods.nim_talk_recall_msg(json, notify, null, RecallMessageCb, ptr);
         }
 
@@ -247,6 +277,10 @@ namespace NIM
                 NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
         }
 
+        /// <summary>
+        /// 注册接收消息撤回通知的回调
+        /// </summary>
+        /// <param name="cb"></param>
         public static void RegRecallMessageCallback(RecallMessageDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
@@ -262,11 +296,6 @@ namespace NIM
                 NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, data[0]);
             else
                 NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
-        }
-
-        public static void RecallMessage(string _lastSendedMsgId, object onRecallMessageCompleted)
-        {
-            throw new NotImplementedException();
         }
     }
 }
