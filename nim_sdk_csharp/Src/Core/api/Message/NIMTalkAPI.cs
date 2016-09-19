@@ -8,6 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM
 {
@@ -155,7 +159,6 @@ namespace NIM
                 var newMsg = marshaler.MarshalNativeToManaged(newMsgPtr);
                 var newMsgJson = newMsg.ToString();
                 var dstMsg = MessageFactory.CreateMessage(newMsgJson);
-                NimUtility.NimLogManager.NimCoreLog.InfoFormat("CreateRetweetMessage:{0}", newMsgJson);
                 GlobalAPI.FreeStringBuffer(newMsgPtr);
                 return dstMsg;
             }
@@ -182,7 +185,7 @@ namespace NIM
             }
             //NimUtility.DelegateConverter.Invoke<ReportUploadProgressDelegate>(userData, uploadedSize, totalSize);
         }
-
+		[MonoPInvokeCallback(typeof(IMMessageArcCallback))]
         private static void OnReceiveMessageAck(string arcResult, IntPtr userData)
         {
             if (string.IsNullOrEmpty(arcResult))
@@ -193,7 +196,7 @@ namespace NIM
                 OnSendMessageCompleted(null, new MessageArcEventArgs(arc));
             }
         }
-
+		[MonoPInvokeCallback(typeof(IMReceiveMessageCallback))]
         static void OnReceiveIMMessage(string content, string jsonArcResult, IntPtr userData)
         {
             if (string.IsNullOrEmpty(content) || OnReceiveMessageHandler == null)
@@ -228,7 +231,9 @@ namespace NIM
             TalkNativeMethods.nim_talk_reg_receive_msgs_cb(null, OnReceivedBatchMessages, ptr);
         }
 
-        private static readonly IMReceiveMessageCallback OnReceivedBatchMessages = (content, jsonArcResult, userData) =>
+		private static readonly IMReceiveMessageCallback OnReceivedBatchMessages = OnReceivedBatchMessagesCallback;
+		[MonoPInvokeCallback(typeof(IMReceiveMessageCallback))]
+		static void OnReceivedBatchMessagesCallback(string content,string jsonArcResult, IntPtr userData)
         {
             List<NIMReceivedMessage> msgs = null;
             if (!string.IsNullOrEmpty(content))
@@ -236,7 +241,7 @@ namespace NIM
                 msgs = NimUtility.Json.JsonParser.Deserialize<List<NIMReceivedMessage>>(content);
             }
             NimUtility.DelegateConverter.InvokeOnce<ReceiveBatchMesaagesDelegate>(userData, msgs);
-        };
+        }
 
         /// <summary>
         /// 撤回消息
@@ -268,6 +273,7 @@ namespace NIM
 
         private static readonly nim_talk_recall_msg_func RecallMessageCb = OnRecallMessageCompleted;
 
+        [MonoPInvokeCallback(typeof(nim_talk_recall_msg_func))]
         private static void OnRecallMessageCompleted(int resCode, string content, string jsonExt, IntPtr userData)
         {
             var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);
@@ -289,6 +295,7 @@ namespace NIM
 
         private static readonly nim_talk_recall_msg_func GlobalRecallMessageCb = RecallMessageCallbackFunc;
 
+        [MonoPInvokeCallback(typeof(nim_talk_recall_msg_func))]
         private static void RecallMessageCallbackFunc(int resCode, string content, string jsonExt, IntPtr userData)
         {
             var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);

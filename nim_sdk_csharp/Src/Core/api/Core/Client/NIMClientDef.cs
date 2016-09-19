@@ -279,10 +279,67 @@ namespace NIM
         [JsonProperty("switch_open")]
         private int _enabled { get; set; }
 
+        [JsonIgnore]
         public bool Enabled
         {
             get { return _enabled != 1; }
             set { _enabled = value ? 2 : 1; }
+        }
+    }
+
+    /// <summary>
+    /// 客户端传入的属性（如果开启免打扰，请让第三方确保把时间转成东八区，即北京时间，小时是24小时制)
+    /// </summary>
+    public class DndConfigParam : NimUtility.NimJsonObject<DndConfigParam>
+    {
+        /// <summary>
+        /// 是否显示详情，1显示详情，2不显示详情，其它按1处理
+        /// </summary>
+        [JsonProperty("show_detail")]
+        private int _showDetail { get; set; }
+
+        /// <summary>
+        /// 是否开启免打扰，1开启，2关闭，其它按2处理
+        /// </summary>
+        [JsonProperty("switch_open")]
+        private int _isOpened { get; set; }
+
+        /// <summary>
+        /// 如果开启免打扰，开始小时数
+        /// </summary>
+        [JsonProperty("fromh")]
+        public int FromHours { get; set; }
+
+        /// <summary>
+        /// 如果开启免打扰，开始分钟数
+        /// </summary>
+        [JsonProperty("fromm")]
+        public int FromMinutes { get; set; }
+
+        /// <summary>
+        /// 如果开启免打扰，截止小时数
+        /// </summary>
+        [JsonProperty("toh")]
+        public int ToHours { get; set; }
+
+        /// <summary>
+        /// 如果开启免打扰，截止分钟数
+        /// </summary>
+        [JsonProperty("tom")]
+        public int ToMunutes { get; set; }
+
+        [JsonIgnore]
+        public bool ShowDetail
+        {
+            get { return _showDetail != 2; }
+            set { _showDetail = value ? 1 : 2; }
+        }
+
+        [JsonIgnore]
+        public bool IsOpened
+        {
+            get { return _isOpened == 1; }
+            set { _isOpened = value ? 1 : 2; }
         }
     }
 }

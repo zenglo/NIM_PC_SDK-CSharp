@@ -13,6 +13,11 @@ using System.Diagnostics;
 using System.IO;
 using NimUtility;
 
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
+
 namespace NIM
 {
     public delegate void ConfigMultiportPushDelegate(ResponseCode response,ConfigMultiportPushParam param);
@@ -34,6 +39,7 @@ namespace NIM
 
         public delegate void LoginResultDelegate(NIMLoginResult result);
 
+        public delegate void DndConfigureDelegate(ResponseCode resCode, DndConfigParam config);
         /// <summary>
         /// SDK是否已经初始化
         /// </summary>
@@ -51,21 +57,71 @@ namespace NIM
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
-            NimUtility.NimLogManager.NimCoreLog.Info("NIMCoreinit:"+_sdkInitialized.ToString());
+#if UNITY
+            //Import bug report U3D SDK
+            ExceptHandler.Init("A005777174"); //NIM BUGRPT APPID
+#endif
             if (_sdkInitialized)
                 return true;
             string configJson = null;
             if (config != null && config.IsValiad())
                 configJson = config.Serialize();
-            NimUtility.NimLogManager.NimCoreLog.Info("nim_client_init start");
-            _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
-            NimUtility.NimLogManager.NimCoreLog.Info("nim_client_init end");
+            try
+            {
+                _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
             if (_sdkInitialized)
             {
                 RegisterSdkCallbacks();
             }
-            NimLogManager.NimCoreLog.InfoFormat("sdk init result:{0}", _sdkInitialized);
+            //调用com.netease.nimlib.SystemUtil的初始化接口
+            InitSystemUtil();
+
             return _sdkInitialized;
+        }
+
+        [Conditional("UNITY")]
+        private static void InitSystemUtil()
+        {
+#if UNITY_ANDROID
+            try
+            {
+                /* The Mono garbage collector should release all created instances of AndroidJavaObject and AndroidJavaClass after use, 
+                 * but it is advisable to keep them in a using(){} statement to ensure they are deleted as soon as possible. 
+                 * Without this, you cannot be sure when they will be destroyed.
+                 */
+                using (var actClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                {
+                    AndroidJavaObject curActivityContext = actClass.GetStatic<AndroidJavaObject>("currentActivity");
+                    if (curActivityContext != null)
+                    {
+                        AndroidJavaClass clsSystemUtil = new AndroidJavaClass("com.netease.nimlib.NIMSDK");
+                        if (clsSystemUtil != null)
+                        {
+                            UnityEngine.Debug.Log("com.netease.nimlib.NIMSDK found");
+                            Boolean init = clsSystemUtil.CallStatic<Boolean>("init", curActivityContext, "nim");
+                            UnityEngine.Debug.Log("init:" + init);
+                            //string androidId = clsSystemUtil.CallStatic<String>("getAndroidId");
+                            //Debug.Log("androidId:" + androidId);
+                        }
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                System.Console.Write("initAndroidExceptionHandler failed, an unexpected error: " + e.ToString());
+            }
+#endif
+
+#if UNITY_IPHONE || UNITY_IOS
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+            //TODO:
+		}
+#endif
         }
 
         private static void RegisterSdkCallbacks()
@@ -84,9 +140,7 @@ namespace NIM
         public static void Cleanup()
         {
             if (!_sdkInitialized) return;
-            NimLogManager.NimCoreLog.Info("cleanup executed");
             ClientNativeMethods.nim_client_cleanup(null);
-            NimLogManager.NimCoreLog.Info("cleanup end");
             _sdkInitialized = false;
         }
 
@@ -103,7 +157,6 @@ namespace NIM
                 return;
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             ClientNativeMethods.nim_client_login(appKey, account, token, null, LoginResultCallback, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("account [{0}] begin to login", account);
         }
 
         static bool CheckLoginParams(string appkey, string account, string token)
@@ -131,7 +184,6 @@ namespace NIM
         {
             IntPtr ptr = NimUtility.DelegateConverter.ConvertToIntPtr(@delegate);
             ClientNativeMethods.nim_client_logout(logoutType, null, LogoutResultCallback, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("logout with type:{0}", logoutType);
         }
 
         /// <summary>
@@ -198,6 +250,59 @@ namespace NIM
             ClientNativeMethods.nim_client_reg_kickout_other_client_cb(null, KickOtherClientCb, ptr);
         }
 
+        private static readonly NIMGlobal.JsonTransportCb LoginResultCallback = OnLoginResultCallback;
+
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnLoginResultCallback(string jsonResult, IntPtr ptr)
+        {            
+            var loginResult = NIMLoginResult.Deserialize(jsonResult);
+
+            ptr.Invoke<LoginResultDelegate>(loginResult);
+            if (LoginResultHandler != null)
+            {
+                LoginResultHandler(null, new LoginResultEventArgs(loginResult));
+            }
+        }
+
+        private static readonly NIMGlobal.JsonTransportCb LogoutResultCallback = OnLogoutResultCallback;
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnLogoutResultCallback(string jsonResult, IntPtr ptr)
+        {
+            var result = NIMLogoutResult.Deserialize(jsonResult);
+            ptr.InvokeOnce<LogoutResultDelegate>(result);
+        }
+
+        private static readonly NIMGlobal.JsonTransportCb BeKickedOfflineCallback = OnBeKickedOfflineCallback;
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnBeKickedOfflineCallback(string jsonResult, IntPtr ptr)
+        {
+            var result = NIMKickoutResult.Deserialize(jsonResult);
+            ptr.InvokeOnce<KickoutResultHandler>(result);
+        }
+
+        private static readonly NIMGlobal.JsonTransportCb DisconnectedCallback = OnDisconnectedCallback;
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnDisconnectedCallback(string jsonResult, IntPtr ptr)
+        {
+            ptr.Invoke<Action>();
+        }
+
+        private static readonly NIMGlobal.JsonTransportCb MultiSpotLoginNotifyCallback = OnMultiSpotLoginNotifyCallback;
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnMultiSpotLoginNotifyCallback(string jsonResult, IntPtr handler)
+        {
+            var result = NIMMultiSpotLoginNotifyResult.Deserialize(jsonResult);
+            handler.Invoke<MultiSpotLoginNotifyResultHandler>(result);
+        }
+
+        private static readonly NIMGlobal.JsonTransportCb KickOtherClientCb = OnKickOtherClientCb;
+        [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
+        static void OnKickOtherClientCb(string jsonResult, IntPtr handler)
+        {
+            var result = NIMKickOtherResult.Deserialize(jsonResult);
+            handler.InvokeOnce<KickOtherClientResultHandler>(result);
+        }
+
         /// <summary>
         /// 开启多端推送
         /// </summary>
@@ -207,7 +312,7 @@ namespace NIM
             ConfigMultiportPushParam param = new ConfigMultiportPushParam();
             param.Enabled = true;
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
-            ClientNativeMethods.nim_client_set_multiport_push_config(param.Serialize(),null, ConfigMultiportPushCb, ptr);
+            ClientNativeMethods.nim_client_set_multiport_push_config(param.Serialize(), null, ConfigMultiportPushCb, ptr);
         }
 
         /// <summary>
@@ -242,57 +347,53 @@ namespace NIM
             ClientNativeMethods.nim_client_reg_sync_multiport_push_config_cb(null, OnMultiportPushEnableChanged, ptr);
         }
 
-        private static readonly nim_client_multiport_push_config_cb_func ConfigMultiportPushCb = (resCode,content,jsonExt,ptr) =>
+        private static readonly nim_client_multiport_push_config_cb_func ConfigMultiportPushCb = MultiportPushChanged;
+
+        private static void MultiportPushChanged(int resCode, string content, string jsonExt, IntPtr ptr)
         {
             ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);
-            ptr.InvokeOnce<ConfigMultiportPushDelegate>((ResponseCode) resCode, param);
-        };
+            ptr.InvokeOnce<ConfigMultiportPushDelegate>((ResponseCode)resCode, param);
+        }
 
-        private static readonly nim_client_multiport_push_config_cb_func OnMultiportPushEnableChanged = (resCode, content, jsonExt, ptr) =>
-        {
-            ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);
-            ptr.Invoke<ConfigMultiportPushDelegate>((ResponseCode)resCode, param);
-        };
+        private static readonly nim_client_multiport_push_config_cb_func OnMultiportPushEnableChanged = MultiportPushChanged;
 
-        private static readonly NIMGlobal.JsonTransportCb LoginResultCallback = (jsonResult, ptr) =>
+        /// <summary>
+        /// 更新ios推送token
+        /// </summary>
+        /// <param name="token"></param>
+        public static void UpdateApnsToken(string token)
         {
-            var loginResult = NIMLoginResult.Deserialize(jsonResult);
-            ptr.Invoke<LoginResultDelegate>(loginResult);
-            if (LoginResultHandler != null)
-            {
-                LoginResultHandler(null, new LoginResultEventArgs(loginResult));
-            }
-            NimLogManager.NimCoreLog.InfoFormat("login step:{0},result:{1}", loginResult.LoginStep, loginResult.Code);
-        };
+            ClientNativeMethods.nim_client_update_apns_token(token);
+        }
 
-        private static readonly NIMGlobal.JsonTransportCb LogoutResultCallback = (jsonResult, ptr) =>
+        /// <summary>
+        /// ios 免打扰设置
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="cb"></param>
+        public static void SetDndConfig(DndConfigParam param, DndConfigureDelegate cb)
         {
-            var result = NIMLogoutResult.Deserialize(jsonResult);
-            ptr.InvokeOnce<LogoutResultDelegate>(result);
-        };
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_set_dnd_config(param.Serialize(), null, UpdateDndConfigCb, ptr);
+        }
 
-        private static readonly NIMGlobal.JsonTransportCb BeKickedOfflineCallback = (jsonResult, ptr) =>
+        /// <summary>
+        /// 获取ios 免打扰设置
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void GetDndConfig(DndConfigureDelegate cb)
         {
-            var result = NIMKickoutResult.Deserialize(jsonResult);
-            ptr.InvokeOnce<KickoutResultHandler>(result);
-        };
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            ClientNativeMethods.nim_client_get_dnd_config(UpdateDndConfigCb, ptr);
+        }
 
-        private static readonly NIMGlobal.JsonTransportCb DisconnectedCallback = (jsonResult, ptr) =>
-        {
-            ptr.Invoke<Action>();
-            NimLogManager.NimCoreLog.InfoFormat("disconnected:{0}", jsonResult);
-        };
+        private static readonly nim_client_dnd_cb_func UpdateDndConfigCb = UpdateDndConfigCompleted;
 
-        private static readonly NIMGlobal.JsonTransportCb MultiSpotLoginNotifyCallback = (jsonResult, handler) =>
+        [MonoPInvokeCallback(typeof(nim_client_dnd_cb_func))]
+        private static void UpdateDndConfigCompleted(int rescode, string content, string json_params, IntPtr user_data)
         {
-            var result = NIMMultiSpotLoginNotifyResult.Deserialize(jsonResult);
-            handler.Invoke<MultiSpotLoginNotifyResultHandler>(result);
-        };
-
-        private static readonly NIMGlobal.JsonTransportCb KickOtherClientCb = (jsonResult, handler) =>
-        {
-            var result = NIMKickOtherResult.Deserialize(jsonResult);
-            handler.InvokeOnce<KickOtherClientResultHandler>(result);
-        };
+            DndConfigParam param = DndConfigParam.Deserialize(content);
+            user_data.InvokeOnce<DndConfigureDelegate>((ResponseCode)rescode, param);
+        }
     }
 }

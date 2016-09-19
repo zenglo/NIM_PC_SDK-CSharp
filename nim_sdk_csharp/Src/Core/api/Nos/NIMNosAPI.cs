@@ -7,6 +7,10 @@
 
 using System;
 using NimUtility;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Nos
 {
@@ -27,11 +31,58 @@ namespace NIM.Nos
     public delegate void UploadResultHandler(int rescode, string url);
 
     /// <summary>
+    /// 上传/下载进度回调数据
+    /// </summary>
+    public class ProgressData
+    {
+        /// <summary>
+        /// 目标url
+        /// </summary>
+        public string Url { get; set; }
+
+        /// <summary>
+        /// 消息体
+        /// </summary>
+        public NIMIMMessage Message { get; set; }
+
+        /// <summary>
+        /// 上传文件路径
+        /// </summary>
+        public string FilePath { get; set; }
+
+        /// <summary>
+        /// 用户定义数据
+        /// </summary>
+        public object UserData { get; set; }
+
+        /// <summary>
+        /// 当前字节数
+        /// </summary>
+        public long CurrentSize { get; set; }
+
+        /// <summary>
+        /// 数据总字节数
+        /// </summary>
+        public long TotalSize { get; set; }
+    }
+
+    /// <summary>
     ///     传输进度回调
     /// </summary>
-    /// <param name="curSize">已传输数据大小</param>
-    /// <param name="fileSize">文件大小</param>
-    public delegate void ProgressResultHandler(long curSize, long fileSize);
+    /// <param name="ProgressData">回调数据</param>
+    public delegate void ProgressResultHandler(ProgressData prgData);
+
+    class ProgressPair
+    {
+        public ProgressData Data { get; set; }
+        public ProgressResultHandler Action { get; set; }
+
+        public ProgressPair(ProgressData data, ProgressResultHandler action)
+        {
+            Data = data;
+            Action = action;
+        }
+    }
 
     public class NosAPI
     {
@@ -59,10 +110,14 @@ namespace NIM.Nos
         /// <param name="msg">消息体,NIMVedioMessage NIMAudioMessage NIMFileMessage等带msg_attach属性的有下载信息的消息</param>
         /// <param name="resHandler">下载的结果回调</param>
         /// <param name="prgHandler">下载进度的回调</param>
-        public static void DownloadMedia(NIMIMMessage msg, DownloadResultHandler resHandler, ProgressResultHandler prgHandler)
+        public static void DownloadMedia(NIMIMMessage msg, DownloadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
         {
+            ProgressData data = new ProgressData();
+            data.Message = msg;
+            data.UserData = userData;
+            ProgressPair pair = new ProgressPair(data, prgHandler);
             var ptr1 = DelegateConverter.ConvertToIntPtr(resHandler);
-            var ptr2 = DelegateConverter.ConvertToIntPtr(prgHandler);
+            var ptr2 = DelegateConverter.ConvertToIntPtr(pair);
             var msgJson = msg.Serialize();
             NosNativeMethods.nim_nos_download_media(msgJson, DownloadCb, ptr1, DownloadPrgCb, ptr2);
         }
@@ -84,10 +139,14 @@ namespace NIM.Nos
         /// <param name="localFile">本地文件的完整路径</param>
         /// <param name="resHandler">上传的结果回调</param>
         /// <param name="prgHandler">上传进度的回调</param>
-        public static void Upload(string localFile, UploadResultHandler resHandler, ProgressResultHandler prgHandler)
+        public static void Upload(string localFile, UploadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
         {
+            ProgressData data = new ProgressData();
+            data.FilePath = localFile;
+            data.UserData = userData;
+            ProgressPair pair = new ProgressPair(data, prgHandler);
             var ptr1 = DelegateConverter.ConvertToIntPtr(resHandler);
-            var ptr2 = DelegateConverter.ConvertToIntPtr(prgHandler);
+            var ptr2 = DelegateConverter.ConvertToIntPtr(pair);
             NosNativeMethods.nim_nos_upload(localFile, UploadCb, ptr1, UploadPrgCb, ptr2);
         }
 
@@ -97,31 +156,66 @@ namespace NIM.Nos
         /// <param name="nosUrl">下载资源的URL</param>
         /// <param name="resHandler">下载的结果回调</param>
         /// <param name="prgHandler">下载进度的回调</param>
-        public static void Download(string nosUrl, DownloadResultHandler resHandler, ProgressResultHandler prgHandler)
+        public static void Download(string nosUrl, DownloadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
         {
+            ProgressData data = new ProgressData();
+            data.Url = nosUrl;
+            data.UserData = userData;
+            ProgressPair pair = new ProgressPair(data, prgHandler);
             var ptr1 = DelegateConverter.ConvertToIntPtr(resHandler);
-            var ptr2 = DelegateConverter.ConvertToIntPtr(prgHandler);
+            var ptr2 = DelegateConverter.ConvertToIntPtr(pair);
+
             NosNativeMethods.nim_nos_download(nosUrl, DownloadCb, ptr1, DownloadPrgCb, ptr2);
         }
 
+        [MonoPInvokeCallback(typeof(DownloadCb))]
         private static void DownloadCallback(int rescode, string filePath, string callId, string resId, string jsonExtension, IntPtr userData)
         {
             userData.Invoke<DownloadResultHandler>(rescode, filePath, callId, resId);
         }
 
+        [MonoPInvokeCallback(typeof(DownloadPrgCb))]
         private static void DownloadProgressCallback(long curSize, long fileSize, string jsonExtension, IntPtr userData)
         {
-            userData.Invoke<ProgressResultHandler>(curSize, fileSize);
+            var pair = DelegateConverter.ConvertFromIntPtr<ProgressPair>(userData);
+            if(pair != null)
+            {
+                pair.Data.CurrentSize = curSize;
+                pair.Data.TotalSize = fileSize;
+                if(pair.Action != null)
+                {
+                    pair.Action(pair.Data);
+                }
+                if(fileSize > 0 && curSize >= fileSize)
+                {
+                    DelegateConverter.FreeMem(userData);
+                }
+            }
         }
 
+        [MonoPInvokeCallback(typeof(UploadCb))]
         private static void UploadCallback(int rescode, string url, string jsonExtension, IntPtr userData)
         {
             userData.InvokeOnce<UploadResultHandler>(rescode, url);
         }
 
+        [MonoPInvokeCallback(typeof(UploadPrgCb))]
         private static void UploadProgressCallback(long curSize, long fileSize, string jsonExtension, IntPtr userData)
         {
-            userData.Invoke<ProgressResultHandler>(curSize, fileSize);
+            var pair = DelegateConverter.ConvertFromIntPtr<ProgressPair>(userData);
+            if (pair != null)
+            {
+                pair.Data.CurrentSize = curSize;
+                pair.Data.TotalSize = fileSize;
+                if (pair.Action != null)
+                {
+                    pair.Action(pair.Data);
+                }
+                if (curSize >= fileSize)
+                {
+                    DelegateConverter.FreeMem(userData);
+                }
+            }
         }
     }
 }

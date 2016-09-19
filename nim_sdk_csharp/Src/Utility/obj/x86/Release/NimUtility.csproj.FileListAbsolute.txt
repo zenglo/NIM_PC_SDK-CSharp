@@ -1,5 +1,0 @@
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Bin\Release\NimUtility.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Bin\Release\NimUtility.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Release\NimUtility.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Release\NimUtility.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Release\NimUtility.csprojResolveAssemblyReference.cache

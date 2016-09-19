@@ -18,6 +18,11 @@ namespace NimUtility
             return NimUtility.Json.JsonParser.Serialize(this);
         }
 
+        public virtual string SerializeWithIndented()
+        {
+            return NimUtility.Json.JsonParser.SerializeWithIndented(this);
+        }
+
         public static T Deserialize(string json)
         {
             if (string.IsNullOrEmpty(json))

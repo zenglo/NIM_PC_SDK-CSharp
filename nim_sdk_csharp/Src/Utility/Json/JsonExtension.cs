@@ -26,18 +26,9 @@ namespace NimUtility.Json
             var v = reader.Value.ToString();
             if (!string.IsNullOrEmpty(v))
             {
-                try
-                {
-                    JToken token = JToken.Parse(v);
-                    NimUtility.Json.JsonExtension ext = new NimUtility.Json.JsonExtension(token);
-                    return ext;
-                }
-                catch (Exception exception)
-                {
-                    System.Diagnostics.Debug.WriteLine(exception.Message);
-                    NimUtility.Json.JsonExtension ext = new NimUtility.Json.JsonExtension(v);
-                    return ext;
-                } 
+                JToken token = JToken.Parse(v);
+                NimUtility.Json.JsonExtension ext = new NimUtility.Json.JsonExtension(token);
+                return ext;
             }
             return null;
         }
@@ -53,14 +44,13 @@ namespace NimUtility.Json
     /// </summary>
     public class JsonExtension
     {
-        public string Value { get; private set; }
-
-        public bool IsValied { get; set; }
-
+        public string Value { get; set; }
+        public JsonExtension()
+        {
+        }
         public JsonExtension(object obj)
         {
             Value = JsonParser.Serialize(obj);
-            IsValied = true;
         }
     }
 }

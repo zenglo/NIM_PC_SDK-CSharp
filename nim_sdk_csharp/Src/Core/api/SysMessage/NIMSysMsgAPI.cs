@@ -8,6 +8,10 @@
 using System;
 using NimUtility;
 using NIM.SysMessage.Delegate;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.SysMessage
 {
@@ -24,9 +28,11 @@ namespace NIM.SysMessage
         public static EventHandler<MessageArcEventArgs> SendSysMsgHandler;
         public static EventHandler<NIMSysMsgEventArgs> ReceiveSysMsgHandler;
 
-        private static readonly ReceiveSysMsgDelegate OnReceivingSysMsgDelegate = (result, ptr) =>
+        private static readonly ReceiveSysMsgDelegate OnReceivingSysMsgDelegate = OnReceivingSysMsgCallback;
+        
+        [MonoPInvokeCallback(typeof(ReceiveSysMsgDelegate))]
+        static void OnReceivingSysMsgCallback(string result, IntPtr ptr)
         {
-            NimUtility.NimLogManager.NimCoreLog.InfoFormat("Receive System Message:{0}", result);
             if (ReceiveSysMsgHandler != null)
             {
                 NIMSysMsgEventArgs args = null;
@@ -37,9 +43,12 @@ namespace NIM.SysMessage
                 }
                 ReceiveSysMsgHandler(null, args);
             }
-        };
+        }
 
-        private static readonly CustomSysMsgArcDelegate OnSendMsgCompleted = (result, ptr) =>
+        private static readonly CustomSysMsgArcDelegate OnSendMsgCompleted = OnSendMsgCompletedCallback;
+
+        [MonoPInvokeCallback(typeof(CustomSysMsgArcDelegate))]
+        static void OnSendMsgCompletedCallback(string result, IntPtr ptr)
         {
             if (SendSysMsgHandler != null)
             {
@@ -51,9 +60,12 @@ namespace NIM.SysMessage
                 }
                 SendSysMsgHandler(null, args);
             }
-        };
+        }
 
-        private static readonly QuerySysMsgDelegate OnQuerySysMsgCompleted = (count, result, je, ptr) =>
+        private static readonly QuerySysMsgDelegate OnQuerySysMsgCompleted = OnQuerySysMsgCompletedCallback;
+
+        [MonoPInvokeCallback(typeof(QuerySysMsgDelegate))]
+        static void OnQuerySysMsgCompletedCallback(int count, string result, string je, IntPtr ptr)
         {
             if (ptr != IntPtr.Zero)
             {
@@ -62,11 +74,12 @@ namespace NIM.SysMessage
                     msgs.Count = count;
                 ptr.Invoke<QuerySysMsgResult>(msgs);
             }
-        };
+        }
 
 
         private static readonly OperateSysMsgDelegate OnQueryUnreadCompleted = (res, count, je, ptr) => { ptr.InvokeOnce<CommomOperateResult>((ResponseCode)res, count); };
 
+        [MonoPInvokeCallback(typeof(OperateSysMsgDelegate))]
         public static void RegisterCallbacks()
         {
             SysMsgNativeMethods.nim_sysmsg_reg_custom_notification_ack_cb(null, OnSendMsgCompleted, IntPtr.Zero);
@@ -115,7 +128,8 @@ namespace NIM.SysMessage
         /// <param name="cb">设置消息状态的回调函数，</param>
         public static void SetMsgStatus(long msgId, NIMSysMsgStatus status, OperateSysMsgExternDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_set_status_async(msgId, status, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_set_status_async(msgId, status, null, OperateSysMsgLogsExtDelegate, ptr);
         }
 
         /// <summary>
@@ -124,7 +138,8 @@ namespace NIM.SysMessage
         /// <param name="cb"></param>
         public static void SetAllMsgRead(OperateSysMsgDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_read_all_async(null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_read_all_async(null, OperateSysMsgLogsDelegate, ptr);
         }
 
         /// <summary>
@@ -134,7 +149,8 @@ namespace NIM.SysMessage
         /// <param name="cb"></param>
         public static void DeleteByMsgId(long msgId, OperateSysMsgExternDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_delete_async(msgId, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_delete_async(msgId, null, OperateSysMsgLogsExtDelegate, ptr);
         }
 
         /// <summary>
@@ -143,7 +159,8 @@ namespace NIM.SysMessage
         /// <param name="cb"></param>
         public static void DeleteAll(OperateSysMsgDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_delete_all_async(null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_delete_all_async(null, OperateSysMsgLogsDelegate, ptr);
         }
 
         /// <summary>
@@ -154,7 +171,8 @@ namespace NIM.SysMessage
         /// <param name="cb"></param>
         public static void SetMsgStatusByType(NIMSysMsgType type, NIMSysMsgStatus status, OperateSysMsgDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_set_logs_status_by_type_async(type, status, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_set_logs_status_by_type_async(type, status, null, OperateSysMsgLogsDelegate, ptr);
         }
 
         /// <summary>
@@ -164,7 +182,23 @@ namespace NIM.SysMessage
         /// <param name="cb"></param>
         public static void DeleteMsgByType(NIMSysMsgType type, OperateSysMsgDelegate cb)
         {
-            SysMsgNativeMethods.nim_sysmsg_delete_logs_by_type_async(type, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SysMsgNativeMethods.nim_sysmsg_delete_logs_by_type_async(type, null, OperateSysMsgLogsDelegate, ptr);
+        }
+
+        private static readonly OperateSysMsgDelegate OperateSysMsgLogsDelegate = OnOperateLogsCompleted;
+        private static readonly OperateSysMsgExternDelegate OperateSysMsgLogsExtDelegate = OnOperateLogsExtCompleted;
+
+        [MonoPInvokeCallback(typeof(OperateSysMsgExternDelegate))]
+        private static void OnOperateLogsExtCompleted(int res_code, long msg_id, int unread_count, string json_extension, IntPtr user_data)
+        {
+            user_data.InvokeOnce<OperateSysMsgExternDelegate>(res_code, msg_id, unread_count, json_extension, IntPtr.Zero);
+        }
+
+        [MonoPInvokeCallback(typeof(OperateSysMsgDelegate))]
+        private static void OnOperateLogsCompleted(int res_code, int unread_count, string json_extension, IntPtr user_data)
+        {
+            user_data.InvokeOnce<OperateSysMsgDelegate>(res_code, unread_count, json_extension, IntPtr.Zero);
         }
     }
 }

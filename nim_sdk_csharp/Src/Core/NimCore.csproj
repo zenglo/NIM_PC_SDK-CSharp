@@ -131,10 +131,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NimUtility, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\test\nim_sdk_csharp_demo\Dependents\NimUtility.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -144,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api\Core\Client\ClientNativeMethods.cs" />
-    <Compile Include="api\Core\NimException\NimUnhandledExceptionFilter.cs" />
     <Compile Include="api\Core\NimException\SdkException.cs" />
     <Compile Include="api\DataSync\DataSyncNativeMethods.cs" />
     <Compile Include="api\Device\DeviceNativeMethods.cs" />
@@ -222,7 +217,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Utility\NimUtility.csproj">
+      <Project>{a9141f3e-b530-49ee-b959-16a49e1c98b1}</Project>
+      <Name>NimUtility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -1,5 +1,0 @@
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimAudio.dll
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimAudio.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Development\NimAudio.csprojResolveAssemblyReference.cache
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Development\NimAudio.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Audio\obj\x86\Development\NimAudio.pdb

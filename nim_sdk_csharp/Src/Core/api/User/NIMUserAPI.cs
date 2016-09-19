@@ -11,6 +11,10 @@ using Newtonsoft.Json.Linq;
 using NimUtility;
 using NimUtility.Json;
 using NIM.User.Delegate;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.User
 {
@@ -44,9 +48,10 @@ namespace NIM.User
         public static EventHandler<UserRelationshipSyncArgs> UserRelationshipListSyncHander;
         public static EventHandler<UserRelationshipChangedArgs> UserRelationshipChangedHandler;
 
-		private static readonly UserSpecialRelationshipChangedDelegate OnRelationshipChanged = OnRelationshipChangedCallback;
+        private static readonly UserSpecialRelationshipChangedDelegate OnRelationshipChanged = OnRelationshipChangedCallback;
 
-		static void OnRelationshipChangedCallback(NIMUserRelationshipChangeType type,string result, string je,IntPtr ptr)
+        [MonoPInvokeCallback(typeof(UserSpecialRelationshipChangedDelegate))]
+        static void OnRelationshipChangedCallback(NIMUserRelationshipChangeType type, string result, string je, IntPtr ptr)
         {
             if (type == NIMUserRelationshipChangeType.SyncMuteAndBlackList)
             {
@@ -74,7 +79,7 @@ namespace NIM.User
             }
         }
 
-        public static void RegisterCallbacks()
+        internal static void RegisterCallbacks()
         {
             _syncMutedAndBlacklistCompleted = OnGetUserRelationshipCompleted;
             _userNameCardChanged = OnUserNameCardChanged;
@@ -104,10 +109,11 @@ namespace NIM.User
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             UserNativeMethods.nim_user_set_black(accountId, inBlacklist, null, ModifyBlacklistDelegate, ptr);
         }
-        
+
         private static readonly UserOperationDelegate ModifyBlacklistDelegate = OnModifyBlacklist;
 
-        private static void OnModifyBlacklist(ResponseCode response,string accid,bool opt, string jsonExtension, IntPtr userData)
+        [MonoPInvokeCallback(typeof(UserOperationDelegate))]
+        private static void OnModifyBlacklist(ResponseCode response, string accid, bool opt, string jsonExtension, IntPtr userData)
         {
             userData.InvokeOnce<UserOperationDelegate>(response, accid, opt, jsonExtension, IntPtr.Zero);
         }
@@ -125,9 +131,11 @@ namespace NIM.User
         }
 
         private static readonly UserOperationDelegate ModifyMutedlistDelegate = OnModifyMutedlist;
+
+        [MonoPInvokeCallback(typeof(UserOperationDelegate))]
         private static void OnModifyMutedlist(ResponseCode response, string accid, bool opt, string jsonExtension, IntPtr userData)
         {
-            userData.InvokeOnce<UserOperationDelegate>(response,accid,opt, jsonExtension, IntPtr.Zero);
+            userData.InvokeOnce<UserOperationDelegate>(response, accid, opt, jsonExtension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -139,13 +147,13 @@ namespace NIM.User
             var ptr = DelegateConverter.ConvertToIntPtr(resultDelegate);
             UserNativeMethods.nim_user_get_mute_blacklist("Blacklist", _syncMutedAndBlacklistCompleted, ptr);
         }
-
+        [MonoPInvokeCallback(typeof(SyncMutedAndBlacklistDelegate))]
         private static void OnGetUserRelationshipCompleted(ResponseCode response, string blacklistJson, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
             {
                 var items = JsonParser.Deserialize<UserSpecialRelationshipItem[]>(blacklistJson);
-                userData.InvokeOnce<GetUserRelationshipResuleDelegate>(response, (object) items);
+                userData.InvokeOnce<GetUserRelationshipResuleDelegate>(response, (object)items);
             }
         }
 
@@ -157,6 +165,7 @@ namespace NIM.User
             UserNativeMethods.nim_user_reg_user_name_card_changed_cb(null, _userNameCardChanged, IntPtr.Zero);
         }
 
+        [MonoPInvokeCallback(typeof(UserNameCardChangedDelegate))]
         private static void OnUserNameCardChanged(string resultJson, string jsonExtension, IntPtr userData)
         {
             if (string.IsNullOrEmpty(resultJson))
@@ -180,12 +189,13 @@ namespace NIM.User
             UserNativeMethods.nim_user_get_user_name_card(idJsonParam, null, _getUserNameCardCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(GetUserNameCardDelegate))]
         private static void OnGetUserNameCardCompleted(string resultJson, string jsonExtension, IntPtr userData)
         {
             if (string.IsNullOrEmpty(resultJson) || userData == IntPtr.Zero)
                 return;
             var cards = JsonParser.Deserialize<UserNameCard[]>(resultJson);
-            userData.InvokeOnce<GetUserNameCardResultDelegate>((object) cards);
+            userData.InvokeOnce<GetUserNameCardResultDelegate>((object)cards);
         }
 
         /// <summary>
@@ -212,6 +222,7 @@ namespace NIM.User
             UserNativeMethods.nim_user_update_my_user_name_card(json, null, _updateNameCardCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(UpdateUserNameCardDelegate))]
         private static void OnNameCardUpdated(ResponseCode response, string jsonExtension, IntPtr userData)
         {
             userData.InvokeOnce<UpdateNameCardResultDelegate>(response);

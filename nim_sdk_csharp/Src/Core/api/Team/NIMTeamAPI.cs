@@ -9,6 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NIM.Team.Delegate;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Team
 {
@@ -26,13 +30,13 @@ namespace NIM.Team
 
     public class TeamAPI
     {
-        private static  TeamEventDelegate _teamEventNotificationDelegate;
-        private static  TeamOperationDelegate _teamChangedCallback;
-        private static  QueryMyTeamsDelegate _queryAllMyTeamsCompleted;
-        private static  QueryMyTeamsDetailInfoDelegate _queryMyTeamsInfoCompleted;
-        private static  QueryTeamMembersDelegate _queryTeamMembersCompleted;
-        private static  QuerySingleMemberDelegate _querySingleMemberCompleted;
-        private static  QueryTeamInfoDelegate _queryCachedTeamInfoCompleted;
+        private static TeamEventDelegate _teamEventNotificationDelegate;
+        private static TeamOperationDelegate _teamChangedCallback;
+        private static QueryMyTeamsDelegate _queryAllMyTeamsCompleted;
+        private static QueryMyTeamsDetailInfoDelegate _queryMyTeamsInfoCompleted;
+        private static QueryTeamMembersDelegate _queryTeamMembersCompleted;
+        private static QuerySingleMemberDelegate _querySingleMemberCompleted;
+        private static QueryTeamInfoDelegate _queryCachedTeamInfoCompleted;
 
         /// <summary>
         /// 群通知事件，注册该事件监听群信息变更
@@ -50,13 +54,13 @@ namespace NIM.Team
             _queryCachedTeamInfoCompleted = new QueryTeamInfoDelegate(OnQueryCachedTeamInfoCompleted);
             TeamNativeMethods.nim_team_reg_team_event_cb(null, _teamEventNotificationDelegate, IntPtr.Zero);
         }
-
+        [MonoPInvokeCallback(typeof(TeamEventDelegate))]
         private static void NotifyTeamEvent(int resCode, int nid, string tid, string result, string jsonExtension, IntPtr userData)
         {
             if (TeamEventNotificationHandler != null)
             {
                 NIMTeamEventData eventData = ParseTeamEventData(resCode, nid, tid, result);
-                if(eventData != null)
+                if (eventData != null)
                     TeamEventNotificationHandler.Invoke(null, new NIMTeamEventArgs(eventData));
             }
         }
@@ -92,7 +96,7 @@ namespace NIM.Team
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             TeamNativeMethods.nim_team_create_team_async(tinfoJson, idJson, postscript, null, _teamChangedCallback, ptr);
         }
-
+        [MonoPInvokeCallback(typeof(TeamOperationDelegate))]
         private static void OnTeamChanged(int resCode, int nid, string tid, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -300,7 +304,7 @@ namespace NIM.Team
             TeamNativeMethods.nim_team_query_all_my_teams_async(null, _queryAllMyTeamsCompleted, ptr);
 
         }
-
+        [MonoPInvokeCallback(typeof(QueryMyTeamsDelegate))]
         private static void OnQueryAllMyTeamsCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
         {
             string[] idList = null;
@@ -329,6 +333,7 @@ namespace NIM.Team
             TeamNativeMethods.nim_team_query_all_my_teams_info_async(ext, _queryMyTeamsInfoCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(QueryMyTeamsDetailInfoDelegate))]
         private static void OnQueryMyTeamsInfoCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -337,11 +342,11 @@ namespace NIM.Team
                 if (infoList != null)
                 {
                     var validTeams = infoList.Where((info) => { return info.TeamValid; });
-                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object) validTeams.ToArray());
+                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)validTeams.ToArray());
                 }
                 else
                 {
-                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)new NIMTeamInfo[] {});
+                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)new NIMTeamInfo[] { });
                 }
             }
 
@@ -357,7 +362,7 @@ namespace NIM.Team
             QueryTeamMembersInfo(tid, true, false, action);
         }
 
-        public static void QueryTeamMembersInfo(string tid,bool includeMemberInfo,bool includeInvalidMember, QueryTeamMembersInfoResultDelegate action)
+        public static void QueryTeamMembersInfo(string tid, bool includeMemberInfo, bool includeInvalidMember, QueryTeamMembersInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             Dictionary<string, object> extDic = new Dictionary<string, object>();
@@ -366,12 +371,13 @@ namespace NIM.Team
             TeamNativeMethods.nim_team_query_team_members_async(tid, includeMemberInfo, ext, _queryTeamMembersCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(QueryTeamMembersDelegate))]
         private static void OnQueryTeamMembersInfoCompleted(string tid, int memberCount, bool includeUserInfo, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
             {
                 var membersInfo = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
-                NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(userData, (object) membersInfo);
+                NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(userData, (object)membersInfo);
             }
         }
 
@@ -406,7 +412,7 @@ namespace NIM.Team
             }
             return info;
         }
-
+        [MonoPInvokeCallback(typeof(QuerySingleMemberDelegate))]
         private static void OnQuerySingleMemberCompleted(string tid, string userId, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -426,7 +432,7 @@ namespace NIM.Team
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             TeamNativeMethods.nim_team_query_team_info_async(tid, null, _queryCachedTeamInfoCompleted, ptr);
         }
-
+        [MonoPInvokeCallback(typeof(QueryTeamInfoDelegate))]
         private static void OnQueryCachedTeamInfoCompleted(string tid, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)

@@ -122,9 +122,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\..\ThirdParty\net-cp\3.5\release\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\ThirdParty\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -144,17 +141,11 @@
     <Compile Include="Json\JsonParser.cs" />
     <Compile Include="NimConfig.cs" />
     <Compile Include="NimJsonObject.cs" />
-    <Compile Include="NimLog.cs" />
     <Compile Include="NIMResponseCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConfigReader.cs" />
     <Compile Include="UTF8StringMarshaler.cs" />
     <Compile Include="Utilities.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="log4net.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

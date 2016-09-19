@@ -50,7 +50,6 @@ namespace NIM
                 default:
                     message = NimUtility.Json.JsonParser.Deserialize<NIMUnknownMessage>(msgJsonValue);
                     ((NIMUnknownMessage) message).RawMessage = token.ToString(Formatting.None);
-                    NimUtility.NimLogManager.NimCoreLog.InfoFormat("NIMUnknownMessage:{0}", msgJsonValue);
                     break;
             }
             return message;
@@ -65,7 +64,7 @@ namespace NIM
             }
             catch (Exception e)
             {
-                NimUtility.NimLogManager.NimCoreLog.ErrorFormat("CreateMessage failed:{0} {1}", json, e.Message);
+                System.Diagnostics.Debug.WriteLine("CreateMessage error:" + e.Message);
             }
             return null;
         }

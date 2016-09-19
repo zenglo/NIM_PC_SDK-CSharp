@@ -111,7 +111,7 @@ namespace NimUtility
             return true;
         }
 
-        private static void FreeMem(this IntPtr ptr)
+        public static void FreeMem(this IntPtr ptr)
         {
             _allocedMemDic.Remove(ptr);
             GCHandle handle = GCHandle.FromIntPtr(ptr);

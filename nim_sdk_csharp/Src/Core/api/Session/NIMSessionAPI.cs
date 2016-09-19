@@ -7,6 +7,10 @@
 
 using System;
 using NimUtility;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Session
 {
@@ -25,15 +29,18 @@ namespace NIM.Session
             SessionNativeMethods.nim_session_reg_change_cb("", GlobalSessionChangedCb, IntPtr.Zero);
         }
 
-        private static readonly NimSessionChangeCbFunc GlobalSessionChangedCb = (code, info, unread, je, data) =>
+        private static readonly NimSessionChangeCbFunc GlobalSessionChangedCb = OnSessionChanged;
+
+        [MonoPInvokeCallback(typeof(NimSessionChangeCbFunc))]
+        static void OnSessionChanged(int code, string info, int unread, string je, IntPtr data)
         {
             if (RecentSessionChangedHandler != null)
             {
                 var sessionInfo = SessionInfo.Deserialize(info);
-                var args = new SessionChangedEventArgs((ResponseCode) code, sessionInfo, unread);
+                var args = new SessionChangedEventArgs((ResponseCode)code, sessionInfo, unread);
                 RecentSessionChangedHandler(null, args);
-            } 
-        };
+            }
+        }
 
         /// <summary>
         /// 查询会话列表
@@ -55,7 +62,6 @@ namespace NIM.Session
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             SessionNativeMethods.nim_session_delete_recent_session_async((int)toType, id, "", SessionChangeCb, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("DeleteRecentSession ID={0} Type={1}", id, toType);
         }
 
         /// <summary>
@@ -66,7 +72,6 @@ namespace NIM.Session
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
             SessionNativeMethods.nim_session_delete_all_recent_session_async("", SessionChangeCb, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("DeleteAllRecentSession");
         }
 
         /// <summary>
@@ -82,6 +87,7 @@ namespace NIM.Session
         }
 
         static readonly NimSessionChangeCbFunc SessionChangeCb = new NimSessionChangeCbFunc(SessionChangeCallback);
+        [MonoPInvokeCallback(typeof(NimSessionChangeCbFunc))]
         private static void SessionChangeCallback(int rescode, string result, int totalUnreadCounts, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -91,6 +97,7 @@ namespace NIM.Session
             }
         }
         static readonly NimSessionQueryRecentSessionCbFunc QueryRecentSessionCb = new NimSessionQueryRecentSessionCbFunc(QueryRecentSession);
+        [MonoPInvokeCallback(typeof(NimSessionQueryRecentSessionCbFunc))]
         private static void QueryRecentSession(int totalUnreadCounts, string result, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)

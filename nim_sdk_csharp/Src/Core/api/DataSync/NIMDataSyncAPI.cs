@@ -7,6 +7,11 @@
 
 
 using NimUtility;
+using System;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.DataSync
 {
@@ -14,10 +19,13 @@ namespace NIM.DataSync
 
     public class DataSyncAPI
     {
-        private static readonly DataSyncCb OnDataSyncCompleted = (syncType, status, jsonAttachment, ptr) =>
+        private static readonly DataSyncCb OnDataSyncCompleted = DataSyncCompletedCallback;
+
+        [MonoPInvokeCallback(typeof(DataSyncCb))]
+        private static void DataSyncCompletedCallback(NIMDataSyncType syncType, NIMDataSyncStatus status, string jsonAttachment, IntPtr ptr)
         {
             ptr.Invoke<DataSyncDelegate>(syncType, status, jsonAttachment);
-        };
+        }
 
         /// <summary>
         ///     注册数据同步完成的回调函数

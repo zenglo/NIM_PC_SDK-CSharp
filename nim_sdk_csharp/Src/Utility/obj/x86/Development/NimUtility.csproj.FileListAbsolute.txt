@@ -1,5 +1,0 @@
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimUtility.dll
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimUtility.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Development\NimUtility.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Development\NimUtility.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Utility\obj\x86\Development\NimUtility.csprojResolveAssemblyReference.cache

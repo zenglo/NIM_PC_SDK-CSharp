@@ -6,6 +6,10 @@
 */
 using System;
 using System.Runtime.InteropServices;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM
 {
@@ -123,6 +127,7 @@ namespace NIM
 
         private static readonly NIMTools.GetAudioTextCb ConverteAudio2TextDelegate = OnConverteAudio2TextCompleted;
 
+        [MonoPInvokeCallback(typeof(NIMTools.GetAudioTextCb))]
         private static void OnConverteAudio2TextCompleted(int rescode, string text, string json_extension, IntPtr user_data)
         {
             NimUtility.DelegateConverter.InvokeOnce<NIMTools.GetAudioTextCb>(user_data, rescode, text, json_extension, IntPtr.Zero);

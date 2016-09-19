@@ -96,7 +96,6 @@ namespace NIMChatRoom
             {
                 loginJson = loginData.Serialize();
             }
-			NimUtility.NimLogManager.NimCoreLog.InfoFormat("enter chatroom id={0}",roomId);
 			loginJson = "";
 			string json_ext = "";
 		    ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, json_ext);
@@ -109,7 +108,6 @@ namespace NIMChatRoom
         public static void Exit(long roomId)
         {
             ChatRoomNativeMethods.nim_chatroom_exit(roomId, null);
-            NimUtility.NimLogManager.NimCoreLog.InfoFormat("exit chatroom id={0}", roomId);
         }
 
         /// <summary>

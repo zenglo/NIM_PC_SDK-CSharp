@@ -11,6 +11,10 @@ using NimUtility;
 using NimUtility.Json;
 using NIM.Messagelog.Delegate;
 using NIM.Session;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Messagelog
 {
@@ -37,12 +41,9 @@ namespace NIM.Messagelog
         private static readonly OperateMsglogByObjectIdDelegate OperateMsglogByObjIdCompleted;
         private static readonly OperateMsglogByLogIdDelegate OperateMsglogByLogIdCompleted;
         private static readonly OperateMsglogCommonDelegate NormalOperationCompleted;
-
-        private static readonly NimMsglogStatusChangedCbFunc OnMsglogStatusChanged = (resCode, result, jsonExtension, userData) => { userData.InvokeOnce<MsglogStatusChangedDelegate>((ResponseCode) resCode, result); };
-
-        private static readonly NimMsglogStatusChangedCbFunc OnGlobalMsglogStatusChanged = (resCode, result, jsonExtension, userData) => { userData.Invoke<MsglogStatusChangedDelegate>((ResponseCode) resCode, result); };
-
-        private static readonly NimMsglogResCbFunc OnUpdateLocalExtCompleted = (int resCode, string msgId, string jsonExtension, IntPtr userData) => { userData.Invoke<UpdateLocalExtDelegate>((ResponseCode) resCode, msgId); };
+        private static readonly NimMsglogStatusChangedCbFunc OnMsglogStatusChanged;
+        private static readonly NimMsglogStatusChangedCbFunc OnGlobalMsglogStatusChanged;
+        private static readonly NimMsglogResCbFunc OnUpdateLocalExtCompleted;
 
         static MessagelogAPI()
         {
@@ -51,6 +52,9 @@ namespace NIM.Messagelog
             OperateMsglogByObjIdCompleted = OnOperateMsglogByObjIdCompleted;
             OperateMsglogByLogIdCompleted = OnOperateMsglogByLogIdCompleted;
             NormalOperationCompleted = OnNormalOperationCompleted;
+            OnMsglogStatusChanged = MsglogChangedCallback;
+            OnGlobalMsglogStatusChanged = GlobalMsglogStatusChangedCallback;
+            OnUpdateLocalExtCompleted = UpdateLocalExtCallback;
         }
 
         /// <summary>
@@ -64,12 +68,13 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_query_msg_by_id_async(clientMsgId, null, QuerySingleLogCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(QuerySingleLogDelegate))]
         private static void OnQuerySingleLogCompleted(int resCode, string msgId, string result, string jsonExtension, IntPtr userData)
         {
             if (userData == IntPtr.Zero)
                 return;
             var msg = MessageFactory.CreateMessage(result);
-            userData.InvokeOnce<QueryLogByMsgIdResultDelegate>((ResponseCode) resCode, msgId, msg);
+            userData.InvokeOnce<QueryLogByMsgIdResultDelegate>((ResponseCode)resCode, msgId, msg);
         }
 
         /// <summary>
@@ -88,19 +93,20 @@ namespace NIM.Messagelog
 
         public static void QueryMsglogLocally(QueryMsglogParams args, QueryMsglogResultDelegate action)
         {
-            var x = new {direction = args.Direction, reverse = args.Reverse};
+            var x = new { direction = args.Direction, reverse = args.Reverse };
             var json_ext = JsonParser.Serialize(x);
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_query_msg_async(args.AccountId, args.SessionType, args.CountLimit, args.MsgAnchorTimttag, json_ext, QueryLogCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(QueryMessageLogDelegate))]
         private static void OnQuerylogCompleted(int resCode, string id, NIMSessionType type, string result, string jsonExtension, IntPtr userData)
         {
             if (userData == IntPtr.Zero)
                 return;
             var queryResult = new MsglogQueryResult();
             queryResult.CreateFromJsonString(result);
-            userData.InvokeOnce<QueryMsglogResultDelegate>((ResponseCode) resCode, id, type, queryResult);
+            userData.InvokeOnce<QueryMsglogResultDelegate>((ResponseCode)resCode, id, type, queryResult);
         }
 
         /// <summary>
@@ -160,10 +166,10 @@ namespace NIM.Messagelog
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_batch_status_read_async(id, sType, null, OperateMsglogByObjIdCompleted, ptr);
         }
-
+        [MonoPInvokeCallback(typeof(OperateMsglogByObjectIdDelegate))]
         private static void OnOperateMsglogByObjIdCompleted(int resCode, string uid, NIMSessionType type, string jsonExtension, IntPtr userData)
         {
-            userData.InvokeOnce<OperateMsglogResultDelegate>((ResponseCode) resCode, uid, type);
+            userData.InvokeOnce<OperateMsglogResultDelegate>((ResponseCode)resCode, uid, type);
         }
 
         /// <summary>
@@ -190,9 +196,10 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_set_status_async(msgId, status, null, OperateMsglogByLogIdCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(OperateMsglogByLogIdDelegate))]
         private static void OnOperateMsglogByLogIdCompleted(int resCode, string msgId, string jsonExtension, IntPtr userData)
         {
-            userData.InvokeOnce<OperateSingleLogResultDelegate>((ResponseCode) resCode, msgId);
+            userData.InvokeOnce<OperateSingleLogResultDelegate>((ResponseCode)resCode, msgId);
         }
 
         /// <summary>
@@ -208,18 +215,17 @@ namespace NIM.Messagelog
         }
 
         /// <summary>
-        ///     只往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
+        ///     往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="sType"></param>
-        /// <param name="msgId"></param>
-        /// <param name="msg"></param>
-        /// <param name="action"></param>
-        public static void WriteMsglog(string uid, NIMSessionType sType, string msgId, NIMIMMessage msg, OperateSingleLogResultDelegate action)
+        /// <param name="uid">会话id，对方的account id或者群组tid</param>
+        /// <param name="need_update_session">是否更新会话列表（一般最新一条消息会有更新的需求）</param>
+        /// <param name="msg">消息体</param>
+        /// <param name="action">操作结果的回调函数</param>
+        public static void WriteMsglog(string uid, bool need_update_session, NIMIMMessage msg, OperateSingleLogResultDelegate action)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             var msgJsonValue = msg.Serialize();
-            MsglogNativeMethods.nim_msglog_write_db_only_async(uid, sType, msgId, msgJsonValue, null, OperateMsglogByLogIdCompleted, ptr);
+            MsglogNativeMethods.nim_msglog_insert_msglog_async(uid, msgJsonValue, need_update_session, null, OperateMsglogByLogIdCompleted, ptr);
         }
 
         /// <summary>
@@ -232,7 +238,6 @@ namespace NIM.Messagelog
         {
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_delete_by_session_type_async(deleteSessions, sType, null, OperateMsglogByObjIdCompleted, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("DeleteMsglogsBySessionType,SessionType={0}", sType);
         }
 
         /// <summary>
@@ -246,7 +251,6 @@ namespace NIM.Messagelog
         {
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_delete_async(sid, sType, msgId, null, OperateMsglogByLogIdCompleted, ptr);
-            NimLogManager.NimCoreLog.InfoFormat("DeleteSpecifiedMsglog,SessionType={0} MsgId = {1}", sType, msgId);
         }
 
         /// <summary>
@@ -260,9 +264,10 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_delete_all_async(deleteSessions, null, NormalOperationCompleted, ptr);
         }
 
+        [MonoPInvokeCallback(typeof(OperateMsglogCommonDelegate))]
         private static void OnNormalOperationCompleted(int resCode, string jsonExtension, IntPtr userData)
         {
-            userData.InvokeOnce<CommonOperationResultDelegate>((ResponseCode) resCode);
+            userData.InvokeOnce<CommonOperationResultDelegate>((ResponseCode)resCode);
         }
 
         /// <summary>
@@ -286,9 +291,12 @@ namespace NIM.Messagelog
         {
             var ptr1 = DelegateConverter.ConvertToIntPtr(action);
             var ptr2 = DelegateConverter.ConvertToIntPtr(prg);
-            MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ReportImportDbProgress, ptr2);
+            MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ImportMsglogPrgCb, ptr2);
         }
 
+        private static readonly ImportMsglogProgressDelegate ImportMsglogPrgCb = ReportImportDbProgress;
+
+        [MonoPInvokeCallback(typeof(ImportMsglogProgressDelegate))]
         private static void ReportImportDbProgress(long importedSize, long totalSize, string jsonExtension, IntPtr userData)
         {
             userData.Invoke<ImportProgressDelegate>(importedSize, totalSize);
@@ -302,7 +310,7 @@ namespace NIM.Messagelog
         /// <returns></returns>
         public static bool IsMessageBeReaded(NIMIMMessage msg, string jsonExtension = null)
         {
-            Debug.Assert(msg != null && !string.IsNullOrEmpty(msg.ReceiverID));
+            System.Diagnostics.Debug.Assert(msg != null && !string.IsNullOrEmpty(msg.ReceiverID));
             var msgJson = msg.Serialize();
             return MsglogNativeMethods.nim_msglog_query_be_readed(msgJson, jsonExtension);
         }
@@ -312,10 +320,28 @@ namespace NIM.Messagelog
         /// </summary>
         public static void SendReceipt(NIMIMMessage msg, MsglogStatusChangedDelegate cb, string jsonExtension = null)
         {
-            Debug.Assert(msg != null && !string.IsNullOrEmpty(msg.ReceiverID));
+            System.Diagnostics.Debug.Assert(msg != null && !string.IsNullOrEmpty(msg.ReceiverID));
             var msgJson = msg.Serialize();
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             MsglogNativeMethods.nim_msglog_send_receipt_async(msgJson, jsonExtension, OnMsglogStatusChanged, ptr);
+        }
+
+        [MonoPInvokeCallback(typeof(NimMsglogStatusChangedCbFunc))]
+        private static void MsglogChangedCallback(int res_code, string result, string json_extension, IntPtr userData)
+        {
+            userData.InvokeOnce<MsglogStatusChangedDelegate>((ResponseCode)res_code, result);
+        }
+
+        [MonoPInvokeCallback(typeof(NimMsglogStatusChangedCbFunc))]
+        private static void GlobalMsglogStatusChangedCallback(int res_code, string result, string json_extension, IntPtr userData)
+        {
+            userData.Invoke<MsglogStatusChangedDelegate>((ResponseCode)res_code, result);
+        }
+
+        [MonoPInvokeCallback(typeof(NimMsglogResCbFunc))]
+        private static void UpdateLocalExtCallback(int res_code, string msg_id, string json_extension, IntPtr userData)
+        {
+            userData.Invoke<UpdateLocalExtDelegate>((ResponseCode)res_code, msg_id);
         }
 
         /// <summary>

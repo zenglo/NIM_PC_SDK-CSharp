@@ -8,28 +8,33 @@
 using System;
 using NimUtility;
 using NIM.Friend.Delegate;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Friend
 {
-    /// <summary>
-    /// 提供好友相关功能
-    /// </summary>
     public class FriendAPI
     {
         private static FriendInfoChangedDelegate _friendInfoChangedHandler;
         private static GetFriendProfileDelegate _getFriendProfileCompleted;
         public static EventHandler<NIMFriendProfileChangedArgs> FriendProfileChangedHandler;
 
-        private static readonly GetFriendsListDelegate OnGetFriendListCompleted = (resCode, retJson, je, ptr) =>
+        private static readonly GetFriendsListDelegate OnGetFriendListCompleted = GetFriendListCompleted;
+
+        [MonoPInvokeCallback(typeof(GetFriendsListDelegate))]
+        private static void GetFriendListCompleted(int resCode, string retJson, string je, IntPtr ptr)
         {
             if (ptr != IntPtr.Zero)
             {
                 var friends = string.IsNullOrEmpty(retJson) ? null : NIMFriends.Deserialize(retJson);
                 ptr.InvokeOnce<GetFriendsListResultDelegate>(friends);
             }
-        };
 
-        internal static void RegisterCallbacks()
+        }
+
+        public static void RegisterCallbacks()
         {
             _friendInfoChangedHandler = OnFriendInfoChanged;
             _getFriendProfileCompleted = OnGetFriendProfileCompleted;
@@ -43,6 +48,7 @@ namespace NIM.Friend
         public static void GetFriendsList(GetFriendsListResultDelegate cb)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
+
             FriendNativeMethods.nim_friend_get_list("", OnGetFriendListCompleted, ptr);
         }
 
@@ -63,7 +69,16 @@ namespace NIM.Friend
         /// <param name="cb">操作结果回调</param>
         public static void ProcessFriendRequest(string accid, NIMVerifyType verifyType, string msg, FriendOperationDelegate cb)
         {
-            FriendNativeMethods.nim_friend_request(accid, verifyType, msg, null, cb, IntPtr.Zero);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            FriendNativeMethods.nim_friend_request(accid, verifyType, msg, null, ProcessFriendRequestDelegate, ptr);
+        }
+
+        private static readonly FriendOperationDelegate ProcessFriendRequestDelegate = OnProcessFriendRequest;
+
+        [MonoPInvokeCallback(typeof(FriendOperationDelegate))]
+        private static void OnProcessFriendRequest(int resCode, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<FriendOperationDelegate>(resCode, jsonExtension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -76,7 +91,7 @@ namespace NIM.Friend
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             FriendNativeMethods.nim_friend_get_profile(accountId, null, _getFriendProfileCompleted, ptr);
         }
-
+        [MonoPInvokeCallback(typeof(GetFriendProfileDelegate))]
         private static void OnGetFriendProfileCompleted(string accid, string profileJson, string jsonExtension, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -88,7 +103,6 @@ namespace NIM.Friend
             }
         }
 
-
         /// <summary>
         ///     删除好友
         /// </summary>
@@ -96,7 +110,16 @@ namespace NIM.Friend
         /// <param name="cb">操作结果回调</param>
         public static void DeleteFriend(string accid, FriendOperationDelegate cb)
         {
-            FriendNativeMethods.nim_friend_delete(accid, null, cb, IntPtr.Zero);
+            IntPtr ptr = DelegateConverter.ConvertToIntPtr(cb);
+            FriendNativeMethods.nim_friend_delete(accid, null, DeleteFriendDelegate, ptr);
+        }
+
+        private static readonly FriendOperationDelegate DeleteFriendDelegate = OnDeleteFriendCompleted;
+
+        [MonoPInvokeCallback(typeof(FriendOperationDelegate))]
+        private static void OnDeleteFriendCompleted(int resCode, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<FriendOperationDelegate>(resCode, jsonExtension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -109,9 +132,19 @@ namespace NIM.Friend
             if (profile == null || string.IsNullOrEmpty(profile.AccountId))
                 throw new ArgumentException("profile or accountid can't be null");
             var jsonParam = profile.Serialize();
-            FriendNativeMethods.nim_friend_update(jsonParam, null, cb, IntPtr.Zero);
+            IntPtr ptr = DelegateConverter.ConvertToIntPtr(cb);
+            FriendNativeMethods.nim_friend_update(jsonParam, null, UpdateFriendDelegate, ptr);
         }
 
+        private static readonly FriendOperationDelegate UpdateFriendDelegate = OnUpdateFriendCompleted;
+
+        [MonoPInvokeCallback(typeof(FriendOperationDelegate))]
+        private static void OnUpdateFriendCompleted(int resCode, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<FriendOperationDelegate>(resCode, jsonExtension, IntPtr.Zero);
+        }
+
+        [MonoPInvokeCallback(typeof(FriendInfoChangedDelegate))]
         private static void OnFriendInfoChanged(NIMFriendChangeType type, string resultJson, string jsonExtension, IntPtr userData)
         {
             if (FriendProfileChangedHandler != null)

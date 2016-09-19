@@ -168,10 +168,10 @@ namespace NIM
         /// 监听接收的视频数据
         /// </summary>
         /// <param name="handler">回调</param>
-        public static void SetVideoReceiveDataCb(VideoDataHandler handler)
+        public static void SetVideoReceiveDataCb(VideoDataHandler handler,string json_extension="")
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-            DeviceNativeMethods.nim_vchat_set_video_data_cb(false, null, VideoDataCb, ptr);
+            DeviceNativeMethods.nim_vchat_set_video_data_cb(false, json_extension, VideoDataCb, ptr);
         }
 
         /// <summary>

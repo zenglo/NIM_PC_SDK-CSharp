@@ -1,5 +1,0 @@
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\bin\Debug\NimChatRoom.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\bin\Debug\NimChatRoom.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\ChatRoom\obj\x86\Debug\NimChatRoom.csprojResolveAssemblyReference.cache
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\ChatRoom\obj\x86\Debug\NimChatRoom.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\ChatRoom\obj\x86\Debug\NimChatRoom.pdb

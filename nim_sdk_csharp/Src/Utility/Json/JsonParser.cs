@@ -24,11 +24,11 @@ namespace NimUtility.Json
             }
             catch (JsonException jsonException)
             {
-                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json);
+                System.Diagnostics.Debug.WriteLine("Deserialize JsonException:" + jsonException.Message);
             }
             catch (Exception e)
             {
-                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json);
+                System.Diagnostics.Debug.WriteLine("JsonParser Deserialize error:\n" + e.Message + "Json string: " + json);
             }
             return default(T);
         }
@@ -44,17 +44,18 @@ namespace NimUtility.Json
             {
                 var setting = new JsonSerializerSettings();
                 setting.NullValueHandling = NullValueHandling.Ignore;
+                setting.Converters.Add(new JExtConverter());
                 setting.Converters.Add(new JsonKeyValuePairConverter());
                 var ret = JsonConvert.DeserializeObject<IDictionary<string, object>>(json, setting);
                 return ret;
             }
             catch (JsonException jsonException)
             {
-                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json);
+                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json));
             }
             catch (Exception e)
             {
-                NimLogManager.NimCoreLog.ErrorFormat("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json);
+                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json));
             }
             return null;
         }
@@ -97,6 +98,14 @@ namespace NimUtility.Json
             setting.NullValueHandling = NullValueHandling.Ignore;
             setting.Converters.Add(new JExtConverter());
             return JsonConvert.SerializeObject(obj, Formatting.None, setting);
+        }
+
+        public static string SerializeWithIndented(object obj)
+        {
+            JsonSerializerSettings setting = new JsonSerializerSettings();
+            setting.NullValueHandling = NullValueHandling.Ignore;
+            setting.Converters.Add(new JExtConverter());
+            return JsonConvert.SerializeObject(obj, Formatting.Indented, setting);
         }
 
         /// <summary>

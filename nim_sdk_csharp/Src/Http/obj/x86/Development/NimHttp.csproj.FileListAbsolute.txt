@@ -1,5 +1,0 @@
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimHttp.dll
-E:\working projects\nim\Windows\true_trunk\nim_csharp_demo\Dependents\NimHttp.pdb
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Http\obj\x86\Development\NimHttp.csprojResolveAssemblyReference.cache
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Http\obj\x86\Development\NimHttp.dll
-E:\working projects\nim\Windows\true_trunk\sdk\nim_sdk_desktop\nim_sdk_csharp\Src\Http\obj\x86\Development\NimHttp.pdb
