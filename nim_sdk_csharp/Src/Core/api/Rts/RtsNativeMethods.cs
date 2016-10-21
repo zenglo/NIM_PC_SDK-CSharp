@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UNITY
+using System;
 using System.Runtime.InteropServices;
 using NimUtility;
 
@@ -247,3 +248,4 @@ namespace NIM
         }
     }
 }
+#endif

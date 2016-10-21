@@ -348,7 +348,7 @@ namespace NIM
         }
 
         private static readonly nim_client_multiport_push_config_cb_func ConfigMultiportPushCb = MultiportPushChanged;
-
+		[MonoPInvokeCallback(typeof(nim_client_multiport_push_config_cb_func))]
         private static void MultiportPushChanged(int resCode, string content, string jsonExt, IntPtr ptr)
         {
             ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);

@@ -4,7 +4,7 @@
   * @author gq
   * @date 2015/12/8
   */
-
+#if !UNITY
 using System;
 using Newtonsoft.Json;
 using NimUtility;
@@ -204,3 +204,4 @@ namespace NIM
         }
     }
 }
+#endif

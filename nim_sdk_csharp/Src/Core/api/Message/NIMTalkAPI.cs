@@ -106,20 +106,18 @@ namespace NIM
         /// </summary>
         /// <param name="message">消息体</param>
         /// <param name="action">附件上传进度回调</param>
-        [Obsolete("不再提供该接口")]
         public static void StopSendMessage(NIMIMMessage message, ReportUploadProgressDelegate action = null)
         {
-            //System.Diagnostics.Debug.Assert(message != null);
-            //var msg = message.Serialize();
-            //IntPtr ptr = IntPtr.Zero;
-            //if (action != null)
-            //{
-            //    NimUploadProgressData data = new NimUploadProgressData();
-            //    data.Message = message;
-            //    data.ProgressAction = action;
-            //    ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
-            //}
-            //TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
+            var msg = message.Serialize();
+            IntPtr ptr = IntPtr.Zero;
+            if (action != null)
+            {
+                NimUploadProgressData data = new NimUploadProgressData();
+                data.Message = message;
+                data.ProgressAction = action;
+                ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
+            }
+            TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
         }
 
         /// <summary>
@@ -165,17 +163,20 @@ namespace NIM
             return null;
         }
 
-        private static readonly NIMTeamNotificationFilterFunc TeamNotificationFilter = (content, jsonExt, ptr) =>
+		private static readonly NIMTeamNotificationFilterFunc TeamNotificationFilter = OnTeamNotificationFilter;
+		[MonoPInvokeCallback(typeof(NIMTeamNotificationFilterFunc))]
+		static bool OnTeamNotificationFilter (string content, string jsonExt, IntPtr ptr)
         {
             if (ptr != IntPtr.Zero)
             {
                 var msg = MessageFactory.CreateMessage(content);
-                var action = (TeamNotificationFilterDelegate)Marshal.GetObjectForNativeVariant(ptr);
+				var action = NimUtility.DelegateConverter.ConvertFromIntPtr<TeamNotificationFilterDelegate> (ptr);
                 return action(msg, jsonExt);
             }
             return false;
-        };
+        }
 
+		[MonoPInvokeCallback(typeof(UploadFileCallback))]
         private static void OnUploadFileProgressChanged(long uploadedSize, long totalSize, string jsonExtension, IntPtr userData)
         {
             var data = NimUtility.DelegateConverter.ConvertFromIntPtr(userData) as NimUploadProgressData;
@@ -254,7 +255,7 @@ namespace NIM
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             Dictionary<string, object> paramDic = new Dictionary<string, object>();
             paramDic[NIMIMMessage.ClientMessageId] = msgId;
-            var json = NimUtility.Json.JsonParser.Serialize(paramDic);
+            var json = NimUtility.Json.JsonParser.Serialize(paramDic);			
             TalkNativeMethods.nim_talk_recall_msg(json, notify, null, RecallMessageCb, ptr);
         }
 

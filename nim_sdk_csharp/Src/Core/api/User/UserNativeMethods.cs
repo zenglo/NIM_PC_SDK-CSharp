@@ -86,8 +86,8 @@ namespace NIM.User
         /// <param name="json_extension"></param>
         /// <param name="cb"></param>
         /// <param name="user_data"></param>
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_set_stat", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void nim_user_set_stat(uint user_stat, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, NIMGlobal.JsonTransportCb cb, IntPtr user_data);
+        //[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_set_stat", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        //public static extern void nim_user_set_stat(uint user_stat, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, NIMGlobal.JsonTransportCb cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_reg_special_relationship_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_reg_special_relationship_changed_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UserSpecialRelationshipChangedDelegate cb, IntPtr user_data);

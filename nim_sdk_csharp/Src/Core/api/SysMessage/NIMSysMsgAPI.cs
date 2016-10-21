@@ -76,10 +76,15 @@ namespace NIM.SysMessage
             }
         }
 
-
-        private static readonly OperateSysMsgDelegate OnQueryUnreadCompleted = (res, count, je, ptr) => { ptr.InvokeOnce<CommomOperateResult>((ResponseCode)res, count); };
+        private static readonly OperateSysMsgDelegate OnQueryUnreadCompleted = OnQueryUnreadCompletedCallback;//(res, count, je, ptr) => { ptr.InvokeOnce<CommomOperateResult>((ResponseCode)res, count); };
 
         [MonoPInvokeCallback(typeof(OperateSysMsgDelegate))]
+
+        static void OnQueryUnreadCompletedCallback(int res_code, int unread_count, string json_extension, IntPtr user_data)
+        {
+            user_data.InvokeOnce<CommomOperateResult>(res_code, unread_count);
+        }
+
         public static void RegisterCallbacks()
         {
             SysMsgNativeMethods.nim_sysmsg_reg_custom_notification_ack_cb(null, OnSendMsgCompleted, IntPtr.Zero);
@@ -93,8 +98,10 @@ namespace NIM.SysMessage
         public static void SendCustomMessage(NIMSysMessageContent content)
         {
             if (string.IsNullOrEmpty(content.ClientMsgId))
-                content.GenerateMsgId();
+				content.ClientMsgId = content.GenerateMsgId();
             var jsonMsg = content.Serialize();
+
+			//Debug.Log (content.Dump () + jsonMsg);
             SysMsgNativeMethods.nim_sysmsg_send_custom_notification(jsonMsg, null);
         }
 

@@ -160,23 +160,49 @@ namespace NIM.Messagelog
         public bool Reverse { get; set; }
     }
 
+    /// <summary>
+    /// 消息历史查询来源
+    /// </summary>
+    public enum NIMMsglogQuerySource
+    {
+        /// <summary>
+        /// 本地查询
+        /// </summary>
+        kNIMMsglogQuerySourceLocal = 0,
+
+        /// <summary>
+        /// 云端查询
+        /// </summary>
+        kNIMMsglogQuerySourceServer = 1
+    }
+
+
     public class MsglogQueryResult
     {
         const string MsglogCountKey = "count";
         const string MsglogContentKey = "content";
+        const string MsglogSourceKey = "source";
         public int Count { get; set; }
 
         public NIMIMMessage[] MsglogCollection { get; set; }
+
+        public NIMMsglogQuerySource Source { get; set; }
 
         public void CreateFromJsonString(string json)
         {
             var jObj = Newtonsoft.Json.Linq.JObject.Parse(json);
             var countToken = jObj.SelectToken(MsglogCountKey);
             var contentToken = jObj.SelectToken(MsglogContentKey);
+            var sourceToken = jObj.SelectToken(MsglogSourceKey);
             if (countToken != null)
             {
                 this.Count = countToken.ToObject<int>();
             }
+            if(sourceToken != null)
+            {
+                this.Source = sourceToken.ToObject<NIMMsglogQuerySource>();
+            }
+
             if (contentToken != null && contentToken.Type == Newtonsoft.Json.Linq.JTokenType.Array)
             {
                 var log = from c in contentToken

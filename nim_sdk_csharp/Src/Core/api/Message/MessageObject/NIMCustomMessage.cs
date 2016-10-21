@@ -26,22 +26,5 @@ namespace NIM
         [JsonProperty("need_upload_res")]
         public bool NeedUploadResource { get; set; }
 
-        /// <summary>
-        /// (可选)该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效 默认 True
-        /// </summary>
-        [JsonProperty(PropertyName = "cloud_history")]
-        public bool ServerSaveHistory { get; set; }
-
-        /// <summary>
-        /// (可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效 默认 True
-        /// </summary>
-        [JsonProperty(PropertyName = "roam_msg")]
-        public bool Roaming { get; set; }
-
-        /// <summary>
-        /// (可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效 默认 True 
-        /// </summary>
-        [JsonProperty(PropertyName = "sync_msg")]
-        public bool MultiSync { get; set; }
     }
 }

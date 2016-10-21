@@ -1,4 +1,4 @@
-﻿
+﻿#if !UNITY
 
 using Newtonsoft.Json.Linq;
 /** @file NIMDeviceAPI.cs
@@ -249,3 +249,4 @@ namespace NIM
         }
     }
 }
+#endif

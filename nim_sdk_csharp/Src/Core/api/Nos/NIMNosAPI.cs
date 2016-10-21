@@ -186,10 +186,6 @@ namespace NIM.Nos
                 {
                     pair.Action(pair.Data);
                 }
-                if(fileSize > 0 && curSize >= fileSize)
-                {
-                    DelegateConverter.FreeMem(userData);
-                }
             }
         }
 
@@ -210,10 +206,6 @@ namespace NIM.Nos
                 if (pair.Action != null)
                 {
                     pair.Action(pair.Data);
-                }
-                if (curSize >= fileSize)
-                {
-                    DelegateConverter.FreeMem(userData);
                 }
             }
         }

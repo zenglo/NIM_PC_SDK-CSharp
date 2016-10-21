@@ -7,23 +7,30 @@ namespace NIM.Message
         public static NIMMessageAttachment CreateAttachment(NIMMessageType type, string attachmentJson)
         {
             NIMMessageAttachment attach = null;
-            var jObj = JObject.Parse(attachmentJson);
-            switch (type)
+            try
             {
-                case NIMMessageType.kNIMMessageTypeFile:
-                    attach = jObj.ToObject<NIMMessageAttachment>();
-                    break;
-                case NIMMessageType.kNIMMessageTypeImage:
-                    attach = jObj.ToObject<NIMImageAttachment>();
-                    break;
-                case NIMMessageType.kNIMMessageTypeAudio:
-                    attach = jObj.ToObject<NIMAudioAttachment>();
-                    break;
-                case NIMMessageType.kNIMMessageTypeVideo:
-                    attach = jObj.ToObject<NIMVedioAttachment>();
-                    break;
+                var jObj = JObject.Parse(attachmentJson);
+                switch (type)
+                {
+                    case NIMMessageType.kNIMMessageTypeFile:
+                        attach = jObj.ToObject<NIMMessageAttachment>();
+                        break;
+                    case NIMMessageType.kNIMMessageTypeImage:
+                        attach = jObj.ToObject<NIMImageAttachment>();
+                        break;
+                    case NIMMessageType.kNIMMessageTypeAudio:
+                        attach = jObj.ToObject<NIMAudioAttachment>();
+                        break;
+                    case NIMMessageType.kNIMMessageTypeVideo:
+                        attach = jObj.ToObject<NIMVedioAttachment>();
+                        break;
+                }
+                return attach;
             }
-            return attach;
+            catch
+            {
+                return null;
+            }
         }
     }
 }

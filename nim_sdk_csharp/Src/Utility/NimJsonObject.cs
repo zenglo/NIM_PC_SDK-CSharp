@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace NimUtility
 {
@@ -40,6 +41,7 @@ namespace NimUtility
             }
         }
 
+        [JsonIgnore]
         public string RawJson { get; private set; }
     }
 }

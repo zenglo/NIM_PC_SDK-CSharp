@@ -167,7 +167,7 @@ namespace NIM.Team
         /// 群类型
         /// </summary>
         [JsonProperty("type")]
-        public NIMTeamType TeamType { get; set; }
+        public NIMTeamType? TeamType { get; set; }
 
         /// <summary>
         /// 群创建者
@@ -179,7 +179,7 @@ namespace NIM.Team
         /// 群等级
         /// </summary>
         [JsonProperty("level")]
-        public int Level { get; set; }
+        public int? Level { get; set; }
 
         /// <summary>
         /// 群性质,长度限制：6000字符
@@ -194,25 +194,25 @@ namespace NIM.Team
         /// 群成员数量
         /// </summary>
         [JsonProperty("member_count")]
-        public int MembersCount { get; set; }
+        public int? MembersCount { get; set; }
 
         /// <summary>
         /// 群列表时间戳(毫秒)
         /// </summary>
         [JsonProperty("list_timetag")]
-        public long MemberListTimetag { get; set; }
+        public long? MemberListTimetag { get; set; }
 
         /// <summary>
         /// 群创建时间戳(毫秒)
         /// </summary>
         [JsonProperty("create_timetag")]
-        public long CreatedTimetag { get; set; }
+        public long? CreatedTimetag { get; set; }
 
         /// <summary>
         /// 群信息上次更新时间戳(毫秒)
         /// </summary>
         [JsonProperty("update_timetag")]
-        public long UpdatedTimetag { get; set; }
+        public long? UpdatedTimetag { get; set; }
 
         [JsonProperty("member_valid")]
         private object IsMemberValid { get; set; }
@@ -233,13 +233,13 @@ namespace NIM.Team
         /// 入群模式
         /// </summary>
         [JsonProperty("join_mode")]
-        public NIMTeamJoinMode JoinMode { get; set; }
+        public NIMTeamJoinMode? JoinMode { get; set; }
 
         /// <summary>
         /// 群属性配置 
         /// </summary>
         [JsonProperty("bits")]
-        private long ConfigBits { get; set; }
+        private long? ConfigBits { get; set; }
 
         /// <summary>
         /// 第三方扩展字段（仅负责存储和透传）
@@ -263,25 +263,25 @@ namespace NIM.Team
         /// 被邀请人同意方式，属性本身只有群主管理员可以修改 
         /// </summary>
         [JsonProperty("be_invite_mode")]
-        public NIMTeamBeInviteMode BeInvitedMode { get; set; }
+        public NIMTeamBeInviteMode? BeInvitedMode { get; set; }
 
         /// <summary>
         /// 谁可以邀请他人入群，属性本身只有群主管理员可以修改
         /// </summary>
         [JsonProperty("invite_mode")]
-        public NIMTeamInviteMode InvitedMode { get; set; }
+        public NIMTeamInviteMode? InvitedMode { get; set; }
 
         /// <summary>
         /// 谁可以修改群资料，属性本身只有群主管理员可以修改
         /// </summary>
         [JsonProperty("update_info_mode")]
-        public NIMTeamUpdateInfoMode UpdateMode { get; set; }
+        public NIMTeamUpdateInfoMode? UpdateMode { get; set; }
 
         /// <summary>
         /// 谁可以更新群自定义属性，属性本身只有群主管理员可以修改
         /// </summary>
         [JsonProperty("update_custom_mode")]
-        public NIMTeamUpdateCustomMode UpdateCustomMode { get; set; }
+        public NIMTeamUpdateCustomMode? UpdateCustomMode { get; set; }
 
         /// <summary>
         /// 群有效性
@@ -301,6 +301,7 @@ namespace NIM.Team
         /// <summary>
         /// 消息提醒
         /// </summary>
+        [JsonIgnore]
         public bool NotifyNewMessage
         {
             get { return (ConfigBits & (int) NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify) == 0; }

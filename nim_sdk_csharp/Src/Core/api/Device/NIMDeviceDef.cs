@@ -4,7 +4,7 @@
   * @author gq
   * @date 2015/12/8
   */
-
+#if !UNITY
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -170,3 +170,4 @@ namespace NIM
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
 }
+#endif

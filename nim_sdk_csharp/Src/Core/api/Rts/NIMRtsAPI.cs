@@ -4,7 +4,7 @@
   * @author gq
   * @date 2015/12/8
   */
-
+#if !UNITY
 using System;
 using NimUtility;
 using NIM.NIMRts;
@@ -219,3 +219,4 @@ namespace NIM
         #endregion
     }
 }
+#endif

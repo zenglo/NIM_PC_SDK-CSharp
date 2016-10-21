@@ -84,8 +84,15 @@ namespace NIM
                     token.Remove(NIMIMMessage.AttachmentPath);
                     return;
                 }
-                var newAttachToken = Newtonsoft.Json.Linq.JToken.Parse(attachValue);
-                attachmentToken.Replace(newAttachToken);
+                try
+                {
+                    var newAttachToken = Newtonsoft.Json.Linq.JToken.Parse(attachValue);
+                    attachmentToken.Replace(newAttachToken);
+                }
+                catch
+                {
+                    
+                }
             }
             
         }
