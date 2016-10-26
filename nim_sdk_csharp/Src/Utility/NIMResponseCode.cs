@@ -281,6 +281,16 @@ namespace NIM
         /// </summary>
         kNIMResRoomBlackBeOut = 13003,
 
+        /// <summary>
+        /// 被禁言
+        /// </summary>
+        kNIMResRoomBeMuted = 13004,
+
+        /// <summary>
+        /// 聊天室处于整体禁言状态,只有管理员能发言
+        /// </summary>
+        kNIMResRoomAllMuted = 13006,
+
         #endregion
 
         #region 客户端自定义的api调用问题

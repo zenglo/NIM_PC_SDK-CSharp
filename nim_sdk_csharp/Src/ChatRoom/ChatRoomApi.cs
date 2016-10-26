@@ -91,14 +91,12 @@ namespace NIMChatRoom
         /// <param name="loginData">聊天室可选信息</param>
         public static void Login(long roomId, string request, LoginData loginData = null)
         {
-            string loginJson = null;
+            string loginJson = string.Empty;
             if (loginData != null)
             {
                 loginJson = loginData.Serialize();
             }
-			loginJson = "";
-			string json_ext = "";
-		    ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, json_ext);
+		    ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, string.Empty);
         }
 
         /// <summary>

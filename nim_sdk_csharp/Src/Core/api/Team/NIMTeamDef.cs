@@ -349,6 +349,7 @@ namespace NIM.Team
         [JsonProperty("mute")]
         private int Muted { get; set; }
 
+        [JsonIgnore]
         public bool IsMuted {
             get { return Muted == 1; }
         }

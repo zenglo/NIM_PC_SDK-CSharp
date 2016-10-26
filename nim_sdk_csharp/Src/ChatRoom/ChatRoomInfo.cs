@@ -57,6 +57,18 @@ namespace NIMChatRoom
         [JsonProperty("online_count")]
         public int OnlineMembersCount { get; set; }
 
+        [JsonProperty("mute_all")]
+        public int _isMuted { get; set; }
+
+        /// <summary>
+        /// 聊天室禁言标志
+        /// </summary>
+        public bool IsMuted
+        {
+            get { return _isMuted == 1; }
+            set { _isMuted = 0; }
+        }
+
         public ChatRoomInfo()
         {
             RoomId = 0;

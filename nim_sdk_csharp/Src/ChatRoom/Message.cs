@@ -75,7 +75,7 @@ namespace NIMChatRoom
         public NIMChatRoomMsgType MessageType { get; set; }
 
         /// <summary>
-        /// 消息内容,如果约定的是json字符串，必须为可以解析为json的非格式化的字符串
+        /// 消息内容,长度限制2048,如果约定的是json字符串，必须为可以解析为json的非格式化的字符串
         /// </summary>
         [JsonProperty("msg_attach")]
         public string MessageAttachment { get; set; }
@@ -97,6 +97,25 @@ namespace NIMChatRoom
         /// </summary>
         [JsonProperty("ext")]
         public NimUtility.Json.JsonExtension Extension { get; set; }
+
+        [JsonProperty(PropertyName = "anti_spam_enable")]
+        private int _antiSpamEnabled { get; set; }
+
+        /// <summary>
+        /// 是否需要过易盾反垃圾,默认false
+        /// </summary>
+        [JsonIgnore]
+        public bool AntiSpamEnabled
+        {
+            get { return _antiSpamEnabled == 1; }
+            set { _antiSpamEnabled = value ? 1 : 0; }
+        }
+
+        /// <summary>
+        /// (可选)开发者自定义的反垃圾字段,长度限制：5000字符 
+        /// </summary>
+        [JsonProperty(PropertyName = "anti_spam_content")]
+        public string AntiSpamContent { get; set; }
 
         /// <summary>
         /// 媒体文件本地绝对路径（客户端）

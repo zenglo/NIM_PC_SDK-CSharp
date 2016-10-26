@@ -84,7 +84,21 @@ namespace NIM.Team
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         delegate void QueryTeamInfoDelegate([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
-       
+        /// <summary>
+        /// 获取群禁言成员列表的回调函数定义
+        /// </summary>
+        /// <param name="res_code">结果代码，一切正常200</param>
+        /// <param name="member_count">禁言列表人数</param>
+        /// <param name="tid">群组id</param>
+        /// <param name="result">Json string(群组成员信息 json object array)</param>
+        /// <param name="json_extension">json扩展数据（备用）</param>
+        /// <param name="user_data"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate void nim_team_query_mute_list_cb_func(int res_code, int member_count, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
     }
     
@@ -195,5 +209,12 @@ namespace NIM.Team
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr nim_team_query_team_info_block(string tid);
 
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_mute_list_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr nim_team_query_mute_list_online_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
+            string tid,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
+            string json_extension,
+            nim_team_query_mute_list_cb_func cb,
+            IntPtr user_data);
     }
 }

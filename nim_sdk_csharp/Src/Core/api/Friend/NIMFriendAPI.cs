@@ -172,5 +172,15 @@ namespace NIM.Friend
                 FriendProfileChangedHandler(null, args);
             }
         }
+
+        /// <summary>
+        /// 在本地缓存数据中查询accid是否为自己的好友
+        /// </summary>
+        /// <param name="accid">好友id</param>
+        /// <returns>当正向和反向好友关系都为好友时返回true</returns>
+        public static bool IsActiveFriend(string accid)
+        {
+            return FriendNativeMethods.nim_friend_query_friendship_block(accid, null);
+        }
     }
 }

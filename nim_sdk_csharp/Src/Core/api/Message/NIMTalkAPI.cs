@@ -21,7 +21,7 @@ namespace NIM
 
     public delegate bool TeamNotificationFilterDelegate(NIMIMMessage msg, string jsonExtension);
 
-    public delegate void RecallMessageDelegate(ResponseCode result, RecallNotification notify);
+    public delegate void RecallMessageDelegate(ResponseCode result, RecallNotification[] notify);
 
     /// <summary>
     /// nos 上传进度回调
@@ -278,10 +278,7 @@ namespace NIM
         private static void OnRecallMessageCompleted(int resCode, string content, string jsonExt, IntPtr userData)
         {
             var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);
-            if (data != null && data.Length > 0)
-                NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, data[0]);
-            else
-                NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
+            NimUtility.DelegateConverter.InvokeOnce<RecallMessageDelegate>(userData, (ResponseCode)resCode, data);
         }
 
         /// <summary>
@@ -300,10 +297,8 @@ namespace NIM
         private static void RecallMessageCallbackFunc(int resCode, string content, string jsonExt, IntPtr userData)
         {
             var data = NimUtility.Json.JsonParser.Deserialize<RecallNotification[]>(content);
-            if (data != null && data.Length > 0)
-                NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, data[0]);
-            else
-                NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, null);
+            NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, data);
+
         }
     }
 }

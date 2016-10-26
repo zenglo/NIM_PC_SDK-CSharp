@@ -28,6 +28,8 @@ namespace NIM.Team
 
     public delegate void QueryCachedTeamInfoResultDelegate(string tid, NIMTeamInfo info);
 
+    public delegate void QueryTeamMutedListDelegate(ResponseCode res,int count,string tid, NIMTeamMemberInfo[] members);
+
     public class TeamAPI
     {
         private static TeamEventDelegate _teamEventNotificationDelegate;
@@ -476,6 +478,26 @@ namespace NIM.Team
                 return tinfo;
             }
             return null;
+        }
+        
+        /// <summary>
+        /// 获取群禁言成员列表
+        /// </summary>
+        /// <param name="tid">群组id</param>
+        /// <param name="cb">回调函数</param>
+        public static void QueryMutedListOnlineAsync(string tid, QueryTeamMutedListDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TeamNativeMethods.nim_team_query_mute_list_online_async(tid, null, QueryMutedListOnlineCb, ptr);
+        }
+
+        private static readonly nim_team_query_mute_list_cb_func QueryMutedListOnlineCb = OnQueryMutedlistCompleted;
+
+        [MonoPInvokeCallback(typeof(nim_team_query_mute_list_cb_func))]
+        private static void OnQueryMutedlistCompleted(int res_code, int member_count, string tid, string result, string json_extension, IntPtr user_data)
+        {
+            var members = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
+            NimUtility.DelegateConverter.InvokeOnce<QueryTeamMutedListDelegate>(user_data, (ResponseCode)res_code, member_count, tid, members);
         }
     }
 }

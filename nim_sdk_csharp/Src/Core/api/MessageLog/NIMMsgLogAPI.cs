@@ -272,17 +272,26 @@ namespace NIM.Messagelog
 
         /// <summary>
         ///     导出整个消息历史DB文件（不包括系统消息历史）
+        ///     android 和 ios 平台下不可用
         /// </summary>
         /// <param name="destPath">导出时保存的目标全路径</param>
         /// <param name="action"></param>
         public static void ExportDatabaseFile(string destPath, CommonOperationResultDelegate action)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(action);
+#if UNITY
+#if UNITY_STANDALONE
             MsglogNativeMethods.nim_msglog_export_db_async(destPath, null, NormalOperationCompleted, ptr);
+#endif
+#else
+            MsglogNativeMethods.nim_msglog_export_db_async(destPath, null, NormalOperationCompleted, ptr);
+#endif
+
         }
 
         /// <summary>
         ///     导入消息历史DB文件（不包括系统消息历史）。先验证是否自己的消息历史文件和DB加密密钥，如果验证不通过，则不导入。
+        ///     android 和 ios 平台下不可用
         /// </summary>
         /// <param name="srcPath"></param>
         /// <param name="action"></param>
@@ -291,7 +300,13 @@ namespace NIM.Messagelog
         {
             var ptr1 = DelegateConverter.ConvertToIntPtr(action);
             var ptr2 = DelegateConverter.ConvertToIntPtr(prg);
+#if UNITY
+#if UNITY_STANDALONE
             MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ImportMsglogPrgCb, ptr2);
+#endif
+#else
+            MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ImportMsglogPrgCb, ptr2);
+#endif
         }
 
         private static readonly ImportMsglogProgressDelegate ImportMsglogPrgCb = ReportImportDbProgress;

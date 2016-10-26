@@ -40,5 +40,29 @@ namespace NIM
         /// </summary>
         [JsonProperty("notify")]
         public string NOtify { get; set; }
+
+        /// <summary>
+        /// 撤回操作的时间戳(毫秒)
+        /// </summary>
+        [JsonProperty("time")]
+        public long Timetag { get; set; }
+
+        /// <summary>
+        /// 撤回通知种类
+        /// </summary>
+        [JsonProperty("feature")]
+        public NIMMessageFeature Feature { get; set; }
+
+        /// <summary>
+        /// 撤回的消息本地是否存在,比如对方离线时发一条消息又撤回,对方上线收到离线撤回通知该tag为false
+        /// </summary>
+        [JsonProperty("msg_exist")]
+        public bool MsgLocalExist { get; set; }
+
+        /// <summary>
+        /// 撤回的消息的时间戳(毫秒)
+        /// </summary>
+        [JsonProperty("msg_time")]
+        public long MsgTimetag { get; set; }
     }
 }
