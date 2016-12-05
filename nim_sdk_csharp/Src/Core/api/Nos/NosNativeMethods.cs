@@ -14,11 +14,11 @@ namespace NIM.Nos
     /// <param name="json_extension">json扩展数据（备用）</param>
     /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DownloadCb(int rescode,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string file_path,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string call_id,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string res_id,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
+    public delegate void DownloadCb(int rescode,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string file_path,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string call_id,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string res_id,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
     /// <summary>
@@ -29,8 +29,8 @@ namespace NIM.Nos
     /// <param name="json_extension">json扩展数据（备用）</param>
     /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DownloadPrgCb(long downloaded_size, long file_size,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
+    public delegate void DownloadPrgCb(long downloaded_size, long file_size,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
     /// <summary>
@@ -41,9 +41,9 @@ namespace NIM.Nos
     /// <param name="json_extension">json扩展数据（备用）</param>
     /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void UploadCb(int rescode,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string url,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
+    public delegate void UploadCb(int rescode,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string url,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
     /// <summary>
@@ -54,9 +54,28 @@ namespace NIM.Nos
     /// <param name="json_extension">json扩展数据（备用）</param>
     /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void UploadPrgCb(long uploaded_size, long file_size,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
+    public delegate void UploadPrgCb(long uploaded_size, long file_size,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void DownloadSpeedCb(long download_speed,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+        IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void DownloadInfoCb(long actual_download_size, long download_speed,
+       [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+       IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UploadSpeedCb(long upload_speed, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+        IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void UploadInfoCb(long actual_upload_size, long upload_speed,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+       IntPtr user_data);
 
     internal static class NosNativeMethods
     {
@@ -68,20 +87,43 @@ namespace NIM.Nos
         internal static extern void nim_nos_reg_download_cb(DownloadCb cb, IntPtr user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_download_media", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_nos_download_media([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_msg,
+        internal static extern void nim_nos_download_media([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_msg,
             DownloadCb res_cb, IntPtr res_user_data, DownloadPrgCb prg_cb, IntPtr prg_user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_stop_download_media", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_nos_stop_download_media([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_msg);
+        internal static extern void nim_nos_stop_download_media([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_msg);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_upload", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_nos_upload([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string local_file,
+        internal static extern void nim_nos_upload([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string local_file,
             UploadCb res_cb, IntPtr res_user_data, UploadPrgCb prg_cb, IntPtr prg_user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_download", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_nos_download([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string nos_url,
+        internal static extern void nim_nos_download([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string nos_url,
             DownloadCb res_cb, IntPtr res_user_data, DownloadPrgCb prg_cb, IntPtr prg_user_data);
 
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_download_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_download_ex([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string nos_url,
+            string json_extension,
+            DownloadCb res_cb, IntPtr res_user_data,
+            DownloadPrgCb prg_cb, IntPtr prg_user_data,
+            DownloadSpeedCb speed_cb, IntPtr speed_user_data,
+            DownloadInfoCb info_cb, IntPtr info_user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_download_media_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_download_media_ex([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_msg,
+            string json_extension,
+             DownloadCb res_cb, IntPtr res_user_data,
+            DownloadPrgCb prg_cb, IntPtr prg_user_data,
+            DownloadSpeedCb speed_cb, IntPtr speed_user_data,
+            DownloadInfoCb info_cb, IntPtr info_user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_upload_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_upload_ex([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string local_file,
+            string json_extension,
+            UploadCb res_cb, IntPtr res_user_data,
+            UploadPrgCb prg_cb, IntPtr prg_user_data,
+            UploadSpeedCb speed_cb, IntPtr speed_user_data,
+            UploadInfoCb info_cb, IntPtr info_user_data);
         #endregion
     }
 }

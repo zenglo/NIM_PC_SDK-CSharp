@@ -59,7 +59,10 @@ namespace NIM
         {
 #if UNITY
             //Import bug report U3D SDK
-            ExceptHandler.Init("A005777174"); //NIM BUGRPT APPID
+			if (RuntimePlatform.IPhonePlayer == Application.platform)
+				ExceptHandler.Init("I005309131");
+			else
+            	ExceptHandler.Init("A005777174"); //NIM BUGRPT APPID
 #endif
             if (_sdkInitialized)
                 return true;
@@ -394,6 +397,17 @@ namespace NIM
         {
             DndConfigParam param = DndConfigParam.Deserialize(content);
             user_data.InvokeOnce<DndConfigureDelegate>((ResponseCode)rescode, param);
+        }
+
+        /// <summary>
+        /// 获取NIM客户端登录状态
+        /// </summary>
+        /// <param name="jsonExt"></param>
+        /// <returns></returns>
+        public static NIMLoginState GetLoginState(string jsonExt = null)
+        {
+            var ret = ClientNativeMethods.nim_client_get_login_state(jsonExt);
+            return (NIMLoginState)ret;
         }
     }
 }

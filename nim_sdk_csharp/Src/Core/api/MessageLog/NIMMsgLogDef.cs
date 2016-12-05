@@ -155,6 +155,11 @@ namespace NIM.Messagelog
 
         public long MsgAnchorTimttag { get; set; }
 
+        /// <summary>
+        /// 查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间
+        /// </summary>
+        public long EndTimetag { get; set; }
+
         public MsglogSearchDirection Direction { get; set; }
 
         public bool Reverse { get; set; }
@@ -210,8 +215,16 @@ namespace NIM.Messagelog
                           let msg = MessageFactory.CreateMessage(cobj)
                           where c.Type == Newtonsoft.Json.Linq.JTokenType.Object
                           select msg;
-                if (log != null)
-                    this.MsglogCollection = log.ToArray();
+
+				if (log != null) {
+					
+					//foreach (var v in log) {
+					//	UnityEngine.Debug.Log (v.Dump ());
+					//}
+					this.MsglogCollection = log.ToArray ();
+				}
+                //if (log != null)
+                //    this.MsglogCollection = log.ToArray();
             }
         }
     }

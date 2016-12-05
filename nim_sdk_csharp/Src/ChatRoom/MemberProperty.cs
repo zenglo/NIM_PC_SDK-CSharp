@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace NIMChatRoom
 {
@@ -32,13 +28,13 @@ namespace NIMChatRoom
         kNIMChatRoomMemberAttributeMuteList = -2
     }
 
-    public class MemberProperty:NimUtility.NimJsonObject<MemberProperty>
+    public class MemberProperty : NimUtility.NimJsonObject<MemberProperty>
     {
         /// <summary>
         /// 成员ID 
         /// </summary>
         [JsonProperty("account_id")]
-        public string MemberId { get;private set; }
+        public string MemberId { get; private set; }
 
         /// <summary>
         /// 身份标识

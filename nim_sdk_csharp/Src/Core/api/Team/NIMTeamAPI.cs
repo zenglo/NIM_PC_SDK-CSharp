@@ -36,6 +36,7 @@ namespace NIM.Team
         private static TeamOperationDelegate _teamChangedCallback;
         private static QueryMyTeamsDelegate _queryAllMyTeamsCompleted;
         private static QueryMyTeamsDetailInfoDelegate _queryMyTeamsInfoCompleted;
+        private static QueryMyTeamsDetailInfoDelegate _queryAllMyTeamsInfoCompleted;
         private static QueryTeamMembersDelegate _queryTeamMembersCompleted;
         private static QuerySingleMemberDelegate _querySingleMemberCompleted;
         private static QueryTeamInfoDelegate _queryCachedTeamInfoCompleted;
@@ -51,6 +52,7 @@ namespace NIM.Team
             _teamChangedCallback = new TeamOperationDelegate(OnTeamChanged);
             _queryAllMyTeamsCompleted = new QueryMyTeamsDelegate(OnQueryAllMyTeamsCompleted);
             _queryMyTeamsInfoCompleted = new QueryMyTeamsDetailInfoDelegate(OnQueryMyTeamsInfoCompleted);
+            _queryAllMyTeamsInfoCompleted = new QueryMyTeamsDetailInfoDelegate(OnQueryAllMyTeamsInfoCompleted);
             _queryTeamMembersCompleted = new QueryTeamMembersDelegate(OnQueryTeamMembersInfoCompleted);
             _querySingleMemberCompleted = new QuerySingleMemberDelegate(OnQuerySingleMemberCompleted);
             _queryCachedTeamInfoCompleted = new QueryTeamInfoDelegate(OnQueryCachedTeamInfoCompleted);
@@ -318,7 +320,7 @@ namespace NIM.Team
         }
 
         /// <summary>
-        /// 查询所有群信息
+        /// 查询所有有效群信息
         /// </summary>
         /// <param name="action"></param>
         public static void QueryMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
@@ -335,6 +337,20 @@ namespace NIM.Team
             TeamNativeMethods.nim_team_query_all_my_teams_info_async(ext, _queryMyTeamsInfoCompleted, ptr);
         }
 
+        /// <summary>
+        /// 查询所有群信息，包含无效的群
+        /// </summary>
+        /// <param name="includeInvalid"></param>
+        /// <param name="action"></param>
+        public static void QueryAllMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
+            Dictionary<string, object> extDic = new Dictionary<string, object>();
+            extDic["include_invalid"] = true;
+            var ext = NimUtility.Json.JsonParser.Serialize(extDic);
+            TeamNativeMethods.nim_team_query_all_my_teams_info_async(ext, _queryAllMyTeamsInfoCompleted, ptr);
+        }
+
         [MonoPInvokeCallback(typeof(QueryMyTeamsDetailInfoDelegate))]
         private static void OnQueryMyTeamsInfoCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
         {
@@ -345,6 +361,24 @@ namespace NIM.Team
                 {
                     var validTeams = infoList.Where((info) => { return info.TeamValid; });
                     NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)validTeams.ToArray());
+                }
+                else
+                {
+                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)new NIMTeamInfo[] { });
+                }
+            }
+
+        }
+
+        [MonoPInvokeCallback(typeof(QueryMyTeamsDetailInfoDelegate))]
+        private static void OnQueryAllMyTeamsInfoCompleted(int teamCount, string result, string jsonExtension, IntPtr userData)
+        {
+            if (userData != IntPtr.Zero)
+            {
+                var infoList = NimUtility.Json.JsonParser.Deserialize<List<NIMTeamInfo>>(result);
+                if (infoList != null)
+                {
+                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)infoList.ToArray());
                 }
                 else
                 {

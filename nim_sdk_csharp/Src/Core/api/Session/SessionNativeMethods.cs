@@ -47,6 +47,22 @@ namespace NIM.Session
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
             NimSessionChangeCbFunc cb, IntPtr user_data);
 
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_session_set_top", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_session_set_top(NIMSessionType to_type, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string id, 
+            bool top, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+            NimSessionChangeCbFunc cb, 
+            IntPtr user_data);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_session_set_extend_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_session_set_extend_data(NIMSessionType to_type,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string data,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+            NimSessionChangeCbFunc cb, 
+            IntPtr user_data);
+
         #endregion
     }
 }

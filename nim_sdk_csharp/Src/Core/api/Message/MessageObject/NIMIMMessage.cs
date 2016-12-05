@@ -83,11 +83,15 @@ namespace NIM
         [JsonProperty(PropertyName = "push_need_badge")]
         public bool NeedCounting { get; set; }
 
-        //服务器扩展,内容限非格式化的json string,长度限制1024
+        /// <summary>
+        /// 第三方扩展字段, 格式不限，长度限制1024
+        /// </summary>
         [JsonProperty(PropertyName = "server_ext")]
-        public JsonExtension ServerExtension { get; set; }
+        public string ServerExtension { get; set; }
 
-        //自定义的推送属性，限制非格式化的json string，长度2048
+        /// <summary>
+        /// 自定义的推送属性，限制非格式化的json string，长度2048
+        /// </summary>
         [JsonProperty(PropertyName = "push_payload")]
         public JsonExtension PushPayload { get; set; }
 
@@ -110,19 +114,19 @@ namespace NIM
         public bool NeedPushNick { get; set; }
 
 		/// <summary>
-		/// (可选)该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效 默认 True
+		/// (可选)该消息是否存储云端历史,可选,默认 True
 		/// </summary>
 		[JsonProperty(PropertyName = "cloud_history")]
 		public bool ServerSaveHistory { get; set; }
 
 		/// <summary>
-		/// (可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效 默认 True
+		/// (可选)该消息是否支持漫游,可选, 默认 True
 		/// </summary>
 		[JsonProperty(PropertyName = "roam_msg")]
 		public bool Roaming { get; set; }
 
 		/// <summary>
-		/// (可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效 默认 True 
+		/// (可选)该消息是否支持发送者多端同步,可选, 默认 True 
 		/// </summary>
 		[JsonProperty(PropertyName = "sync_msg")]
 		public bool MultiSync { get; set; }
@@ -206,6 +210,9 @@ namespace NIM
             NeedPush = true;
             SavedOffline = true;
             Routable = true;
+            ServerSaveHistory = true;
+            Roaming = true;
+            MultiSync = true;
             _antiSpamEnabled = 0;
         }
 

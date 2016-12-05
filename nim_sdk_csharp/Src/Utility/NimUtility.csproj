@@ -139,6 +139,7 @@
     <Compile Include="Json\JsonExtension.cs" />
     <Compile Include="Json\JsonKeyValuePairConverter.cs" />
     <Compile Include="Json\JsonParser.cs" />
+    <Compile Include="MonoPInvokeCallback.cs" />
     <Compile Include="NimConfig.cs" />
     <Compile Include="NimJsonObject.cs" />
     <Compile Include="NIMResponseCode.cs" />

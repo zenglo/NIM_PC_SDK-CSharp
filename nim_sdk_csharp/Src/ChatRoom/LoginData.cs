@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 
 namespace NIMChatRoom
 {
     /// <summary>
     /// 聊天室登录信息
     /// </summary>
-    public class LoginData:NimUtility.NimJsonObject<LoginData>
+    public class LoginData : NimUtility.NimJsonObject<LoginData>
     {
         /// <summary>
         /// 进入聊天室后展示的昵称,选填
@@ -28,7 +23,7 @@ namespace NIMChatRoom
         /// 聊天室可用的扩展字段,选填
         /// </summary>
         [JsonProperty("ext")]
-        public NimUtility.Json.JsonExtension Extension { get;  set; }
+        public NimUtility.Json.JsonExtension Extension { get; set; }
 
         /// <summary>
         /// 进入聊天室通知开发者扩展字段

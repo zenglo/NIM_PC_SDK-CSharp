@@ -14,7 +14,7 @@ namespace NimUtility.Json
             return true;
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.None)
                 reader.Read();
@@ -28,7 +28,7 @@ namespace NimUtility.Json
             return value;
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
@@ -94,7 +94,7 @@ namespace NimUtility.Json
         /// <param name="reader"></param>
         /// <param name="serializer"></param>
         /// <returns></returns>
-        private object CreateJsonObject(JsonReader reader, JsonSerializer serializer)
+        private object CreateJsonObject(Newtonsoft.Json.JsonReader reader, JsonSerializer serializer)
         {
             var dict = new Dictionary<string, object>();
             string propertyName = null;

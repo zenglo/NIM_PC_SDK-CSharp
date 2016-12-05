@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace NIMChatRoom
 {
@@ -65,7 +61,7 @@ namespace NIMChatRoom
         kNIMChatRoomOnlineStateOnline = 1
     }
 
-    public class MemberInfo:NimUtility.NimJsonObject<MemberInfo>
+    public class MemberInfo : NimUtility.NimJsonObject<MemberInfo>
     {
         /// <summary>
         ///聊天室id 
@@ -107,7 +103,7 @@ namespace NIMChatRoom
         /// 开发者扩展字段, 长度限制2k, [可以由用户进聊天室时提交]
         /// </summary>
         [JsonProperty("ext")]
-        public NimUtility.Json.JsonExtension Extension { get; set; }
+        public string Extension { get; set; }
 
         /// <summary>
         /// 成员是否处于在线状态, 仅特殊成员才可能离线, 对游客/匿名用户而言只能是在线
@@ -184,7 +180,7 @@ namespace NIMChatRoom
     }
 
 
-    internal class ChatRoomLoginResultParam:NimUtility.NimJsonObject<ChatRoomLoginResultParam>
+    internal class ChatRoomLoginResultParam : NimUtility.NimJsonObject<ChatRoomLoginResultParam>
     {
         [JsonProperty("room_info")]
         internal ChatRoomInfo RoomInfo { get; set; }

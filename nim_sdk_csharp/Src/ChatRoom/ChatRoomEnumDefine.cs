@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace NIMChatRoom
+﻿namespace NIMChatRoom
 {
     /// <summary>
     /// 消息属性
@@ -70,58 +65,57 @@ namespace NIMChatRoom
         kNIMChatRoomLinkConditionDead = 2
     }
 
-	/// <summary>
-	/// 聊天室进入状态
-	/// </summary>
-	public enum NIMChatRoomEnterStep
-	{
-		/// <summary>
-		/// 本地服务初始化
-		/// </summary>
-		kNIMChatRoomEnterStepInit = 1,  
-		/// <summary>
-		/// 服务器连接中
-		/// </summary>
-		kNIMChatRoomEnterStepServerConnecting = 2, 
-		/// <summary>
-		/// 服务器连接结束,连接结果见error_code
-		/// </summary>
-		kNIMChatRoomEnterStepServerConnectOver = 3, 
-		/// <summary>
-		/// 聊天室鉴权中
-		/// </summary>
-		kNIMChatRoomEnterStepRoomAuthing = 4,   
-		/// <summary>
-		/// 聊天室鉴权结束,鉴权结果见error_code, error_code非408则需要开发者重新请求聊天室进入信息
-		/// </summary>
-		kNIMChatRoomEnterStepRoomAuthOver = 5, 
-	}
+    /// <summary>
+    /// 聊天室进入状态
+    /// </summary>
+    public enum NIMChatRoomEnterStep
+    {
+        /// <summary>
+        /// 本地服务初始化
+        /// </summary>
+        kNIMChatRoomEnterStepInit = 1,
+        /// <summary>
+        /// 服务器连接中
+        /// </summary>
+        kNIMChatRoomEnterStepServerConnecting = 2,
+        /// <summary>
+        /// 服务器连接结束,连接结果见error_code
+        /// </summary>
+        kNIMChatRoomEnterStepServerConnectOver = 3,
+        /// <summary>
+        /// 聊天室鉴权中
+        /// </summary>
+        kNIMChatRoomEnterStepRoomAuthing = 4,
+        /// <summary>
+        /// 聊天室鉴权结束,鉴权结果见error_code, error_code非408则需要开发者重新请求聊天室进入信息
+        /// </summary>
+        kNIMChatRoomEnterStepRoomAuthOver = 5,
+    }
 
-	/// <summary>
-	/// 代理类型
-	/// </summary>
-	public enum NIMChatRoomProxyType
-	{
-		/// <summary>
-		/// 不使用代理
-		/// </summary>
-		kNIMChatRoomProxyNone = 0,  
-		/// <summary>
-		/// HTTP 1.1 Proxy（暂不支持）
-		/// </summary>
-		kNIMChatRoomProxyHttp11 = 1,   
-		/// <summary>
-		/// Socks4 Proxy
-		/// </summary>
-		kNIMChatRoomProxySocks4 = 4,   
-		/// <summary>
-		/// Socks4a Proxy
-		/// </summary>
-		kNIMChatRoomProxySocks4a = 5,   
-		/// <summary>
-		/// Socks5 Proxy
-		/// </summary>
-		kNIMChatRoomProxySocks5 = 6,   
-	};
-
+    /// <summary>
+    /// 代理类型
+    /// </summary>
+    public enum NIMChatRoomProxyType
+    {
+        /// <summary>
+        /// 不使用代理
+        /// </summary>
+        kNIMChatRoomProxyNone = 0,
+        /// <summary>
+        /// HTTP 1.1 Proxy（暂不支持）
+        /// </summary>
+        kNIMChatRoomProxyHttp11 = 1,
+        /// <summary>
+        /// Socks4 Proxy
+        /// </summary>
+        kNIMChatRoomProxySocks4 = 4,
+        /// <summary>
+        /// Socks4a Proxy
+        /// </summary>
+        kNIMChatRoomProxySocks4a = 5,
+        /// <summary>
+        /// Socks5 Proxy
+        /// </summary>
+        kNIMChatRoomProxySocks5 = 6,
+    }
 }

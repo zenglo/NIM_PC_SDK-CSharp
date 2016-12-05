@@ -23,7 +23,7 @@ namespace NIM
         /// SDK过程级别Log，更加详细，更有利于开发调试
         /// </summary>
         Pro = 6
-    };
+    }
 
     public class NIMSDKCommonSetting
     {
@@ -51,10 +51,17 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("private_server_setting")]
         public bool UsePriviteServer { get; set; }
 
+        /// <summary>
+        /// 设置是否已读未读状态多端同步，默认true
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("sync_session_ack")]
+        public bool SyncSessionAck { get; set; }
+
         public NIMSDKCommonSetting()
         {
             PredownloadAttachmentThumbnail = true;
             UsePriviteServer = false;
+            SyncSessionAck = true;
             LogLevel = NIMSDKLogLevel.App;
         }
     }

@@ -9,7 +9,7 @@ namespace NimUtility.Json
 {
     public class JsonBoolConverter: Newtonsoft.Json.JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value != null)
             {
@@ -18,7 +18,7 @@ namespace NimUtility.Json
             }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var v = (int)reader.Value;
             return v > 0;

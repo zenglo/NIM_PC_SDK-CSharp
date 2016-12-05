@@ -32,15 +32,4 @@ namespace NIM
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void JsonTransportCb(string jsonParams, IntPtr userData);
     }
-
-#if !UNITY
-    [AttributeUsage(AttributeTargets.Method)]
-    internal class MonoPInvokeCallbackAttribute : Attribute
-    {
-        public MonoPInvokeCallbackAttribute(Type type)
-        {
-
-        }
-    }
-#endif
 }

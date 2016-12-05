@@ -36,6 +36,9 @@ namespace NIM
 		/// 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效
 		/// </summary>
 		kNIMDeviceTypeSoundcardCapturer = 4,   
+
+		kNIMDeviceTypeAudioHook=5,/**< 伴音，启动第三方播放器并获取音频数据（只允许存在一个进程钩子）,只混音到发送的通话声音中 */
+
 	};
 
     /// <summary>

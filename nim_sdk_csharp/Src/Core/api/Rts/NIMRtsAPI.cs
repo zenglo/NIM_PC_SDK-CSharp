@@ -115,6 +115,44 @@ namespace NIM
             RtsNativeMethods.nim_rts_send_data(sessionId, (int) channelType, data, size, "");
         }
 
+        /// <summary>
+        /// 创建一个多人数据通道房间（后续需要主动调用加入接口进入房间）
+        /// </summary>
+        /// <param name="name">房间名</param>
+        /// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
+        /// <param name="cb"></param>
+        public static void CreateConference(string name, string custom_info, NimRtsCreateCbFunc cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            RtsNativeMethods.nim_rts_create_conf(name, custom_info, null, CreateRtsConfCallback, ptr);
+        }
+
+        private static NimRtsCreateCbFunc CreateRtsConfCallback = OnCreateConfCompleted;
+
+        private static void OnCreateConfCompleted(int code, string json_extension, IntPtr user_data)
+        {
+            DelegateConverter.InvokeOnce<NimRtsCreateCbFunc>(user_data, code, json_extension, IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
+        /// </summary>
+        /// <param name="name">房间名</param>
+        /// <param name="json_extension">扩展可选参数kNIMRtsDataRecord， 如{"record":1}</param>
+        /// <param name="cb"></param>
+        public static void JoinConference(string name, string json_extension, NimRtsJoinCbFunc cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            RtsNativeMethods.nim_rts_join_conf(name, json_extension, JoinConfCallback, ptr);
+        }
+
+        private static NimRtsJoinCbFunc JoinConfCallback = OnJoinConfCompleted;
+
+        private static void OnJoinConfCompleted(int code, string session_id, string json_extension, IntPtr user_data)
+        {
+            DelegateConverter.InvokeOnce<NimRtsJoinCbFunc>(user_data, code, session_id, json_extension, IntPtr.Zero);
+        }
+
         #region 设置rts的通知回调
 
         public static void SetStartNotifyCallback(OnStartNotify cb)

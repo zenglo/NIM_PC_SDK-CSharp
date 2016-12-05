@@ -106,5 +106,31 @@ namespace NIM.Session
                 userData.InvokeOnce<QueryRecentHandler>(totalUnreadCounts, infoList);
             }
         }
+
+        /// <summary>
+        /// 设置会话项是否置顶(置顶属性只保存在本地)
+        /// </summary>
+        /// <param name="to_type"></param>
+        /// <param name="id"></param>
+        /// <param name="top"></param>
+        /// <param name="cb"></param>
+        public static void PinSessionOnTop(NIMSessionType to_type, string id, bool top, SessionChangeHandler cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SessionNativeMethods.nim_session_set_top(to_type, id, top, null, SessionChangeCb, ptr);
+        }
+
+        /// <summary>
+        /// 设置会话项扩展数据(扩展数据只保存在本地)
+        /// </summary>
+        /// <param name="to_type"></param>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="cb"></param>
+        public static void SetSessionExtendData(NIMSessionType to_type, string id,string data, SessionChangeHandler cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SessionNativeMethods.nim_session_set_extend_data(to_type, id, data, null, SessionChangeCb, ptr);
+        }
     }
 }

@@ -93,7 +93,7 @@ namespace NIM.Messagelog
 
         public static void QueryMsglogLocally(QueryMsglogParams args, QueryMsglogResultDelegate action)
         {
-            var x = new { direction = args.Direction, reverse = args.Reverse };
+            var x = new { direction = args.Direction, reverse = args.Reverse, endtime = args.EndTimetag };
             var json_ext = JsonParser.Serialize(x);
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_query_msg_async(args.AccountId, args.SessionType, args.CountLimit, args.MsgAnchorTimttag, json_ext, QueryLogCompleted, ptr);
@@ -226,6 +226,13 @@ namespace NIM.Messagelog
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             var msgJsonValue = msg.Serialize();
             MsglogNativeMethods.nim_msglog_insert_msglog_async(uid, msgJsonValue, need_update_session, null, OperateMsglogByLogIdCompleted, ptr);
+        }
+
+		public static void WriteMsglogOnlyForTest(string uid, bool need_update_session, NIMIMMessage msg,string json_extension, OperateSingleLogResultDelegate action)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(action);
+            var msgJsonValue = msg.Serialize();
+			MsglogNativeMethods.nim_msglog_insert_msglog_async(uid, msgJsonValue, need_update_session, json_extension, OperateMsglogByLogIdCompleted, ptr);
         }
 
         /// <summary>

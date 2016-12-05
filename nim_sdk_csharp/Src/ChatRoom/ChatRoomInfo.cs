@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 
 namespace NIMChatRoom
 {
-    public class ChatRoomInfo:NimUtility.NimJsonObject<ChatRoomInfo>
+    public class ChatRoomInfo : NimUtility.NimJsonObject<ChatRoomInfo>
     {
         /// <summary>
         ///聊天室ID 
@@ -49,7 +44,7 @@ namespace NIMChatRoom
         ///第三方扩展字段, 长度4k 
         /// </summary>
         [JsonProperty("ext")]
-        public NimUtility.Json.JsonExtension Extension { get; set; }
+        public string Extension { get; set; }
 
         /// <summary>
         /// 在线人数

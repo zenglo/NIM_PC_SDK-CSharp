@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace NIMChatRoom
@@ -48,7 +45,7 @@ namespace NIMChatRoom
             var listToken = jObj.SelectToken("msg.list");
             if (resToken == null || resToken.ToObject<int>() != 200 || listToken == null)
                 return null;
-            
+
             var rooms = listToken.ToArray();
             List<ChatRoomInfo> roomList = new List<ChatRoomInfo>();
             foreach (var r in rooms)
@@ -59,7 +56,7 @@ namespace NIMChatRoom
                 room.CreatorId = r.Value<string>("creator");
                 room.OnlineMembersCount = r.Value<int>("onlineusercount");
                 room.Valid = r.Value<int>("status");
-                room.Extension = new NimUtility.Json.JsonExtension(r.SelectToken("ext"));
+                room.Extension = r.Value<string>("ext");// new NimUtility.Json.JsonExtension(r.SelectToken("ext"));
                 room.Announcement = r.Value<string>("announcement");
                 room.BroadcastUrl = r.Value<string>("broadcasturl");
                 roomList.Add(room);

@@ -1,8 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#else
+using MonoPInvokeCallbackAttribute = NIM.MonoPInvokeCallbackAttribute;
+#endif
+
+#if !UNITY
 namespace NIMChatRoom
 {
     /// <summary>
@@ -96,7 +101,7 @@ namespace NIMChatRoom
             {
                 loginJson = loginData.Serialize();
             }
-		    ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, string.Empty);
+            ChatRoomNativeMethods.nim_chatroom_enter(roomId, request, loginJson, string.Empty);
         }
 
         /// <summary>
@@ -116,94 +121,112 @@ namespace NIMChatRoom
             ChatRoomNativeMethods.nim_chatroom_cleanup(null);
         }
 
-        private static readonly NimChatroomLoginCbFunc ParaseChatRoomLoginResult = (roomId, loginStep, errorCode, result, jsonExtension, userData) =>
+        private static readonly NimChatroomLoginCbFunc ParaseChatRoomLoginResult = OnLogin;
+
+        [MonoPInvokeCallback(typeof(NimChatroomLoginCbFunc))]
+        private static void OnLogin(long roomId, int loginStep, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             if (LoginHandler != null)
             {
                 ChatRoomLoginResultParam param = ChatRoomLoginResultParam.Deserialize(result);
                 if (param != null)
                 {
-                    LoginHandler((NIMChatRoomLoginStep) loginStep, (NIM.ResponseCode) errorCode, param.RoomInfo, param.MemberInfo);
+                    LoginHandler((NIMChatRoomLoginStep)loginStep, (NIM.ResponseCode)errorCode, param.RoomInfo, param.MemberInfo);
                 }
                 else
                 {
-                    LoginHandler((NIMChatRoomLoginStep) loginStep, (NIM.ResponseCode) errorCode, null, null);
+                    LoginHandler((NIMChatRoomLoginStep)loginStep, (NIM.ResponseCode)errorCode, null, null);
                 }
             }
-        };
+        }
 
         private static void RegisterLoginCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_enter_cb(null, ParaseChatRoomLoginResult, IntPtr.Zero);
         }
 
-        private static readonly NimChatroomExitCbFunc ParseExitChatRoomResult = (roomId, errorCode, exitType, jsonExtension, userData) =>
+        private static readonly NimChatroomExitCbFunc ParseExitChatRoomResult = OnExit;
+
+        [MonoPInvokeCallback(typeof(NimChatroomExitCbFunc))]
+        private static void OnExit(long roomId, int errorCode, int exitType, string jsonExtension, IntPtr userData)
         {
             if (ExitHandler != null)
             {
-                ExitHandler(roomId, (NIM.ResponseCode) errorCode, (NIMChatRoomExitReason) exitType);
+                ExitHandler(roomId, (NIM.ResponseCode)errorCode, (NIMChatRoomExitReason)exitType);
             }
-        };
+        }
 
         private static void RegisterExitChatRoomCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_exit_cb(null, ParseExitChatRoomResult, IntPtr.Zero);
         }
 
-        private static readonly NimChatroomSendmsgArcCbFunc OnSendMsgCompleted = (roomId, errorCode, result, jsonExtension, userData) =>
+        private static readonly NimChatroomSendmsgAckCbFunc SendMsgAckCallback = OnSendMsgCompleted;
+
+        [MonoPInvokeCallback(typeof(NimChatroomSendmsgAckCbFunc))]
+        private static void OnSendMsgCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             System.Diagnostics.Debug.WriteLine("send chatroom message :" + result);
             if (SendMessageHandler != null)
             {
                 var message = NimUtility.Json.JsonParser.Deserialize<Message>(result);
-                SendMessageHandler(roomId, (NIM.ResponseCode) errorCode, message);
+                SendMessageHandler(roomId, (NIM.ResponseCode)errorCode, message);
             }
-        };
+        }
 
         private static void RegisterSendMsgArcCallback()
         {
-            ChatRoomNativeMethods.nim_chatroom_reg_send_msg_ack_cb(null, OnSendMsgCompleted, IntPtr.Zero);
+            ChatRoomNativeMethods.nim_chatroom_reg_send_msg_ack_cb(null, SendMsgAckCallback, IntPtr.Zero);
         }
 
-        private static readonly NimChatroomReceiveMsgCbFunc OnReceiveChatRoomMessage = (roomId, result, jsonExtension, userData) =>
+        private static readonly NimChatroomReceiveMsgCbFunc ReceiveMessageCallback = OnReceiveMessage;
+
+        [MonoPInvokeCallback(typeof(NimChatroomReceiveMsgCbFunc))]
+        private static void OnReceiveMessage(long roomId, string result, string jsonExtension, IntPtr userData)
         {
             if (ReceiveMessageHandler != null)
             {
                 Message message = Message.Deserialize(result);
                 ReceiveMessageHandler(roomId, message);
             }
-        };
+        }
 
         private static void RegisterReceiveMsgCallback()
         {
-            ChatRoomNativeMethods.nim_chatroom_reg_receive_msg_cb(null, OnReceiveChatRoomMessage, IntPtr.Zero);
+            ChatRoomNativeMethods.nim_chatroom_reg_receive_msg_cb(null, ReceiveMessageCallback, IntPtr.Zero);
         }
 
-        private static readonly NimChatroomReceiveNotificationCbFunc OnReceiveChatRoomNotificationMsg = (roomId, result, jsonExtension, userData) =>
+        private static readonly NimChatroomReceiveNotificationCbFunc OnReceiveChatRoomNotificationMsg = OnReceiveNotification;
+
+        [MonoPInvokeCallback(typeof(NimChatroomReceiveNotificationCbFunc))]
+        private static void OnReceiveNotification(long roomId, string result, string jsonExtension, IntPtr userData)
         {
             if (ReceiveNotificationHandler != null)
             {
                 Notification notify = Notification.Deserialize(result);
                 ReceiveNotificationHandler(roomId, notify);
             }
-        };
+        }
 
         private static void RegisterReceiveNotificationMsgCallback()
         {
             ChatRoomNativeMethods.nim_chatroom_reg_receive_notification_cb(null, OnReceiveChatRoomNotificationMsg, IntPtr.Zero);
         }
 
-        private static readonly NimChatroomLinkConditionCbFunc OnChatRoomLinkStateChanged = (long roomId, int condition, string jsonExtension, IntPtr userData) =>
+        private static readonly NimChatroomLinkConditionCbFunc LinkStateChangedCallback = OnLinkStateChanged;
+
+        [MonoPInvokeCallback(typeof(NimChatroomLinkConditionCbFunc))]
+        private static void OnLinkStateChanged(long roomId, int condition, string jsonExtension, IntPtr userData)
         {
             if (LinkStateChanged != null)
             {
-                LinkStateChanged(roomId, (NIMChatRoomLinkCondition) condition);
+                LinkStateChanged(roomId, (NIMChatRoomLinkCondition)condition);
             }
-        };
+        }
 
         private static void RegisterLinkStateChangedCallback()
         {
-            ChatRoomNativeMethods.nim_chatroom_reg_link_condition_cb(null, OnChatRoomLinkStateChanged, IntPtr.Zero);
+            ChatRoomNativeMethods.nim_chatroom_reg_link_condition_cb(null, LinkStateChangedCallback, IntPtr.Zero);
         }
 
         /// <summary>
@@ -222,7 +245,7 @@ namespace NIMChatRoom
             param.TimeOffset = timeOffset;
             string queryJsonParam = param.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_get_members_online_async(roomId, queryJsonParam, null, CallbackBridge.OnQueryChatMembersCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_get_members_online_async(roomId, queryJsonParam, null, CallbackBridge.QueryMembersCallback, ptr);
         }
 
         /// <summary>
@@ -239,7 +262,7 @@ namespace NIMChatRoom
             param.StartTime = startTimeStamp;
             string queryJsonParam = param.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_get_msg_history_online_async(roomId, queryJsonParam, null, CallbackBridge.OnQueryMsgHistoryCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_get_msg_history_online_async(roomId, queryJsonParam, null, CallbackBridge.QueryMessageLogCallback, ptr);
         }
 
         /// <summary>
@@ -254,7 +277,7 @@ namespace NIMChatRoom
                 throw new ArgumentException("MemberId can't be null or empty");
             var jsonParam = property.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_set_member_attribute_async(roomId, jsonParam, null, CallbackBridge.OnSetMemberPropertyCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_set_member_attribute_async(roomId, jsonParam, null, CallbackBridge.SetMemberPropertyCallback, ptr);
         }
 
         /// <summary>
@@ -266,7 +289,7 @@ namespace NIMChatRoom
         public static void CloseRoom(long roomId, string notify, CloseRoomDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_close_async(roomId, notify, null, CallbackBridge.OnRoomClosed, ptr);
+            ChatRoomNativeMethods.nim_chatroom_close_async(roomId, notify, null, CallbackBridge.RoomClosedCallback, ptr);
         }
 
         /// <summary>
@@ -277,7 +300,7 @@ namespace NIMChatRoom
         public static void GetRoomInfo(long roomId, GetRoomInfoDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_get_info_async(roomId, null, CallbackBridge.OnGetRoomInfoCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_get_info_async(roomId, null, CallbackBridge.GetRoomInfoCallback, ptr);
         }
 
         /// <summary>
@@ -290,7 +313,7 @@ namespace NIMChatRoom
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             var idJson = NimUtility.Json.JsonParser.Serialize(idCollection);
-            ChatRoomNativeMethods.nim_chatroom_get_members_by_ids_online_async(roomId, idJson, null, CallbackBridge.OnQueryChatMembersCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_get_members_by_ids_online_async(roomId, idJson, null, CallbackBridge.QueryMembersCallback, ptr);
         }
 
         /// <summary>
@@ -303,7 +326,7 @@ namespace NIMChatRoom
         public static void RemoveMember(long roomId, string memberId, string notify, RemoveMemberDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_kick_member_async(roomId, memberId, notify, null, CallbackBridge.OnRemoveMemberCompleted, ptr);
+            ChatRoomNativeMethods.nim_chatroom_kick_member_async(roomId, memberId, notify, null, CallbackBridge.KickoutMemberCallback, ptr);
         }
 
         /// <summary>
@@ -332,42 +355,63 @@ namespace NIMChatRoom
             ChatRoomNativeMethods.nim_chatroom_temp_mute_member_async(roomId, accid, duration, notify, notify_ext, null, CallbackBridge.TempMuteMemberCallback, ptr);
         }
 
-		/// <summary>
-		/// 排序列出所有麦序元素 
-		/// </summary>
-		/// <param name="roomId">房间号</param>
-		/// <param name="cb"></param>
-		/// <param name="json_extension"></param>
-		public static void QueueListAsync(long roomId, nim_chatroom_queue_list_cb_func cb,string json_extension="")
-		{
-			//ChatRoomQueueListDelegate
-			// 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-			// 			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
-			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
-		}
+        /// <summary>
+        /// 排序列出所有麦序元素 
+        /// </summary>
+        /// <param name="roomId">房间号</param>
+        /// <param name="cb"></param>
+        /// <param name="json_extension"></param>
+        public static void QueueListAsync(long roomId, nim_chatroom_queue_list_cb_func cb, string json_extension = "")
+        {
+            //ChatRoomQueueListDelegate
+            // 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            // 			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
+            ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
+        }
 
-		public static void QueueDropAsync(long roomId, nim_chatroom_queue_drop_cb_func cb,string json_extension="")
-		{
-			//ChatRoomQueueDropDelegate
-			// 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-			// 			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
-			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
-		}
+        /// <summary>
+        /// (聊天室管理员权限)删除麦序队列
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="cb"></param>
+        /// <param name="json_extension"></param>
+        public static void QueueDropAsync(long roomId, nim_chatroom_queue_drop_cb_func cb, string json_extension = "")
+        {
+            //ChatRoomQueueDropDelegate
+            // 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            // 			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
+            ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
+        }
 
+        /// <summary>
+        /// (聊天室管理员权限)取出麦序头元素 
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <param name="element_key">需要取出的元素的UniqKey,长度限制128字节,传空传表示取出第一个元素</param>
+        /// <param name="cb"></param>
+        /// <param name="json_extension"></param>
+        public static void QueuePollAsync(long roomId, string element_key, nim_chatroom_queue_poll_cb_func cb, string json_extension = "")
+        {
+            //ChatRoomQueuePollDelegate
+            //var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            //ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
+            ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
+        }
 
-		public static void QueuePollAsync(long roomId,string element_key, nim_chatroom_queue_poll_cb_func cb, string json_extension="")
-		{
-			//ChatRoomQueuePollDelegate
-			//var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-			//ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
-			ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
-		}
-		public static void QueueOfferAsync(long roomId,string element_key,string elemnet_value, nim_chatroom_queue_offer_cb_func cb,string json_extension="")
-		{
-			//var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-			//ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
-			ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
-		}
-
+        /// <summary>
+        /// (聊天室管理员权限)新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <param name="element_key">新元素的UniqKey,长度限制128字节 </param>
+        /// <param name="elemnet_value">新元素内容，长度限制4096字节 </param>
+        /// <param name="cb"></param>
+        /// <param name="json_extension"></param>
+        public static void QueueOfferAsync(long roomId, string element_key, string elemnet_value, nim_chatroom_queue_offer_cb_func cb, string json_extension = "")
+        {
+            //var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            //ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
+            ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
+        }
     }
 }
+#endif

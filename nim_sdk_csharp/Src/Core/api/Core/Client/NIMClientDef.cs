@@ -203,6 +203,22 @@ namespace NIM
         public List<NIMMultiClientLoginInfo> LoginedClients { get; set; }
     }
 
+    /// <summary>
+    /// 登录状态
+    /// </summary>
+    public enum NIMLoginState
+    {
+        /// <summary>
+        /// 已登录
+        /// </summary>
+        kNIMLoginStateLogin = 1,
+
+        /// <summary>
+        /// 未登录
+        /// </summary>
+        kNIMLoginStateUnLogin = 2
+    }
+
     public class NIMLogoutResult : NimUtility.NimJsonObject<NIMLogoutResult>
     {
         /// <summary>

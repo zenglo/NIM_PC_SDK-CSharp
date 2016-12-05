@@ -9,18 +9,19 @@ namespace NimUtility.Json
 {
     class JExtConverter : Newtonsoft.Json.JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
         {
             var ext = value as JsonExtension;
             if (ext == null)
                 writer.WriteNull();
             else
             {
-                writer.WriteValue(ext.Value);
+                var json = ext.Serialize();
+                writer.WriteValue(json);
             }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.Value == null) return null;
             var v = reader.Value.ToString();
@@ -44,13 +45,36 @@ namespace NimUtility.Json
     /// </summary>
     public class JsonExtension
     {
-        public string Value { get; set; }
+        public string Value { get { return Serialize(); } }
+
+        private Dictionary<string, object> _dictionary;
+
         public JsonExtension()
         {
+            _dictionary = new Dictionary<string, object>();
         }
-        public JsonExtension(object obj)
+
+        public JsonExtension(Dictionary<string, object> dic)
         {
-            Value = JsonParser.Serialize(obj);
+            _dictionary = dic;
+        }
+
+        public JsonExtension(JToken token)
+        {
+            var value = token.ToString();
+            _dictionary = JsonParser.Deserialize<Dictionary<string, object>>(value);
+        }
+
+        public void AddItem(string key,object value)
+        {
+            _dictionary[key] = value;
+        }
+
+        public string Serialize()
+        {
+            if (_dictionary != null && _dictionary.Count > 0)
+                return JsonParser.Serialize(_dictionary);
+            return null;
         }
     }
 }

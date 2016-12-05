@@ -150,6 +150,18 @@ namespace NIM.Session
         [Newtonsoft.Json.JsonProperty("last_updated_msg")]
         public bool IsLast { get; set; }
 
+        /// <summary>
+        /// 是否置顶
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("top")]
+        public bool IsPinnedOnTop { get; set; }
+
+        /// <summary>
+        /// 本地扩展字段, 限4096
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("extend_data")]
+        public string ExtendString { get; set; }
+
         public void ParseAttachmentInfo()
         {
             if (MsgType != NIMMessageType.kNIMMessageTypeUnknown && !string.IsNullOrEmpty(Attach))

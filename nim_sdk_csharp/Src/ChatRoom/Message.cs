@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 
 namespace NIMChatRoom
 {
@@ -36,7 +31,7 @@ namespace NIMChatRoom
     /// <summary>
     /// 聊天室消息
     /// </summary>
-    public class Message:NimUtility.NimJsonObject<Message>
+    public class Message : NimUtility.NimJsonObject<Message>
     {
         /// <summary>
         /// 消息所属的聊天室id(服务器填充)
@@ -128,6 +123,11 @@ namespace NIMChatRoom
         /// </summary>
         [JsonProperty("res_id")]
         public string LocalResourceId { get; set; }
+
+        public Message()
+        {
+            _antiSpamEnabled = 0;
+        }
     }
 
     internal class QueryMessageHistoryParam : NimUtility.NimJsonObject<QueryMessageHistoryParam>

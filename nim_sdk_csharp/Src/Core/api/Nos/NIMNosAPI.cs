@@ -110,7 +110,7 @@ namespace NIM.Nos
         /// <param name="msg">消息体,NIMVedioMessage NIMAudioMessage NIMFileMessage等带msg_attach属性的有下载信息的消息</param>
         /// <param name="resHandler">下载的结果回调</param>
         /// <param name="prgHandler">下载进度的回调</param>
-        public static void DownloadMedia(NIMIMMessage msg, DownloadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
+        public static void DownloadMedia(NIMIMMessage msg, DownloadResultHandler resHandler, ProgressResultHandler prgHandler, object userData = null)
         {
             ProgressData data = new ProgressData();
             data.Message = msg;
@@ -139,7 +139,7 @@ namespace NIM.Nos
         /// <param name="localFile">本地文件的完整路径</param>
         /// <param name="resHandler">上传的结果回调</param>
         /// <param name="prgHandler">上传进度的回调</param>
-        public static void Upload(string localFile, UploadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
+        public static void Upload(string localFile, UploadResultHandler resHandler, ProgressResultHandler prgHandler, object userData = null)
         {
             ProgressData data = new ProgressData();
             data.FilePath = localFile;
@@ -156,7 +156,7 @@ namespace NIM.Nos
         /// <param name="nosUrl">下载资源的URL</param>
         /// <param name="resHandler">下载的结果回调</param>
         /// <param name="prgHandler">下载进度的回调</param>
-        public static void Download(string nosUrl, DownloadResultHandler resHandler, ProgressResultHandler prgHandler,object userData = null)
+        public static void Download(string nosUrl, DownloadResultHandler resHandler, ProgressResultHandler prgHandler, object userData = null)
         {
             ProgressData data = new ProgressData();
             data.Url = nosUrl;
@@ -178,11 +178,11 @@ namespace NIM.Nos
         private static void DownloadProgressCallback(long curSize, long fileSize, string jsonExtension, IntPtr userData)
         {
             var pair = DelegateConverter.ConvertFromIntPtr<ProgressPair>(userData);
-            if(pair != null)
+            if (pair != null)
             {
                 pair.Data.CurrentSize = curSize;
                 pair.Data.TotalSize = fileSize;
-                if(pair.Action != null)
+                if (pair.Action != null)
                 {
                     pair.Action(pair.Data);
                 }
@@ -208,6 +208,158 @@ namespace NIM.Nos
                     pair.Action(pair.Data);
                 }
             }
+        }
+
+
+        private class CallbackDataPair
+        {
+            public Delegate Callback { get; set; }
+            public IntPtr Data { get; set; }
+
+            public CallbackDataPair() { }
+            public CallbackDataPair(Delegate cb, IntPtr ptr)
+            {
+                Callback = cb;
+                Data = ptr;
+            }
+
+            public IntPtr ToIntPtr()
+            {
+                return DelegateConverter.ConvertToIntPtr(this);
+            }
+
+            public static CallbackDataPair FromIntPtr(IntPtr ptr)
+            {
+                var obj = DelegateConverter.ConvertFromIntPtr(ptr);
+                var pair = obj as CallbackDataPair;
+                return pair;
+            }
+        }
+
+        public static void DownloadEx(string url,
+            DownloadCb resCb, IntPtr resData,
+            DownloadPrgCb prgCb, IntPtr prgData,
+            DownloadSpeedCb speedCb, IntPtr speedData,
+            DownloadInfoCb infoCb, IntPtr infoData)
+        {
+            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
+            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
+            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
+            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
+
+            NosNativeMethods.nim_nos_download_ex(url, "",
+                DownloadResultCallbackEx, resPair.ToIntPtr(),
+                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
+                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
+                DownloadInfoCallbackEx, infoPair.ToIntPtr());
+        }
+
+        private static DownloadCb DownloadResultCallbackEx = OnDownloadCompleted;
+
+        private static void OnDownloadCompleted(int rescode, string file_path, string call_id, string res_id, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((DownloadCb)pair.Callback)(rescode, file_path, call_id, res_id, json_extension, pair.Data);
+        }
+
+        private static DownloadPrgCb DownloadPrgCallbackEx = OnReportDownloadPrg;
+
+        private static void OnReportDownloadPrg(long downloaded_size, long file_size, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((DownloadPrgCb)pair.Callback)(downloaded_size, file_size, json_extension, pair.Data);
+        }
+
+        private static DownloadSpeedCb DownloadSpeedCallbackEx = OnReportDownloadSpeed;
+
+        private static void OnReportDownloadSpeed(long download_speed, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((DownloadSpeedCb)pair.Callback)(download_speed, json_extension, pair.Data);
+        }
+
+        private static DownloadInfoCb DownloadInfoCallbackEx = OnReportDownloadInfo;
+
+        private static void OnReportDownloadInfo(long actual_download_size, long download_speed, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((DownloadInfoCb)pair.Callback)(actual_download_size, download_speed, json_extension, pair.Data);
+        }
+
+        public static void DownloadMediaEx(NIMIMMessage msg,
+            DownloadCb resCb, IntPtr resData,
+            DownloadPrgCb prgCb, IntPtr prgData,
+            DownloadSpeedCb speedCb, IntPtr speedData,
+            DownloadInfoCb infoCb, IntPtr infoData)
+        {
+            var msgJson = msg.Serialize();
+            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
+            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
+            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
+            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
+            NosNativeMethods.nim_nos_download_media_ex(msgJson, null,
+                DownloadResultCallbackEx, resPair.ToIntPtr(),
+                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
+                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
+                DownloadInfoCallbackEx, infoPair.ToIntPtr());
+        }
+
+        private static UploadCb UploadCallbackEx = OnUploadCompleted;
+
+        private static void OnUploadCompleted(int rescode, string url, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((UploadCb)pair.Callback)(rescode, url, json_extension, pair.Data);
+        }
+
+        private static UploadPrgCb UploadPrgCallbackEx = OnReportUploadProgress;
+
+        private static void OnReportUploadProgress(long uploaded_size, long file_size, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((UploadPrgCb)pair.Callback)(uploaded_size, file_size, json_extension, pair.Data);
+        }
+
+        private static UploadSpeedCb UploadSpeedCallbackEx = OnReportUploadSpeed;
+
+        private static void OnReportUploadSpeed(long upload_speed, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((UploadSpeedCb)pair.Callback)(upload_speed, json_extension, pair.Data);
+        }
+
+        private static UploadInfoCb UploadInfoCallbackEx = OnReportUploadInfo;
+
+        private static void OnReportUploadInfo(long actual_upload_size, long upload_speed, string json_extension, IntPtr user_data)
+        {
+            var pair = CallbackDataPair.FromIntPtr(user_data);
+            if (pair.Callback != null)
+                ((UploadInfoCb)pair.Callback)(actual_upload_size, upload_speed, json_extension, pair.Data);
+        }
+
+        public static void UploadEx(string localFile,
+            UploadCb resCb, IntPtr resData,
+            UploadPrgCb prgCb, IntPtr prgData,
+            UploadSpeedCb speedCb, IntPtr speedData,
+            UploadInfoCb infoCb, IntPtr infoData)
+        {
+            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
+            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
+            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
+            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
+
+            NosNativeMethods.nim_nos_upload_ex(localFile, null,
+                UploadCallbackEx, resPair.ToIntPtr(),
+                UploadPrgCallbackEx, prgPair.ToIntPtr(),
+                UploadSpeedCallbackEx, speedPair.ToIntPtr(),
+                UploadInfoCallbackEx, infoPair.ToIntPtr());
         }
     }
 }

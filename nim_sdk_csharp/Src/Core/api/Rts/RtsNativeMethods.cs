@@ -185,6 +185,30 @@ namespace NIM
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             IntPtr userData);
 
+        /// <summary>
+        /// 创建多人rts返回结果
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="json_extension"></param>
+        /// <param name="user_data"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void NimRtsCreateCbFunc(int code,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+            IntPtr user_data);
+
+        /// <summary>
+        /// 加入多人rts返回结果
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="session_id"></param>
+        /// <param name="json_extension"></param>
+        /// <param name="user_data"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void NimRtsJoinCbFunc(int code,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string session_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+            IntPtr user_data);
+
         internal class RtsNativeMethods
         {
             //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
@@ -243,6 +267,19 @@ namespace NIM
 
             [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_rec_data_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_rec_data_cb_func(NimRtsRecDataCbFunc cb, IntPtr user_data);
+            
+            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_create_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void nim_rts_create_conf([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string name,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string custom_info,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+                NimRtsCreateCbFunc cb, 
+                IntPtr user_data);
+            
+            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_join_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void nim_rts_join_conf([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string name,
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+                NimRtsJoinCbFunc cb, 
+                IntPtr user_data);
 
             #endregion
         }
