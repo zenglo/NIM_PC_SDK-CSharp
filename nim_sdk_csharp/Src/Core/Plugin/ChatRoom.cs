@@ -1,7 +1,10 @@
-﻿#if !UNITY
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using NimUtility;
+#if UNITY
+using UnityEngine;
+using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
+#endif
 
 namespace NIM.Plugin
 {
@@ -19,8 +22,14 @@ namespace NIM.Plugin
 
     public class ChatRoom
     {
-        private static readonly NimPluginChatroomRequestLoginCbFunc OnRequestLoginInfoCompleted = (errorCode, result, jsonExtension, userData) => { userData.InvokeOnce<RequestChatRoomLoginInfoDelegate>((ResponseCode) errorCode, result); };
+        private static readonly NimPluginChatroomRequestLoginCbFunc OnRequestLoginInfoCompleted = OnRequestLoginInfoCompletedCallback;
 
+        [MonoPInvokeCallbackAttribute(typeof(NimPluginChatroomRequestLoginCbFunc))]
+        static void OnRequestLoginInfoCompletedCallback(int errorCode, string result, string jsonExtension, IntPtr userData)
+        {
+            userData.InvokeOnce<RequestChatRoomLoginInfoDelegate>((ResponseCode)errorCode, result);
+        }
+        
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_plugin_chatroom_request_enter_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_plugin_chatroom_request_enter_async(long roomId,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
@@ -38,4 +47,3 @@ namespace NIM.Plugin
         }
     }
 }
-#endif

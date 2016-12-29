@@ -36,7 +36,7 @@ namespace NIM
                     message = NimUtility.Json.JsonParser.Deserialize<NIMTextMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeVideo:
-                    message = NimUtility.Json.JsonParser.Deserialize<NIMVedioMessage>(msgJsonValue);
+                    message = NimUtility.Json.JsonParser.Deserialize<NIMVideoMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeNotification:
                     message = NimUtility.Json.JsonParser.Deserialize<NIMTeamNotificationMessage>(msgJsonValue);

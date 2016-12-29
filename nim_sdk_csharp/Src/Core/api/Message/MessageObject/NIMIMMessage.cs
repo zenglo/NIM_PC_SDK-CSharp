@@ -335,6 +335,24 @@ namespace NIM
             set { _teamForcePush = value ? 1 : 0; }
         }
 
+        [JsonProperty(PropertyName = "anti_spam_enable")]
+        private int _antiSpamEnabled { get; set; }
+
+        /// <summary>
+        /// 是否需要过易盾反垃圾,默认false
+        /// </summary>
+        [JsonIgnore]
+        public bool AntiSpamEnabled
+        {
+            get { return _antiSpamEnabled == 1; }
+            set { _antiSpamEnabled = value ? 1 : 0; }
+        }
+
+        /// <summary>
+        /// (可选)开发者自定义的反垃圾字段,长度限制：5000字符 
+        /// </summary>
+        [JsonProperty(PropertyName = "anti_spam_content")]
+        public string AntiSpamContent { get; set; }
         public NIMMessageSetting()
         {
             ServerSaveHistory = true;
@@ -345,6 +363,7 @@ namespace NIM
             NeedPush = true;
             NeedCounting = true;
             NeedPushPrefix = true;
+            _antiSpamEnabled = 0;
         }
 
     }

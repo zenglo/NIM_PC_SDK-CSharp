@@ -24,6 +24,10 @@ namespace NIMChatRoom
 
     public delegate void RemoveMemberDelegate(long roomId, NIM.ResponseCode errorCode);
 
+    public delegate void UpdateRoomInfoDelegate(long roomId, NIM.ResponseCode errorCode);
+
+    public delegate void UpdateMyRoleDelegate(long roomId, NIM.ResponseCode errorCode);
+
     public delegate void GetRoomInfoDelegate(long roomId, NIM.ResponseCode errorCode, ChatRoomInfo info);
 
     public delegate void TempMuteMemberDelegate(long roomId, NIM.ResponseCode errorCode, MemberInfo info);
@@ -117,7 +121,24 @@ namespace NIMChatRoom
             }
         }
 
-
+        public static readonly nim_chatroom_update_room_info_cb_func UpdateRoomInfoCallback = OnUpdateRoomInfoResult;
+        [MonoPInvokeCallback(typeof(nim_chatroom_update_room_info_cb_func))]
+        private static void OnUpdateRoomInfoResult(long roomId, int resCode,string jsonExt, IntPtr userData)
+        {
+            if (userData != IntPtr.Zero)
+            {
+                NimUtility.DelegateConverter.InvokeOnce<UpdateRoomInfoDelegate>(userData, roomId, (NIM.ResponseCode)resCode);
+            }
+        }
+        public static readonly nim_chatroom_update_my_role_cb_func UpdateMyRoleCallback = OnUpdateMyRoleResult;
+        [MonoPInvokeCallback(typeof(nim_chatroom_update_my_role_cb_func))]
+        private static void OnUpdateMyRoleResult(long roomId, int resCode, string jsonExt, IntPtr userData)
+        {
+            if (userData != IntPtr.Zero)
+            {
+                NimUtility.DelegateConverter.InvokeOnce<UpdateMyRoleDelegate>(userData, roomId, (NIM.ResponseCode)resCode);
+            }
+        }
         public static readonly nim_chatroom_queue_list_cb_func ChatroomQueueListCallback = OnQueryMICList;
 
         [MonoPInvokeCallback(typeof(nim_chatroom_queue_list_cb_func))]

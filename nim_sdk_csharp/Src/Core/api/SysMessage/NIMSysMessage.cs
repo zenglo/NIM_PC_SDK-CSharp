@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace NIM.SysMessage
 {
-    public class NIMSysMessag : NimUtility.NimJsonObject<NIMSysMessag>
+    public class NIMSysMessage : NimUtility.NimJsonObject<NIMSysMessage>
     {
         /// <summary>
         ///通知错误码 
@@ -177,9 +177,9 @@ namespace NIM.SysMessage
 
     public class NIMSysMsgEventArgs : EventArgs
     {
-        public NIMSysMessag Message { get; private set; }
+        public NIMSysMessage Message { get; private set; }
 
-        public NIMSysMsgEventArgs(NIMSysMessag msg)
+        public NIMSysMsgEventArgs(NIMSysMessage msg)
         {
             Message = msg;
         }

@@ -15,7 +15,7 @@ using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
 
 namespace NIM.SysMessage
 {
-    public delegate void ReceiveSysMsgResult(NIMSysMessag msg);
+    public delegate void ReceiveSysMsgResult(NIMSysMessage msg);
 
     public delegate void SendSysMsgResult(MessageAck arc);
 
@@ -38,7 +38,7 @@ namespace NIM.SysMessage
                 NIMSysMsgEventArgs args = null;
                 if (!string.IsNullOrEmpty(result))
                 {
-                    var msg = NIMSysMessag.Deserialize(result);
+                    var msg = NIMSysMessage.Deserialize(result);
                     args = new NIMSysMsgEventArgs(msg);
                 }
                 ReceiveSysMsgHandler(null, args);

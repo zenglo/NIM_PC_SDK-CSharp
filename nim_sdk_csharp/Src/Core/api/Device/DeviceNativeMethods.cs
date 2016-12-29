@@ -80,6 +80,10 @@ namespace NIM
         internal static extern bool nim_vchat_custom_video_data(ulong time, IntPtr data, uint size, uint width, uint height,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
 
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_process_info", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vid);
+
         #endregion
     }
 }

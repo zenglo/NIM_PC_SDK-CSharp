@@ -2,6 +2,9 @@
 
 namespace NIMChatRoom
 {
+    /// <summary>
+    /// 聊天室信息
+    /// </summary>
     public class ChatRoomInfo : NimUtility.NimJsonObject<ChatRoomInfo>
     {
         /// <summary>
@@ -41,7 +44,7 @@ namespace NIMChatRoom
         public int Valid { get; set; }
 
         /// <summary>
-        ///第三方扩展字段, 长度4k 
+        ///第三方扩展字段, 必须为可以解析为Json的非格式化的字符串, 长度4k
         /// </summary>
         [JsonProperty("ext")]
         public string Extension { get; set; }
@@ -58,6 +61,7 @@ namespace NIMChatRoom
         /// <summary>
         /// 聊天室禁言标志
         /// </summary>
+        [JsonIgnore]
         public bool IsMuted
         {
             get { return _isMuted == 1; }

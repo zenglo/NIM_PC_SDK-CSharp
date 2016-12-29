@@ -85,7 +85,17 @@ namespace NIMChatRoom
         /// <summary>
         /// 成员主动更新了聊天室内的角色信息(仅指nick/avator/ext)
         /// </summary>
-        kNIMChatRoomNotificationIdMyRoleUpdated = 316
+        kNIMChatRoomNotificationIdMyRoleUpdated = 316,
+
+        /// <summary>
+        ///聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态 
+        /// </summary>
+        kNIMChatRoomNotificationIdRoomMuted = 318,
+
+        /// <summary>
+        ///聊天室解除全体禁言状态 
+        /// </summary>
+        kNIMChatRoomNotificationIdRoomDeMuted = 319
     }
 
     public class Notification : NimUtility.NimJsonObject<Notification>
@@ -102,10 +112,10 @@ namespace NIMChatRoom
         public class Data
         {
             /// <summary>
-            /// 上层开发自定义的事件通知扩展字段
+            /// 上层开发自定义的事件通知扩展字段, 必须为可以解析为Json的非格式化的字符串
             /// </summary>
             [JsonProperty("ext")]
-            public NimUtility.Json.JsonExtension Extension { get; set; }
+            public string Extension { get; set; }
 
             /// <summary>
             /// 操作者的账号id
@@ -137,6 +147,24 @@ namespace NIMChatRoom
             /// </summary>
             [JsonProperty("muteDuration")]
             public long MuteDuration { get; set; }
+
+            /// <summary>
+            /// 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否禁言状态，1:是 缺省或0:不是
+            /// </summary>
+            [JsonProperty("muted")]
+            public int Muted { get; set; }
+
+            /// <summary>
+            /// 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否临时禁言状态，1:是 缺省或0:不是
+            /// </summary>
+            [JsonProperty("tempMuted")]
+            public int TempMuted { get; set; }
+
+            /// <summary>
+            /// 当通知为kNIMChatRoomNotificationIdMemberIn，代表临时禁言时长(秒)， 其他通知事件不带该数据
+            /// </summary>
+            [JsonProperty("muteTtl")]
+            public long TempMutedDuration { get; set; }
         }
     }
 }

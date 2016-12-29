@@ -57,12 +57,19 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("sync_session_ack")]
         public bool SyncSessionAck { get; set; }
 
+        /// <summary>
+        /// 登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("login_retry_max_times")]
+        public int LoginRetryMaxTimes { get; set; }
+
         public NIMSDKCommonSetting()
         {
             PredownloadAttachmentThumbnail = true;
             UsePriviteServer = false;
             SyncSessionAck = true;
             LogLevel = NIMSDKLogLevel.App;
+            LoginRetryMaxTimes = 0;
         }
     }
 

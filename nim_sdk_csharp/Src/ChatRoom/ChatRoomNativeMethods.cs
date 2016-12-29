@@ -80,12 +80,26 @@ IntPtr user_data);
  IntPtr user_data);
     internal static class ChatRoomNativeMethods
     {
-#if DEBUG
-        private const string ChatRoomNativeDll = "nim_chatroom.dll";
-#else
-        const string ChatRoomNativeDll = "nim_chatroom.dll";
+        //#if DEBUG
+        //        private const string ChatRoomNativeDll = "nim_chatroom.dll";
+        //#else
+        //        const string ChatRoomNativeDll = "nim_chatroom.dll";
+        //#endif
+#if UNITY
+#if UNITY_IOS
+            public const string ChatRoomNativeDll = "__Internal";
+#elif UNITY_ANDROID || UNITY_STANDALONE_LINUX
+            public const string ChatRoomNativeDll = "nim_chatroom";
+#elif UNITY_STANDALONE_WIN
+        public const string ChatRoomNativeDll = "nim_chatroom";
 #endif
-#if !UNITY
+
+#elif DEBUG
+        public const string ChatRoomNativeDll = "nim_chatroom.dll";
+#else
+        public const string ChatRoomNativeDll = "nim_chatroom.dll";
+#endif
+
         /// <summary>
         ///注册全局登录回调 
         /// </summary>
@@ -174,12 +188,6 @@ IntPtr user_data);
         internal static extern void nim_chatroom_set_member_attribute_async(long room_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string notify_ext, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, NimChatroomSetMemberAttributeCbFunc cb, IntPtr user_data);
 
         /// <summary>
-        /// 异步关闭聊天室（只有创建者有权限）
-        /// </summary>
-        [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_close_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_chatroom_close_async(long room_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string notify_ext, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, NimChatroomCloseCbFunc cb, IntPtr user_data);
-
-        /// <summary>
         /// 异步获取当前聊天室信息
         /// </summary>
         [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_get_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -208,6 +216,14 @@ IntPtr user_data);
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string user,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string password);
 
+        /// <summary>
+        /// 获取登陆状态
+        /// </summary>
+        
+        [DllImport(ChatRoomNativeDll, EntryPoint = "nim_chatroom_get_login_state", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int nim_chatroom_get_login_state(
+            long room_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
         /// <summary>
         /// 临时禁言/解禁 
         /// </summary>
@@ -291,6 +307,6 @@ IntPtr user_data);
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_drop_cb_func cb,
         IntPtr user_data);
-#endif
+
     }
 }

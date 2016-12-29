@@ -2,7 +2,7 @@
 
 namespace NIM
 {
-    public class NIMVedioAttachment : NIMMessageAttachment
+    public class NIMVideoAttachment : NIMMessageAttachment
     {
         [JsonProperty("dur")]
         public int Duration { get; set; }
@@ -14,14 +14,14 @@ namespace NIM
         public int Height { get; set; }
     }
 
-    public class NIMVedioMessage : NIMIMMessage
+    public class NIMVideoMessage : NIMIMMessage
     {
-        public NIMVedioMessage()
+        public NIMVideoMessage()
         {
             MessageType = NIMMessageType.kNIMMessageTypeVideo;
         }
 
         [JsonProperty(AttachmentPath)]
-        public NIMVedioAttachment VedioAttachment { get; set; }
+        public NIMVideoAttachment VideoAttachment { get; set; }
     }
 }

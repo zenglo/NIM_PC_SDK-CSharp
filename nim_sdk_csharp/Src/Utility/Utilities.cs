@@ -12,4 +12,24 @@ namespace NimUtility
             return Guid.NewGuid().ToString();
         }
     }
+
+    public class DelegateBaton<T>
+    {
+        public object Data { get; set; }
+
+        public T Action { get; set; }
+
+        public IntPtr ToIntPtr()
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(this);
+            return ptr;
+        }
+
+        public static DelegateBaton<T> FromIntPtr(IntPtr ptr)
+        {
+            var obj = DelegateConverter.ConvertFromIntPtr(ptr);
+            var baton = obj as DelegateBaton<T>;
+            return baton;
+        }
+    }
 }

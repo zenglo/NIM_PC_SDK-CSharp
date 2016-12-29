@@ -94,10 +94,14 @@ namespace NimUtility.Json
         /// <returns></returns>
         public static string Serialize(object obj)
         {
-            JsonSerializerSettings setting = new JsonSerializerSettings();
-            setting.NullValueHandling = NullValueHandling.Ignore;
-            setting.Converters.Add(new JExtConverter());
-            return JsonConvert.SerializeObject(obj, Formatting.None, setting);
+            if(obj != null)
+            {
+                JsonSerializerSettings setting = new JsonSerializerSettings();
+                setting.NullValueHandling = NullValueHandling.Ignore;
+                setting.Converters.Add(new JExtConverter());
+                return JsonConvert.SerializeObject(obj, Formatting.None, setting);
+            }
+            return string.Empty;
         }
 
         public static string SerializeWithIndented(object obj)

@@ -13,10 +13,39 @@ namespace NIMChatRoom
         kNIMChatRoomMsgTypeText = 0,
 
         /// <summary>
+        ///图片类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeImage = 1,
+
+        /// <summary>
+        ///声音类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeAudio = 2,
+
+        /// <summary>
+        ///视频类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeVideo = 3,
+
+        /// <summary>
+        ///位置类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeLocation = 4,
+
+        /// <summary>
         ///活动室通知 
         /// </summary>
         kNIMChatRoomMsgTypeNotification = 5,
 
+        /// <summary>
+        ///文件类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeFile = 6,
+
+        /// <summary>
+        ///提醒类型消息 
+        /// </summary>
+        kNIMChatRoomMsgTypeTips = 10,
         /// <summary>
         ///自定义消息 
         /// </summary>
@@ -25,7 +54,48 @@ namespace NIMChatRoom
         /// <summary>
         ///未知类型消息，作为默认值 
         /// </summary>
-        kNIMChatRoomMsgTypeUnknown = 1000,
+        kNIMChatRoomMsgTypeUnknown = 1000
+    }
+
+    /// <summary>
+    /// 聊天室消息来源端
+    /// </summary>
+    public enum NIMChatRoomClientType
+    {
+        /// <summary>
+        ///default,unset 
+        /// </summary>
+        kNIMChatRoomClientTypeDefault = 0,
+
+        /// <summary>
+        /// android 
+        /// </summary>
+        kNIMChatRoomClientTypeAndroid = 1,
+
+        /// <summary>
+        /// ios
+        /// </summary>
+        kNIMChatRoomClientTypeiOS = 2,
+
+        /// <summary>
+        /// PC
+        /// </summary>
+        kNIMChatRoomClientTypePCWindows = 4,
+
+        /// <summary>
+        /// WindowsPhone
+        /// </summary>
+        kNIMChatRoomClientTypeWindowsPhone = 8,
+
+        /// <summary>
+        /// web
+        /// </summary>
+        kNIMChatRoomClientTypeWeb = 16,
+
+        /// <summary>
+        /// RestAPI
+        /// </summary>
+        kNIMChatRoomClientTypeRestAPI = 32
     }
 
     /// <summary>
@@ -55,13 +125,25 @@ namespace NIMChatRoom
         /// 消息发送方客户端类型,服务器填写,发送方不需要填写
         /// </summary>
         [JsonProperty("from_client_type")]
-        public int SenderClientType { get; set; }
+        public NIMChatRoomClientType SenderClientType { get; set; }
 
         /// <summary>
         /// 消息发送方昵称
         /// </summary>
         [JsonProperty("from_nick")]
         public string SenderNickName { get; set; }
+
+        /// <summary>
+        /// 消息发送方头像,服务器填写,发送方不需要填写
+        /// </summary>
+        [JsonProperty("from_avator")]
+        public string SenderAvator { get; set; }
+
+        /// <summary>
+        /// 消息发送方身份扩展字段,服务器填写,发送方不需要填写
+        /// </summary>
+        [JsonProperty("from_ext")]
+        public string SenderExtension { get; set; }
 
         /// <summary>
         /// 消息类型

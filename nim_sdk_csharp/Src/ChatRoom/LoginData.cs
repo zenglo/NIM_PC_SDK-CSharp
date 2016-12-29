@@ -23,7 +23,7 @@ namespace NIMChatRoom
         /// 聊天室可用的扩展字段,选填
         /// </summary>
         [JsonProperty("ext")]
-        public NimUtility.Json.JsonExtension Extension { get; set; }
+        public string Extension { get; set; }
 
         /// <summary>
         /// 进入聊天室通知开发者扩展字段

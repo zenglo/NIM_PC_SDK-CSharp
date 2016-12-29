@@ -47,6 +47,9 @@ namespace NIM
     }
 
     public delegate void NimWriteLogDelegate(int level, string log);
+
+    public delegate void NimNetworkDetectionDelegate(NetDetectionRes error, NetDetectResult result, IntPtr userData);
+
     public class GlobalAPI
     {
         /// <summary>
@@ -94,6 +97,34 @@ namespace NIM
             DelegateConverter.Invoke<NimWriteLogDelegate>(user_data, log_level, log);
         }
 
+        /// <summary>
+        /// 网络探测接口
+        /// </summary>
+        /// <param name="type">探测类型</param>
+        /// <param name="appKey">应用标识</param>
+        /// <param name="resultCb">操作结果的回调函数</param>
+        /// <param name="userData"></param>
+        //public static void DetectNetwork(NIMNetDetectType type,string appKey, NimNetworkDetectionDelegate resultCb,IntPtr userData)
+        //{
+        //    NimUtility.DelegateBaton<NimNetworkDetectionDelegate> baton = new DelegateBaton<NimNetworkDetectionDelegate>();
+        //    baton.Action = resultCb;
+        //    baton.Data = userData;
+        //    nim_global_net_detect(type, appKey, null, NetDetectionCallback, baton.ToIntPtr());
+        //}
+
+        private static nim_global_net_detect_cb_func NetDetectionCallback = OnNetDetected;
+
+        private static void OnNetDetected(int rescode, string json_params, IntPtr user_data)
+        {
+            var baton = DelegateBaton<NimNetworkDetectionDelegate>.FromIntPtr(user_data);
+            if (baton != null && baton.Action != null)
+            {
+                var result = NetDetectResult.Deserialize(json_params);
+                baton.Action((NetDetectionRes)rescode, result, (IntPtr)baton.Data);
+            }
+            DelegateConverter.FreeMem(user_data);
+        }
+
         #region NIM C SDK native methods
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -116,6 +147,13 @@ namespace NIM
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_reg_sdk_log_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_global_reg_sdk_log_cb(string jsonExt, nim_sdk_log_cb_func cb, IntPtr data);
+
+        //[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_net_detect", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        //private static extern void nim_global_net_detect(NIMNetDetectType type,
+        //   [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]  string app_key,
+        //   [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]  string json_extension,
+        //   nim_global_net_detect_cb_func cb,
+        //   IntPtr user_data);
         #endregion
     }
 }

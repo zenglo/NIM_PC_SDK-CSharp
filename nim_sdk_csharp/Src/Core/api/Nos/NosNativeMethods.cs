@@ -118,12 +118,28 @@ namespace NIM.Nos
             DownloadInfoCb info_cb, IntPtr info_user_data);
 
         [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_upload_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_nos_upload_ex([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string local_file,
+        internal static extern void nim_nos_upload_ex(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string local_file,
             string json_extension,
             UploadCb res_cb, IntPtr res_user_data,
             UploadPrgCb prg_cb, IntPtr prg_user_data,
             UploadSpeedCb speed_cb, IntPtr speed_user_data,
             UploadInfoCb info_cb, IntPtr info_user_data);
+
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_reg_upload_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_reg_upload_cb(UploadCb cb, IntPtr user_data);
+
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_stop_upload_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_stop_upload_ex(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string task_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension);
+
+        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_nos_stop_download_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_nos_stop_download_ex(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string task_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension);
         #endregion
     }
 }

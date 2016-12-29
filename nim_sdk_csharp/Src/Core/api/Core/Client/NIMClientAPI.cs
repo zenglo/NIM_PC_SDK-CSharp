@@ -57,13 +57,6 @@ namespace NIM
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
-#if UNITY
-            //Import bug report U3D SDK
-			if (RuntimePlatform.IPhonePlayer == Application.platform)
-				ExceptHandler.Init("I005309131");
-			else
-            	ExceptHandler.Init("A005777174"); //NIM BUGRPT APPID
-#endif
             if (_sdkInitialized)
                 return true;
             string configJson = null;

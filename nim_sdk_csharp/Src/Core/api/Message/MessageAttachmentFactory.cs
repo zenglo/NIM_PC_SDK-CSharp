@@ -22,7 +22,7 @@ namespace NIM.Message
                         attach = jObj.ToObject<NIMAudioAttachment>();
                         break;
                     case NIMMessageType.kNIMMessageTypeVideo:
-                        attach = jObj.ToObject<NIMVedioAttachment>();
+                        attach = jObj.ToObject<NIMVideoAttachment>();
                         break;
                 }
                 return attach;

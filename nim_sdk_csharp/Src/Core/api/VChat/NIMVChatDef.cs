@@ -11,24 +11,71 @@ using System.Runtime.InteropServices;
 
 namespace NIM
 {
-    /** @enum NIMVideoChatSessionType 音视频通话状态通知类型 */
+    /// <summary>
+    /// NIMVideoChatSessionType 音视频通话状态通知类型 
+    /// </summary>
     public enum NIMVideoChatSessionType
     {
-        kNIMVideoChatSessionTypeStartRes = 1,		/**< 创建通话结果 */
-        kNIMVideoChatSessionTypeInviteNotify = 2,		/**< 通话邀请 */
-        kNIMVideoChatSessionTypeCalleeAckRes = 3,		/**< 确认通话，接受拒绝结果 */
-        kNIMVideoChatSessionTypeCalleeAckNotify = 4,		/**< 确认通话，接受拒绝通知 */
-        kNIMVideoChatSessionTypeControlRes = 5,		/**< NIMVChatControlType 结果 */
-        kNIMVideoChatSessionTypeControlNotify = 6,		/**< NIMVChatControlType 通知 */
-        kNIMVideoChatSessionTypeConnect = 7,		/**< 通话中链接状态通知 */
-        kNIMVideoChatSessionTypePeopleStatus = 8,		/**< 通话中成员状态 */
-        kNIMVideoChatSessionTypeNetStatus = 9,		/**< 通话中网络状态 */
-        kNIMVideoChatSessionTypeHangupRes = 10,		/**< 通话挂断结果 */
-        kNIMVideoChatSessionTypeHangupNotify = 11,		/**< 通话被挂断通知 */
-        kNIMVideoChatSessionTypeSyncAckNotify = 12,     /**< 通话接听挂断同步通知 */
-        kNIMVideoChatSessionTypeMp4Notify = 13,     /**< 通知MP4录制状态，包括开始录制和结束录制 */
-        kNIMVideoChatSessionTypeInfoNotify = 14,        /**< 通知实时音视频数据状态 */
-        kNIMVideoChatSessionTypeVolumeNotify = 15,      /**< 通知实时音频发送和混音的音量状态 */
+        /// <summary>
+        /// 创建通话结果
+        /// </summary>
+        kNIMVideoChatSessionTypeStartRes = 1,
+		/// <summary>
+		/// 通话邀请
+		/// </summary>
+        kNIMVideoChatSessionTypeInviteNotify = 2,		
+        /// <summary>
+        /// 确认通话，接受拒绝结果
+        /// </summary>
+        kNIMVideoChatSessionTypeCalleeAckRes = 3,		
+        /// <summary>
+        /// 确认通话，接受拒绝通知
+        /// </summary>
+        kNIMVideoChatSessionTypeCalleeAckNotify = 4,		
+        /// <summary>
+        /// NIMVChatControlType 结果
+        /// </summary>
+        kNIMVideoChatSessionTypeControlRes = 5,		
+        /// <summary>
+        /// NIMVChatControlType 通知
+        /// </summary>
+        kNIMVideoChatSessionTypeControlNotify = 6,		
+        /// <summary>
+        /// 通话中链接状态通知
+        /// </summary>
+        kNIMVideoChatSessionTypeConnect = 7,	
+        /// <summary>
+        /// 通话中成员状态
+        /// </summary>
+        kNIMVideoChatSessionTypePeopleStatus = 8,		
+        /// <summary>
+        /// 通话中网络状态
+        /// </summary>
+        kNIMVideoChatSessionTypeNetStatus = 9,		
+        /// <summary>
+        /// 通话挂断结果
+        /// </summary>
+        kNIMVideoChatSessionTypeHangupRes = 10,		
+        /// <summary>
+        /// 通话被挂断通知
+        /// </summary>
+        kNIMVideoChatSessionTypeHangupNotify = 11,		
+        /// <summary>
+        /// 通话接听挂断同步通知
+        /// </summary>
+        kNIMVideoChatSessionTypeSyncAckNotify = 12,     
+        /// <summary>
+        /// 通知MP4录制状态，包括开始录制和结束录制
+        /// </summary>
+        kNIMVideoChatSessionTypeMp4Notify = 13,   
+        /// <summary>
+        /// 通知实时音视频数据状态
+        /// </summary>
+        kNIMVideoChatSessionTypeInfoNotify = 14,        
+        /// <summary>
+        /// 通知实时音频发送和混音的音量状态
+        /// </summary>
+        kNIMVideoChatSessionTypeVolumeNotify = 15,    
     };
 
     /// <summary>
@@ -319,7 +366,71 @@ namespace NIM
         kNIMVChatMp4RecordInvalid = 404,
     };
 
+    /// <summary>
+    /// NIMVChatSetStreamingModeCode 设置推流模式返回码
+    /// </summary>
+    public enum NIMVChatSetStreamingModeCode
+    {
+        /// <summary>
+        /// 无效的操作
+        /// </summary>
+        kNIMVChatBypassStreamingInvalid = 0,	
+		/// <summary>
+        /// 设置成功
+		/// </summary>
+        kNIMVChatBypassStreamingSuccess = 200,	
+		/// <summary>
+        /// 超过最大允许直播节点数量
+		/// </summary>
+        kNIMVChatBypassStreamingErrorExceedMax = 202,	
+	    /// <summary>
+        /// 必须由主播第一个开启直播
+	    /// </summary>
+        kNIMVChatBypassStreamingErrorHostNotJoined = 203,
+		/// <summary>
+		///  互动直播服务器错误
+		/// </summary>
+        kNIMVChatBypassStreamingErrorServerError = 204,	
+		/// <summary>
+		/// 互动直播其他错误
+		/// </summary>
+        kNIMVChatBypassStreamingErrorOtherError = 205,			
+        /// <summary>
+        ///  互动直播服务器没有响应
+        /// </summary>
+        kNIMVChatBypassStreamingErrorNoResponse = 404,			
+        /// <summary>
+        /// 重连过程中无法进行相关操作，稍后再试
+        /// </summary>
+        kNIMVChatBypassStreamingErrorReconnecting = 405,	
+		/// <summary>
+		/// 互动直播设置超时
+		/// </summary>
+        kNIMVChatBypassStreamingErrorTimeout = 408,	
+    };
 
+   /// <summary>
+    ///  NIMVChatVideoSplitMode 主播设置的直播分屏模式 
+   /// </summary>
+   public enum NIMVChatVideoSplitMode
+    {
+       /// <summary>
+       ///  底部横排浮窗
+       /// </summary>
+        kNIMVChatSplitBottomHorFloating = 0,	
+		/// <summary>
+		/// 顶部横排浮窗
+		/// </summary>
+        kNIMVChatSplitTopHorFloating = 1,			
+       /// <summary>
+       /// 平铺
+       /// </summary>
+        kNIMVChatSplitLatticeTile = 2,		
+	   /// <summary>
+	   /// 裁剪平铺
+	   /// </summary>
+        kNIMVChatSplitLatticeCuttingTile = 3,	
+    };
 
     /// <summary>
     /// 发起和接受通话时的参数
@@ -344,10 +455,115 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("custom_video")]
         public int CustomVideo { get; set; }
 
+		/// <summary>
+		/// 是否需要录制音频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数）
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("record")]
+		public int ServerAudioRecord { get; set; }
+
+		/// <summary>
+		/// 是否需要录制视频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数）
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("video_record")]
+		public int ServerVideoRecord { get; set; }
+
+        /// <summary>
+        ///  视频发送编码码率 >=100000 <=600000有效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("max_video_rate")]
+        public int MaxVideoRate { get; set; }
+
+        /// <summary>
+        /// 视频聊天分辨率选择 NIMVChatVideoQuality
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("video_quality")]
+        public int VideoQuality { get; set; }
+
+        /// <summary>
+        /// 视频画面帧率 NIMVChatVideoFrameRate
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("frame_rate")]
+        public int FrameRate { get; set; }
+
+        /// <summary>
+        /// 直播推流地址，非空代表主播旁路直播，此时MeetingMode、kNRTCChatBypassRtmp无效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("rtmp_url")]
+        public string RtmpUrl { get; set; }
+
+        /// <summary>
+        /// 是否是旁路直播观众，此时MeetingMode无效 >0表示是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("bypass_rtmp")]
+        public int BypassRtmp { get; set; }
+
+        /// <summary>
+        /// 主播控制的直播推流时的分屏模式 NIMVChatVideoSplitMode
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("split_mode")]
+        public int SplitMode { get; set; }
+
+        /// <summary>
+        /// 是否需要推送 >0表示是 默认是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("push_enable")]
+        public int PushEnable { get; set; }
+
+        /// <summary>
+        /// 是否需要角标计数 >0表示是 默认是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("need_badge")]
+        public int NeedBadge { get; set; }
+
+        /// <summary>
+        /// 是否需要推送昵称 >0表示是 默认是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("need_nick")]
+        public int NeedNick { get; set; }
+
+
+        [Newtonsoft.Json.JsonProperty("high_rate")]
+        public int AudioHighRate { get; set; }
+
+        /// <summary>
+        /// JSON格式,推送payload
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("payload")]
+        public string PayLoad { get; set; }
+
+        /// <summary>
+        /// 推送声音
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("sound")]
+        public string Sound { get; set; }
+
+        /// <summary>
+        ///  是否使用多人模式 >0表示是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("meeting_mode")]
+        public int MeetingMode { get; set; }
+
+      
         public NIMVChatInfo()
         {
             CustomAudio = 0;
             CustomVideo = 0;
+			ServerAudioRecord = 0;
+			ServerVideoRecord = 0;
+            AudioHighRate = 0;
+            MaxVideoRate = 0;
+            MeetingMode = 0;
+            VideoQuality = 0;
+            FrameRate = 0;
+            RtmpUrl = "";
+            BypassRtmp = 0;
+            SplitMode = 0;
+            PushEnable = 1;
+            NeedBadge = 1;
+            NeedNick = 1;
+            PayLoad = "";
+            Sound = "";
+            MeetingMode = 0;
             Uids = null;
         }
     }

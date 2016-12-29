@@ -34,7 +34,7 @@ namespace NIMChatRoom
         /// 成员ID 
         /// </summary>
         [JsonProperty("account_id")]
-        public string MemberId { get; private set; }
+        public string MemberId { get; set; }
 
         /// <summary>
         /// 身份标识

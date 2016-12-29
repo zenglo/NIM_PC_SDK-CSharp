@@ -61,6 +61,9 @@ namespace NIMChatRoom
         kNIMChatRoomOnlineStateOnline = 1
     }
 
+    /// <summary>
+    /// 聊天室成员信息
+    /// </summary>
     public class MemberInfo : NimUtility.NimJsonObject<MemberInfo>
     {
         /// <summary>

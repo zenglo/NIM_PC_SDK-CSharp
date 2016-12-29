@@ -48,6 +48,7 @@ namespace NimUtility.Json
         public string Value { get { return Serialize(); } }
 
         private Dictionary<string, object> _dictionary;
+        
 
         public JsonExtension()
         {
@@ -63,6 +64,14 @@ namespace NimUtility.Json
         {
             var value = token.ToString();
             _dictionary = JsonParser.Deserialize<Dictionary<string, object>>(value);
+        }
+
+        public static JsonExtension createFromString(string json)
+        {
+            Dictionary<string, object> dictionary = JsonParser.Deserialize<Dictionary<string, object>>(json);
+            if (dictionary != null)
+                return new JsonExtension(dictionary);
+            return null;
         }
 
         public void AddItem(string key,object value)

@@ -7,7 +7,6 @@ using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
 using MonoPInvokeCallbackAttribute = NIM.MonoPInvokeCallbackAttribute;
 #endif
 
-#if !UNITY
 namespace NIMChatRoom
 {
     /// <summary>
@@ -74,18 +73,30 @@ namespace NIMChatRoom
         /// </summary>
         public static event ReceiveNotificationDelegate ReceiveNotificationHandler;
 
+        private static bool _chatRoomInitialized = false;
         /// <summary>
         /// 初始化聊天实模块
         /// </summary>
         public static void Init()
         {
-            ChatRoomNativeMethods.nim_chatroom_init(null);
-            RegisterLoginCallback();
-            RegisterExitChatRoomCallback();
-            RegisterLinkStateChangedCallback();
-            RegisterReceiveMsgCallback();
-            RegisterReceiveNotificationMsgCallback();
-            RegisterSendMsgArcCallback();
+            if (_chatRoomInitialized)
+                return;
+            try
+            {
+                ChatRoomNativeMethods.nim_chatroom_init(null);
+                RegisterLoginCallback();
+                RegisterExitChatRoomCallback();
+                RegisterLinkStateChangedCallback();
+                RegisterReceiveMsgCallback();
+                RegisterReceiveNotificationMsgCallback();
+                RegisterSendMsgArcCallback();
+            }
+            catch(Exception e)
+            {
+                _chatRoomInitialized = false;
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+            _chatRoomInitialized = true;
         }
 
         /// <summary>
@@ -118,7 +129,11 @@ namespace NIMChatRoom
         /// </summary>
         public static void Cleanup()
         {
-            ChatRoomNativeMethods.nim_chatroom_cleanup(null);
+            if (_chatRoomInitialized)
+            {
+                ChatRoomNativeMethods.nim_chatroom_cleanup(null);
+                _chatRoomInitialized = false;
+            }
         }
 
         private static readonly NimChatroomLoginCbFunc ParaseChatRoomLoginResult = OnLogin;
@@ -281,18 +296,6 @@ namespace NIMChatRoom
         }
 
         /// <summary>
-        /// 关闭聊天室
-        /// </summary>
-        /// <param name="roomId">聊天室ID</param>
-        /// <param name="notify">放到事件通知中的扩展字段</param>
-        /// <param name="cb">操作结果委托</param>
-        public static void CloseRoom(long roomId, string notify, CloseRoomDelegate cb)
-        {
-            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            ChatRoomNativeMethods.nim_chatroom_close_async(roomId, notify, null, CallbackBridge.RoomClosedCallback, ptr);
-        }
-
-        /// <summary>
         /// 获取聊天室信息
         /// </summary>
         /// <param name="roomId">聊天室ID</param>
@@ -301,6 +304,15 @@ namespace NIMChatRoom
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_get_info_async(roomId, null, CallbackBridge.GetRoomInfoCallback, ptr);
+        }
+        /// <summary>
+        /// 获取聊天室状态;
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <returns></returns>
+        public static int GetLoginState(long roomId)
+        {
+            return ChatRoomNativeMethods.nim_chatroom_get_login_state(roomId, null);
         }
 
         /// <summary>
@@ -354,7 +366,34 @@ namespace NIMChatRoom
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_temp_mute_member_async(roomId, accid, duration, notify, notify_ext, null, CallbackBridge.TempMuteMemberCallback, ptr);
         }
-
+        /// <summary>
+        /// 更新聊天室信息;
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <param name="info">只支持修改name,announcement,broadcast_url,ext字段修改</param>
+        /// <param name="cb">操作结果回调</param>
+        /// <param name="notify">是否聊天室内广播通知</param>
+        /// <param name="notify_ext">通知中的自定义字段，长度限制2048</param>
+        public static void UpdateRoomInfo(long roomId, ChatRoomInfo info, UpdateRoomInfoDelegate cb, bool notify, string notify_ext)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var json = info.Serialize();
+            ChatRoomNativeMethods.nim_chatroom_update_room_info_async(roomId, json, notify, notify_ext, null, CallbackBridge.UpdateRoomInfoCallback, ptr);
+        }
+        /// <summary>
+        /// 更新我的信息;
+        /// </summary>
+        /// <param name="roomId">聊天室ID</param>
+        /// <param name="info">只支持修改nick,avatar,ext字段修改</param>
+        /// <param name="cb">操作结果回调</param>
+        /// <param name="notify">是否聊天室内广播通知</param>
+        /// <param name="notify_ext">通知中的自定义字段，长度限制2048</param>
+        public static void UpdateMyRoleInfo(long roomId, MemberInfo info, UpdateMyRoleDelegate cb, bool notify, string notify_ext)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var json = info.Serialize();
+            ChatRoomNativeMethods.nim_chatroom_update_my_role_async(roomId, json, notify, notify_ext, null, CallbackBridge.UpdateMyRoleCallback, ptr);
+        }
         /// <summary>
         /// 排序列出所有麦序元素 
         /// </summary>
@@ -414,4 +453,3 @@ namespace NIMChatRoom
         }
     }
 }
-#endif

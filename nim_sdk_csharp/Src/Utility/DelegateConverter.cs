@@ -117,5 +117,15 @@ namespace NimUtility
             GCHandle handle = GCHandle.FromIntPtr(ptr);
             handle.Free();
         }
+
+        public static void ClearHandles()
+        {
+            foreach(var item in _allocedMemDic)
+            {
+                GCHandle handle = GCHandle.FromIntPtr(item.Key);
+                handle.Free();
+            }
+            _allocedMemDic.Clear();
+        }
     }
 }
