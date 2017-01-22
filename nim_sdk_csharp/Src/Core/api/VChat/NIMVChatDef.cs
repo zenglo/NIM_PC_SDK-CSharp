@@ -498,6 +498,12 @@ namespace NIM
         public int BypassRtmp { get; set; }
 
         /// <summary>
+        /// 是否开启服务器对直播推流录制（需要开启服务器能力）， >0表示是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("rtmp_record")]
+        public int RtmpRecord { get; set; }
+
+        /// <summary>
         /// 主播控制的直播推流时的分屏模式 NIMVChatVideoSplitMode
         /// </summary>
         [Newtonsoft.Json.JsonProperty("split_mode")]

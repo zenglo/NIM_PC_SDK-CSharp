@@ -30,7 +30,7 @@ namespace NIM.Plugin
             userData.InvokeOnce<RequestChatRoomLoginInfoDelegate>((ResponseCode)errorCode, result);
         }
         
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_plugin_chatroom_request_enter_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_plugin_chatroom_request_enter_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_plugin_chatroom_request_enter_async(long roomId,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string jsonExtension,
             NimPluginChatroomRequestLoginCbFunc cb, IntPtr ptr);

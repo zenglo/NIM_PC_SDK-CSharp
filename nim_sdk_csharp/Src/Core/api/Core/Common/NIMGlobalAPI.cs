@@ -132,23 +132,23 @@ namespace NIM
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string log,
             IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_free_str_buf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_global_free_str_buf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_global_free_str_buf(IntPtr str);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_free_buf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_global_free_buf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_global_free_buf(IntPtr data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_set_proxy", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_global_set_proxy", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_global_set_proxy(NIMProxyType type,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string host,
             int port,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string user,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string password);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_reg_sdk_log_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_global_reg_sdk_log_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_global_reg_sdk_log_cb(string jsonExt, nim_sdk_log_cb_func cb, IntPtr data);
 
-        //[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_global_net_detect", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        //[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_global_net_detect", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         //private static extern void nim_global_net_detect(NIMNetDetectType type,
         //   [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]  string app_key,
         //   [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]  string json_extension,

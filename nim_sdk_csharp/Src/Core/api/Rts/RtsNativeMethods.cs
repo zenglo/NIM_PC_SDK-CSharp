@@ -215,67 +215,67 @@ namespace NIM
 
             #region NIM C SDK native methods
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_start", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_start", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_start(int channel_type, string uid,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsStartCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_start_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_start_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_start_notify_cb_func(NimRtsStartNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_ack", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_ack", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_ack(string session_id, int channel_type, bool accept,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsAckResCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_ack_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_ack_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_ack_notify_cb_func(NimRtsAckNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_sync_ack_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_sync_ack_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_sync_ack_notify_cb_func(NimRtsSyncAckNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_connect_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_connect_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_connect_notify_cb_func(NimRtsConnectNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_member_change_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_member_change_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_member_change_cb_func(NimRtsMemberChangeCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_control", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_control", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_control(string session_id,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsControlResCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_control_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_control_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_control_notify_cb_func(NimRtsControlNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_vchat_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_vchat_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_vchat_mode(string session_id, int mode,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_hangup", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_hangup", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_hangup(string session_id,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
                 NimRtsHangupResCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_hangup_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_hangup_notify_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_hangup_notify_cb_func(NimRtsHangupNotifyCbFunc cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_send_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_send_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_send_data(string session_id, int channel_type, IntPtr data, int size,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_set_rec_data_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_set_rec_data_cb_func", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_set_rec_data_cb_func(NimRtsRecDataCbFunc cb, IntPtr user_data);
             
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_create_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_create_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_create_conf([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string name,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string custom_info,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
                 NimRtsCreateCbFunc cb, 
                 IntPtr user_data);
             
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_rts_join_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_join_conf", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_join_conf([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string name,
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
                 NimRtsJoinCbFunc cb, 

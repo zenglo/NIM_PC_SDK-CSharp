@@ -18,45 +18,45 @@ namespace NIMHttp
         //引用C中的方法
         #region NIM Http C SDK native methods
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_init", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_init", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_init();
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_uninit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_uninit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_uninit();
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_post_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_post_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern int nim_http_post_request(IntPtr request_handle);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_remove_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_remove_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_remove_request(int request_id);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_create_download_file_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_create_download_file_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_http_create_download_file_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url, 
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string download_file_path,
             NimHttpDef.CompletedCb complete_cb, IntPtr user_data);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_create_download_file_range_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_create_download_file_range_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_http_create_download_file_range_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url, 
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string download_file_path,
             long range_start, NimHttpDef.CompletedCb complete_cb, IntPtr user_data);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_create_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_create_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_http_create_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url,
 			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string post_body, 
 			int post_body_size, NimHttpDef.ResponseCb response_cb, IntPtr user_data);
         
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_add_request_header", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_add_request_header", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_add_request_header(IntPtr request_handle,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string key,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string value);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_set_request_progress_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_set_request_progress_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_set_request_progress_cb(IntPtr request_handle, NimHttpDef.ProgressCb progress_cb, IntPtr user_data);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_set_request_method_as_post", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_set_request_method_as_post", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_set_request_method_as_post(IntPtr request_handle);
 
-        [DllImport(NimHttpDef.NIMHttpNativeDLL, EntryPoint = "nim_http_set_timeout", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_set_timeout", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_set_timeout(IntPtr request_handle, int timeout_ms);
 
         #endregion

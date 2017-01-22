@@ -347,10 +347,17 @@ namespace NIM
         /// <param name="json_extension">无效扩展字段</param>
         /// <param name="cb">返回的json_extension无效</param>
         /// <param name="user_data"> APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void SetMemberInBlackList(string uid, bool add, bool audio, string json_extension, nim_vchat_opt_cb_func cb,
-             IntPtr user_data)
+        public static void SetMemberInBlackList(string uid, bool add, bool audio, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_set_member_in_blacklist(uid, add, audio, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_member_in_blacklist(uid, add, audio, json_extension, VChatNormalOptCb, ptr);
+        }
+
+        private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompleted;
+
+        private static void OnNormalOpCompleted(bool ret, int code, string json_extension, IntPtr user_data)
+        {
+            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_opt_cb_func>(user_data, ret, code, json_extension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -362,7 +369,15 @@ namespace NIM
         /// <param name="user_data">APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
         public static void StartRecord(string path, string json_extension, nim_vchat_mp4_record_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_start_record(path, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_start_record(path, json_extension, VChatMP4RecordOptCb, ptr);
+        }
+
+        private static nim_vchat_mp4_record_opt_cb_func VChatMP4RecordOptCb = OnMP4RecordOpCompleted;
+
+        private static void OnMP4RecordOpCompleted(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
+        {
+            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_mp4_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -373,21 +388,28 @@ namespace NIM
         /// <param name="user_data">APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
         public static void StopRecord(string json_extension, nim_vchat_mp4_record_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_stop_record(json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_stop_record(json_extension, VChatMP4RecordOptCb, ptr);
+        }
+
+        private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreated;
+
+        private static void OnVchatRoomCreated(int code, long channel_id, string json_extension, IntPtr user_data)
+        {
+            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_opt2_cb_func>(user_data, code, channel_id, json_extension, IntPtr.Zero);
         }
 
         /// <summary>
-        /// 创建一个多人房间（后续需要主动调用加入接口进入房间）
+        ///创建一个多人房间（后续需要主动调用加入接口进入房间） 
         /// </summary>
         /// <param name="room_name">房间名</param>
         /// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
         /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb">返回的json_extension无效</param>
-        /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void CreateRoom(string room_name, string custom_info, string json_extension,
-            nim_vchat_opt_cb_func cb, IntPtr user_data)
+        /// <param name="cb"></param>
+        public static void CreateRoom(string room_name, string custom_info, string json_extension, nim_vchat_opt2_cb_func cb)
         {
-            VChatNativeMethods.nim_vchat_create_room(room_name, custom_info, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_create_room(room_name, custom_info, json_extension, VChatOpt2Cb, ptr);
         }
 
 
@@ -401,12 +423,14 @@ namespace NIM
         /// <returns></returns>
         public static bool JoinRoom(NIMVideoChatMode mode, string room_name, string json_extension, nim_vchat_opt2_cb_func cb, IntPtr user_data)
         {
-            return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, VChatOpt2Cb, ptr);
         }
 
         public static void UpdateRtmpUrl(string rtmp_url, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_update_rtmp_url(rtmp_url, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_update_rtmp_url(rtmp_url, json_extension, VChatNormalOptCb, ptr);
         }
 
         /// <summary>
@@ -418,7 +442,8 @@ namespace NIM
         /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
         public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_set_video_quality(video_quality, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_video_quality(video_quality, json_extension, VChatNormalOptCb, ptr);
         }
 
         /// <summary>
@@ -430,7 +455,8 @@ namespace NIM
         /// <param name="user_data"></param>
         public static void SetFrameRate(NIMVChatVideoFrameRate frame_rate, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_set_frame_rate(frame_rate, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_frame_rate(frame_rate, json_extension, VChatNormalOptCb, ptr);
         }
 
         /// <summary>
@@ -443,7 +469,41 @@ namespace NIM
         /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
         public static void SetCustomData(bool custom_audio, bool custom_video, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
         {
-            VChatNativeMethods.nim_vchat_set_custom_data(custom_audio, custom_video, json_extension, cb, user_data);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_custom_data(custom_audio, custom_video, json_extension, VChatNormalOptCb, ptr);
+        }
+
+        /// <summary>
+        /// 音视频网络探测接口
+        /// </summary>
+        /// <param name="json_extension"></param>
+        /// <param name="cb">
+        /// 回调函数json_extension keys:
+        /// "task_id":uint64 任务id
+        /// "loss":int 丢包率百分比
+        /// "rttmax":int rtt 最大值
+        /// "rttmin":int rtt 最小值
+        /// "rttavg":int rtt 平均值
+        /// "rttmdev":int rtt 偏差值 mdev
+        /// "detailinfo":string 扩展信息
+        /// </param>
+        /// <param name="user_data"></param>
+        /// <returns>探测任务id
+        /// 200:成功
+        /// 0:流程错误
+        /// 400:非法请求格式
+        /// 417:请求数据不对
+        /// 606:ip为内网ip
+        /// 607:频率超限
+        /// 20001:探测类型错误
+        /// 20002:ip错误
+        /// 20003:sock错误
+        /// </returns>
+        public static ulong DetectNetwork(string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var ret = VChatNativeMethods.nim_vchat_net_detect(json_extension, VChatNormalOptCb, ptr);
+            return ret;
         }
 
     }

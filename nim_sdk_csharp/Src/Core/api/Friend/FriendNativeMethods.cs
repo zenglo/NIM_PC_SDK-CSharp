@@ -26,13 +26,13 @@ namespace NIM
     {
         class FriendNativeMethods
         {
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_reg_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_reg_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_reg_changed_cb(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string json_extension,
                 Friend.Delegate.FriendInfoChangedDelegate cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_get_profile", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_get_profile", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_get_profile(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string accid,
@@ -40,14 +40,14 @@ namespace NIM
                 string json_extension,
                 Friend.Delegate.GetFriendProfileDelegate cb, IntPtr userData);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_get_list", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_get_list", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_get_list(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string json_extension,
                 [MarshalAs(UnmanagedType.FunctionPtr)]
                 Friend.Delegate.GetFriendsListDelegate cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_request(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string accid,
@@ -58,7 +58,7 @@ namespace NIM
                 string json_extension,
                 Friend.Delegate.FriendOperationDelegate cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_delete", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_delete", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_delete(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string accid,
@@ -66,7 +66,7 @@ namespace NIM
                 string json_extension,
                 Friend.Delegate.FriendOperationDelegate cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_update", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_update", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_friend_update(
                 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string friend_json,
@@ -74,7 +74,7 @@ namespace NIM
                 string json_extension,
                 Friend.Delegate.FriendOperationDelegate cb, IntPtr user_data);
 
-            [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_friend_query_friendship_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_query_friendship_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern bool nim_friend_query_friendship_block(
                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (NimUtility.Utf8StringMarshaler))]
                 string accid,

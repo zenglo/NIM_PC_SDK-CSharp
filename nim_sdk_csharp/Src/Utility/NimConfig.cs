@@ -28,6 +28,12 @@ namespace NimUtility
     public class SdkCommonSetting
     {
         /// <summary>
+        /// AppKey
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("app_key")]
+        public string AppKey { get; set; }
+
+        /// <summary>
         /// 数据库秘钥，必填，目前只支持最多32个字符的加密密钥！建议使用32个字符
         /// </summary>
         [Newtonsoft.Json.JsonProperty("db_encrypt_key")]

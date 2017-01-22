@@ -196,6 +196,11 @@ namespace NIM
         kNIMResRoomLocalNeedRequestAgain = 10001,
 
         /// <summary>
+        /// 客户端本地错误号，本地网络错误，需要检查本地网络 
+        /// </summary>
+        kNIMLocalResNetworkError = 10010,
+
+        /// <summary>
         /// 发送文件消息，NOS上传暂停
         /// </summary>
         kNIMLocalResMsgNosUploadCancel = 10200,

@@ -19,7 +19,7 @@ namespace NIM.DataSync
 
         #region NIM C SDK native methods
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_data_sync_reg_complete_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_data_sync_reg_complete_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_data_sync_reg_complete_cb(DataSyncCb cb, IntPtr user_data);
 
         #endregion

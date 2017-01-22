@@ -19,15 +19,6 @@ namespace NIMHttp
     public class NimHttpDef
     {
         /// <summary>
-        /// The NIM Http native DLL
-        /// </summary>
-#if DEBUG
-        public const string NIMHttpNativeDLL = "nim_tools_http.dll";
-#else
-        public const string NIMHttpNativeDLL = "nim_tools_http.dll";
-#endif
-
-        /// <summary>
         /// http传输结果回调
         /// </summary>
         /// <param name="userData">回传的自定义数据</param>

@@ -105,93 +105,93 @@ namespace NIM.Team
 
     class TeamNativeMethods
     {
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_reg_team_event_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_reg_team_event_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_reg_team_event_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamEventDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_create_team_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_create_team_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_create_team_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string team_info,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonlist_uids,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string invitation_postscript,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_invite_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_invite_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_invite_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonlist_uids,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string invitation_postscript,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_kick_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_kick_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_kick_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonlist_uids,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_leave_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_leave_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_leave_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_dismiss_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_dismiss_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_dismiss_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_update_team_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_update_team_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_update_team_info_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_info,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_apply_join_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_apply_join_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_apply_join_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string reason,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_pass_join_apply_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_pass_join_apply_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_pass_join_apply_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string applicant_id,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_reject_join_apply_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_reject_join_apply_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_reject_join_apply_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string applicant_id,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string reason,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_add_managers_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_add_managers_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_add_managers_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonlist_admin_ids,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_remove_managers_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_remove_managers_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_remove_managers_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonlist_admin_ids, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_transfer_team_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_transfer_team_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_transfer_team_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string new_owner,  bool is_leave,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_update_my_property_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_update_my_property_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_update_my_property_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string info,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_update_other_nick_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_update_other_nick_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_update_other_nick_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string info,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_accept_invitation_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_accept_invitation_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_accept_invitation_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string invitor,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_reject_invitation_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_reject_invitation_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_reject_invitation_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string invitor,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string reason,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_all_my_teams_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_all_my_teams_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_all_my_teams_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, QueryMyTeamsDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_all_my_teams_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_all_my_teams_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_all_my_teams_info_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, QueryMyTeamsDetailInfoDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_members_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_members_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_team_members_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  bool include_user_info,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, QueryTeamMembersDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_team_member_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string user_id,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, QuerySingleMemberDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_team_info_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, QueryTeamInfoDelegate cb, IntPtr user_data);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_team_info_online_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string tid,  [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, TeamOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_mute_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_mute_member_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_mute_member_async(
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
             string tid,
@@ -203,13 +203,13 @@ namespace NIM.Team
             TeamOperationDelegate cb,IntPtr userData);
 
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_member_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_member_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr nim_team_query_team_member_block(string tid, string uid);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_team_info_block", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr nim_team_query_team_info_block(string tid);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_team_query_mute_list_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_mute_list_online_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr nim_team_query_mute_list_online_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
             string tid,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]

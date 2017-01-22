@@ -155,6 +155,18 @@ namespace NIM
             public int CustomVideo { get; set; }
 
             /// <summary>
+            /// 是否需要服务器录制白板数据,大于0表示是
+            /// </summary>
+            [JsonProperty("data_record")]
+            public int DataRecord { get; set; }
+
+            /// <summary>
+            /// 是否需要服务器录制音频数据,大于0表示是
+            /// </summary>
+            [JsonProperty("audio_record")]
+            public int AudioRecord { get; set; }
+
+            /// <summary>
             ///     推送用的文本，接收方无效
             /// </summary>
             [JsonProperty("apns")]
@@ -165,6 +177,60 @@ namespace NIM
             /// </summary>
             [JsonProperty("custom_info")]
             public string CustomInfo { get; set; }
+
+            /// <summary>
+            /// 是否需要推送 ,大于0表示是
+            /// </summary>
+            [JsonProperty("push_enable")]
+            public int PushEnable { get; set; }
+
+            /// <summary>
+            /// 是否需要角标计数,大于0表示是
+            /// </summary>
+            [JsonProperty("need_badge")]
+            public int NeedBadge { get; set; }
+
+            /// <summary>
+            /// 是否需要推送昵称,大于0表示是
+            /// </summary>
+            [JsonProperty("need_nick")]
+            public int NeedNick { get; set; }
+
+            /// <summary>
+            /// JSON格式,推送payload
+            /// </summary>
+            [JsonProperty("payload")]
+            public string Payload { get; set; }
+
+            /// <summary>
+            /// 推送声音
+            /// </summary>
+            [JsonProperty("sound")]
+            public string PushSound { get; set; }
+
+            /// <summary>
+            /// 视频发送编码码率 100000-5000000有效
+            /// </summary>
+            [JsonProperty("max_video_rate")]
+            public int MaxVideoRate { get; set; }
+
+            /// <summary>
+            /// 视频画面帧率
+            /// </summary>
+            [JsonProperty("frame_rate")]
+            public NIMVChatVideoFrameRate FrameRate { get; set; }
+
+            /// <summary>
+            /// 视频聊天分辨率选择
+            /// </summary>
+            [JsonProperty("video_quality")]
+            public NIMVChatVideoQuality VideoQuality { get; set; }
+
+            /// <summary>
+            /// 是否使用语音高清模式,大于0表示是（默认关闭）3.3.0 之前的版本无法加入已经开启高清语音的多人会议
+            /// </summary>
+            [JsonProperty("high_rate")]
+            public int HDAudio { get; set; }
         }
 
         /// <summary>

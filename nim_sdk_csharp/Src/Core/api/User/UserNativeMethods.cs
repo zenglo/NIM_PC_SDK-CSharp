@@ -86,31 +86,31 @@ namespace NIM.User
         /// <param name="json_extension"></param>
         /// <param name="cb"></param>
         /// <param name="user_data"></param>
-        //[DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_set_stat", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        //[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_set_stat", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         //public static extern void nim_user_set_stat(uint user_stat, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, NIMGlobal.JsonTransportCb cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_reg_special_relationship_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_reg_special_relationship_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_reg_special_relationship_changed_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UserSpecialRelationshipChangedDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_set_black", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_set_black", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_set_black([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string accid, bool set_black, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UserOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_set_mute", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_set_mute", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_set_mute([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string accid, bool set_mute, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UserOperationDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_get_mute_blacklist", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_get_mute_blacklist", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_get_mute_blacklist([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, SyncMutedAndBlacklistDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_reg_user_name_card_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_reg_user_name_card_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_reg_user_name_card_changed_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UserNameCardChangedDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_get_user_name_card", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_get_user_name_card", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_get_user_name_card([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string accids, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, GetUserNameCardDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_get_user_name_card_online", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_get_user_name_card_online", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_get_user_name_card_online([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string accids, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, GetUserNameCardDelegate cb, IntPtr user_data);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_user_update_my_user_name_card", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_update_my_user_name_card", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_update_my_user_name_card([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info_json, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UpdateUserNameCardDelegate cb, IntPtr user_data);
     }
 }

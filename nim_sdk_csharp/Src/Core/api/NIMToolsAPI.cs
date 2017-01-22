@@ -135,28 +135,28 @@ namespace NIM
 
         #region NIM C SDK native methods
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_user_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_user_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_user_appdata_dir(string app_account);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_user_specific_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_user_specific_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_user_specific_appdata_dir(string app_account, NIMAppDataType appdata_type);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_local_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_local_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_local_appdata_dir();
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_cur_module_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_cur_module_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_cur_module_dir();
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_md5", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_md5", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_md5(string input);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_file_md5", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_file_md5", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_file_md5(string file_path);
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_uuid", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_uuid", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_uuid();
 
-        [DllImport(NIMGlobal.NIMNativeDLL, EntryPoint = "nim_tool_get_audio_text_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_audio_text_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_tool_get_audio_text_async(string json_audio_info, string json_extension, NIMTools.GetAudioTextCb cb, IntPtr user_data);
 
         #endregion

@@ -6,6 +6,7 @@ using System.Text;
 
 namespace NIM.DocTransition
 {
+#if !UNITY
     public delegate void DocTransDelegate(int code, DocTransInfo info);
 
     public delegate void GetTransListDelegate(int code, DocTransInfoList list);
@@ -231,4 +232,5 @@ namespace NIM.DocTransition
         [JsonProperty("infos")]
         public List<DocTransInfo> TransList { get; set; }
     }
+#endif
 }
