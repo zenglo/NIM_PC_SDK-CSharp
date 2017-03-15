@@ -53,34 +53,6 @@ namespace NimUtility
             return token.ToObject<string>();
         }
 
-        public static List<NativeDependentInfo> GetDependentsInfo()
-        {
-            var root = GetConfigRoot();
-            if (root == null)
-                return null;
-            var token = root.SelectToken("sdk.dependents");
-            var array = token.ToArray();
-            List<NativeDependentInfo> dependents = new List<NativeDependentInfo>();
-            foreach (var item in array)
-            {
-                NativeDependentInfo ninfo = new NativeDependentInfo();
-                var reader = item.CreateReader();
-                while (reader.Read())
-                {
-                    if (reader.TokenType == JsonToken.PropertyName)
-                    {
-                        ninfo.Name = reader.Value.ToString();
-                    }
-                    if (reader.TokenType == JsonToken.String)
-                    {
-                        ninfo.Version = reader.Value.ToString();
-                    }
-                }
-                dependents.Add(ninfo);
-            }
-            return dependents;
-        }
-
         private static T GetConfigItem<T>(string jsonPath)
         {
             var configToken = GetConfigToken();
@@ -92,17 +64,19 @@ namespace NimUtility
 
         public static string GetAppKey()
         {
-            return GetConfigItem<string>("appkey");
-        }
-
-        public static NimConfig GetServerConfig()
-        {
-            return GetConfigItem<NimConfig>("server");
+            return GetConfigItem<string>("app_key");
         }
 
         public static string GetChatRommListServerUrl()
         {
             return GetConfigItem<string>("roomlistserver");
+        }
+
+        public static NimConfig GetSdkConfig()
+        {
+            var configToken = GetConfigToken();
+            var cfg = configToken.ToObject<NimConfig>();
+            return cfg;
         }
     }
 }

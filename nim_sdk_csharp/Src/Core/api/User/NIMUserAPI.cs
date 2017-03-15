@@ -192,8 +192,6 @@ namespace NIM.User
         [MonoPInvokeCallback(typeof(GetUserNameCardDelegate))]
         private static void OnGetUserNameCardCompleted(string resultJson, string jsonExtension, IntPtr userData)
         {
-            if (string.IsNullOrEmpty(resultJson) || userData == IntPtr.Zero)
-                return;
             var cards = JsonParser.Deserialize<UserNameCard[]>(resultJson);
             userData.InvokeOnce<GetUserNameCardResultDelegate>((object)cards);
         }

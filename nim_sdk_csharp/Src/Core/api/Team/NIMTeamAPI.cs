@@ -323,16 +323,11 @@ namespace NIM.Team
         /// 查询所有有效群信息
         /// </summary>
         /// <param name="action"></param>
-        public static void QueryMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
-        {
-            QueryMyTeamsInfo(false, action);
-        }
-
-        public static void QueryMyTeamsInfo(bool includeInvalid, QueryMyTeamsInfoResultDelegate action)
+        public static void QueryMyValidTeamsInfo(QueryMyTeamsInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);
             Dictionary<string, object> extDic = new Dictionary<string, object>();
-            extDic["include_invalid"] = includeInvalid;
+            extDic["include_invalid"] = false;
             var ext = NimUtility.Json.JsonParser.Serialize(extDic);
             TeamNativeMethods.nim_team_query_all_my_teams_info_async(ext, _queryMyTeamsInfoCompleted, ptr);
         }
@@ -359,8 +354,8 @@ namespace NIM.Team
                 var infoList = NimUtility.Json.JsonParser.Deserialize<List<NIMTeamInfo>>(result);
                 if (infoList != null)
                 {
-                    var validTeams = infoList.Where((info) => { return info.TeamValid; });
-                    NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)validTeams.ToArray());
+                    //var validTeams = infoList.Where((info) => { return info.TeamValid; });
+					NimUtility.DelegateConverter.InvokeOnce<QueryMyTeamsInfoResultDelegate>(userData, (object)infoList.ToArray());
                 }
                 else
                 {
@@ -533,5 +528,27 @@ namespace NIM.Team
             var members = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
             NimUtility.DelegateConverter.InvokeOnce<QueryTeamMutedListDelegate>(user_data, (ResponseCode)res_code, member_count, tid, members);
         }
+
+#if !UNITY
+
+        private static nim_team_query_my_all_member_infos_cb_func QueryMyAllMemberInfoCallback = OnQueryMyAllMemberInfoCompleted;
+
+        [MonoPInvokeCallback(typeof(nim_team_query_my_all_member_infos_cb_func))]
+        private static void OnQueryMyAllMemberInfoCompleted(int team_count, string result, string json_extension, IntPtr user_data)
+        {
+            var list = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
+            NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(user_data, (object)list);
+        }
+
+        /// <summary>
+        /// 在自己加的所有群里，查找自己在每个群里的成员信息
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void QueryMyInfoInEachTeam(QueryTeamMembersInfoResultDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TeamNativeMethods.nim_team_query_my_all_member_infos_async(null, QueryMyAllMemberInfoCallback, ptr);
+        }
+#endif
     }
 }

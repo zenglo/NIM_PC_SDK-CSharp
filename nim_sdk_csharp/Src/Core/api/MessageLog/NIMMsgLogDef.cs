@@ -163,6 +163,8 @@ namespace NIM.Messagelog
         public MsglogSearchDirection Direction { get; set; }
 
         public bool Reverse { get; set; }
+
+        internal const string AutoDownloadAttachJsonKey = "need_auto_download_attachment";
     }
 
     /// <summary>

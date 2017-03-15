@@ -93,5 +93,11 @@ namespace NIM
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
             nim_talk_recall_msg_func cb,
             IntPtr user_data);
+
+#if !UNITY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_get_attachment_path_from_msg", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr nim_talk_get_attachment_path_from_msg(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_msg);
+#endif
     }
 }

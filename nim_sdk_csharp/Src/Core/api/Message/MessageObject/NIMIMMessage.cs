@@ -33,7 +33,7 @@ namespace NIM
         /// 消息发送方客户端类型,服务器填写,发送方不需要填写
         /// </summary>
         [JsonProperty("from_client_type")]
-        public NIMClientType SenderClientType { get; private set; }
+        public NIMClientType SenderClientType { get; set; }
 
         /// <summary>
         /// 消息发送方设备id,服务器填写,发送方不需要填写
@@ -57,7 +57,7 @@ namespace NIM
         /// 消息类型
         /// </summary>
         [JsonProperty(MessageTypePath)]
-        public NIMMessageType MessageType { get; protected set; }
+        public NIMMessageType MessageType { get; set; }
 
         /// <summary>
         /// 消息ID（客户端）

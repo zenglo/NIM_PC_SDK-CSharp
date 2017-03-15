@@ -366,10 +366,40 @@ namespace NIM
         kNIMVChatMp4RecordInvalid = 404,
     };
 
-    /// <summary>
-    /// NIMVChatSetStreamingModeCode 设置推流模式返回码
-    /// </summary>
-    public enum NIMVChatSetStreamingModeCode
+	/// <summary>
+	/// NIMVChatAudioRecordCode 音频录制状态 */
+	/// </summary>
+	public enum NIMVChatAudioRecordCode
+	{
+		/// <summary>
+		/// 录制正常结束
+		/// </summary>
+		kNIMVChatAudioRecordClose = 0,
+		/// <summary>
+		/// 录制结束，磁盘空间不足
+		/// </summary>
+		kNIMVChatAudioRecordOutDiskSpace = 2,
+		/// <summary>
+		/// 文件创建成功
+		/// </summary>
+		kNIMVChatAudioRecordCreate = 200,
+		/// <summary>
+		/// 已经存在
+		/// </summary>
+		kNIMVChatAudioRecordExsit = 400,        
+		/// <summary>
+		/// 文件创建失败
+		/// </summary>
+		kNIMVChatAudioRecordCreateError = 403,
+		/// <summary>
+		/// 通话不存在
+		/// </summary>
+		kNIMVChatAudioRecordInvalid = 404,      
+	};
+	/// <summary>
+	/// NIMVChatSetStreamingModeCode 设置推流模式返回码
+	/// </summary>
+	public enum NIMVChatSetStreamingModeCode
     {
         /// <summary>
         /// 无效的操作
@@ -543,10 +573,15 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("sound")]
         public string Sound { get; set; }
 
-        /// <summary>
-        ///  是否使用多人模式 >0表示是
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("meeting_mode")]
+		/// <summary>
+		/// int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("keepcalling")]
+		public int KeepCalling { get; set; }
+		/// <summary>
+		///  是否使用多人模式 >0表示是
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("meeting_mode")]
         public int MeetingMode { get; set; }
 
       
@@ -569,6 +604,7 @@ namespace NIM
             NeedNick = 1;
             PayLoad = "";
             Sound = "";
+			KeepCalling = 1;
             MeetingMode = 0;
             Uids = null;
         }
@@ -588,6 +624,9 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty(PropertyName = "record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RecordFile { get; set; }
 
+		[Newtonsoft.Json.JsonProperty(PropertyName = "video_record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public string VideoRecordFile { get; set; }
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Type { get; set; }
 
@@ -606,6 +645,7 @@ namespace NIM
             Status = 0;
             RecordAddr = null;
             RecordFile = null;
+			VideoRecordFile = null;
             Type = 0;
             Time = 0;
             Accept = 0;
@@ -748,10 +788,10 @@ namespace NIM
     /// </summary>
     /// <param name="channel_id">频道id</param>
     /// <param name="code">结果状态</param>
-    /// <param name="record_addr">录制地址（服务器开启录制时有效）</param>
-    /// <param name="record_file">录制文件名（服务器开启录制时有效）</param>
+    /// <param name="record_addr">录制音频文件名（服务器开启录制时有效）</param>
+    /// <param name="record_file">录制视频文件名（服务器开启录制时有效）</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void onSessionConnectNotify(long channel_id, int code, string record_addr, string record_file);
+    public delegate void onSessionConnectNotify(long channel_id, int code, string record_file, string video_record_file);
 
     /// <summary>
     /// 通话中成员状态

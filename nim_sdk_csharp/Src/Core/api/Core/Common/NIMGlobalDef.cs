@@ -30,6 +30,48 @@ namespace NIM
     }
 
     /// <summary>
+    /// 代理测试步骤
+    /// </summary>
+    public enum NIMProxyDetectStep
+    {
+        /// <summary>
+        /// 探测代理有效性结束
+        /// </summary>
+        kNIMProxyDetectStepAllComplete = 5
+    }
+
+    /// <summary>
+    ///     代理类型
+    /// </summary>
+    public enum NIMProxyType
+    {
+        /// <summary>
+        ///     不使用代理
+        /// </summary>
+        kNIMProxyNone = 0,
+
+        /// <summary>
+        ///     HTTP 1.1 Proxy（暂不支持）
+        /// </summary>
+        kNIMProxyHttp11 = 1,
+
+        /// <summary>
+        ///     Socks4
+        /// </summary>
+        kNIMProxySocks4 = 4,
+
+        /// <summary>
+        ///     Socks4a
+        /// </summary>
+        kNIMProxySocks4a = 5,
+
+        /// <summary>
+        ///     Socks5
+        /// </summary>
+        kNIMProxySocks5 = 6
+    }
+
+    /// <summary>
     /// 网络探测错误
     /// </summary>
     public enum NetDetectionRes

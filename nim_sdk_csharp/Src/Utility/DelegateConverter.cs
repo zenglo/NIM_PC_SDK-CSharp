@@ -57,18 +57,7 @@ namespace NimUtility
             if (delegateObj != null)
             {
                 System.Diagnostics.Debug.Assert(CheckDelegateParams(delegateObj, args));
-                try
-                {
-                    delegateObj.Method.Invoke(delegateObj.Target, args);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(ex);
-                }
-                finally
-                {
-                   // FreeMem(ptr);
-                }
+                delegateObj.Method.Invoke(delegateObj.Target, args);
             }
         }
 
@@ -79,18 +68,8 @@ namespace NimUtility
             if (delegateObj != null)
             {
                 System.Diagnostics.Debug.Assert(CheckDelegateParams(delegateObj, args));
-                try
-                {
-                    delegateObj.Method.Invoke(delegateObj.Target, args);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(ex);
-                }
-                finally
-                {
-                    FreeMem(ptr);
-                }
+                delegateObj.Method.Invoke(delegateObj.Target, args);
+                FreeMem(ptr);
             }
         }
 

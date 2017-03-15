@@ -134,6 +134,7 @@ namespace NIM
                 Mode = (int) NIMRtsVideoChatMode.kNIMRtsVideoChatModeAudio;
                 CustomAudio = 0;
                 CustomVideo = 0;
+                KeepCalling = 1;
             }
 
             /// <summary>
@@ -231,6 +232,12 @@ namespace NIM
             /// </summary>
             [JsonProperty("high_rate")]
             public int HDAudio { get; set; }
+
+            /// <summary>
+            /// 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是
+            /// </summary>
+            [JsonProperty("keepcalling")]
+            public int KeepCalling { get; set; }
         }
 
         /// <summary>

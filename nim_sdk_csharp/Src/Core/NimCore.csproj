@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api\Core\Client\ClientNativeMethods.cs" />
+    <Compile Include="api\Core\Common\NIMGlobalNativeMethods.cs" />
     <Compile Include="api\Core\NimException\SdkException.cs" />
     <Compile Include="api\DataSync\DataSyncNativeMethods.cs" />
     <Compile Include="api\Device\DeviceNativeMethods.cs" />
@@ -180,7 +181,6 @@
     <Compile Include="api\Core\Common\NIMGlobalAPI.cs" />
     <Compile Include="api\Core\Common\NIMGlobalDef.cs" />
     <Compile Include="api\Nos\NIMNosAPI.cs" />
-    <None Include="api\Core\Client\NIMSDKConfig.cs" />
     <Compile Include="api\Nos\NosNativeMethods.cs" />
     <Compile Include="api\Rts\NIMRtsAPI.cs" />
     <Compile Include="api\Rts\NIMRtsDef.cs" />

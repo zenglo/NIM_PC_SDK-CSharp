@@ -15,6 +15,27 @@ using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
 
 namespace NIM.Nos
 {
+    public class UploadResultParam
+    {
+        /// <summary>
+        /// 上传文件的id
+        /// </summary>
+        [JsonProperty("res_id")]
+        public string ResId { get; set; }
+
+        /// <summary>
+        /// 上传文件的会话id
+        /// </summary>
+        [JsonProperty("call_id")]
+        public string CallId { get; set; }
+
+        [JsonProperty("file_path")]
+        public string FilePath { get; set; }
+
+        [JsonProperty("response")]
+        public string ResponseMsg { get; set; }
+    }
+
     /// <summary>
     ///     下载结果回调
     /// </summary>
@@ -30,6 +51,8 @@ namespace NIM.Nos
     /// <param name="rescode">上传结果，一切正常200</param>
     /// <param name="url">url地址</param>
     public delegate void UploadResultHandler(int rescode, string url);
+
+    public delegate void UploadResultHandler2(int rescode, string url, UploadResultParam param);
 
     /// <summary>
     /// 上传/下载进度回调数据
@@ -93,12 +116,16 @@ namespace NIM.Nos
 
         private static readonly UploadCb UploadCb = UploadCallback;
 
+        private static readonly UploadCb UploadCb2 = UploadCallback2;
+
         private static readonly UploadPrgCb UploadPrgCb = UploadProgressCallback;
 
         /// <summary>
         ///     注册下载回调，通过注册回调获得http下载结果通知，刷新资源
         /// </summary>
         /// <param name="handler">下载的结果回调</param>
+        /// 
+
         public static void RegDownloadCb(DownloadResultHandler handler)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(handler);
@@ -152,6 +179,23 @@ namespace NIM.Nos
         }
 
         /// <summary>
+        ///     上传资源
+        /// </summary>
+        /// <param name="localFile">本地文件的完整路径</param>
+        /// <param name="resHandler">上传的结果回调</param>
+        /// <param name="prgHandler">上传进度的回调</param>
+        public static void Upload(string localFile, UploadResultHandler2 resHandler, ProgressResultHandler prgHandler, object userData = null)
+        {
+            ProgressData data = new ProgressData();
+            data.FilePath = localFile;
+            data.UserData = userData;
+            ProgressPair pair = new ProgressPair(data, prgHandler);
+            var ptr1 = DelegateConverter.ConvertToIntPtr(resHandler);
+            var ptr2 = DelegateConverter.ConvertToIntPtr(pair);
+            NosNativeMethods.nim_nos_upload(localFile, UploadCb2, ptr1, UploadPrgCb, ptr2);
+        }
+
+        /// <summary>
         ///     下载资源
         /// </summary>
         /// <param name="nosUrl">下载资源的URL</param>
@@ -196,6 +240,13 @@ namespace NIM.Nos
             userData.InvokeOnce<UploadResultHandler>(rescode, url);
         }
 
+        [MonoPInvokeCallback(typeof(UploadCb))]
+        private static void UploadCallback2(int rescode, string url, string jsonExtension, IntPtr userData)
+        {
+            var param = NimUtility.Json.JsonParser.Deserialize<UploadResultParam>(jsonExtension);
+            userData.InvokeOnce<UploadResultHandler2>(rescode, url, param);
+        }
+
         [MonoPInvokeCallback(typeof(UploadPrgCb))]
         private static void UploadProgressCallback(long curSize, long fileSize, string jsonExtension, IntPtr userData)
         {
@@ -234,40 +285,7 @@ namespace NIM.Nos
                 var pair = obj as CallbackDataPair;
                 return pair;
             }
-        }
-
-        /// <summary>
-        ///下载资源(扩展) 
-        /// </summary>
-        /// <param name="url">下载资源的URL</param>
-        /// <param name="param">http 扩展参数</param>
-        /// <param name="resCb">下载结果的回调函数</param>
-        /// <param name="resData">下载结果回调自定义用户数据，</param>
-        /// <param name="prgCb">下载进度的回调函数</param>
-        /// <param name="prgData">进度回调自定义用户数据</param>
-        /// <param name="speedCb">下载速度的回调函数</param>
-        /// <param name="speedData">下载速度回调自定义用户数据</param>
-        /// <param name="infoCb">返回最终下载信息的回调函数</param>
-        /// <param name="infoData">下载信息回调的自定义用户数据</param>
-        public static void DownloadEx(string url,
-            HttpExtendedParameters param,
-            DownloadCb resCb, IntPtr resData,
-            DownloadPrgCb prgCb, IntPtr prgData,
-            DownloadSpeedCb speedCb, IntPtr speedData,
-            DownloadInfoCb infoCb, IntPtr infoData)
-        {
-            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
-            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
-            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
-            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
-
-            NosNativeMethods.nim_nos_download_ex(url,
-                param != null ? param.Serialize() : string.Empty,
-                DownloadResultCallbackEx, resPair.ToIntPtr(),
-                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
-                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
-                DownloadInfoCallbackEx, infoPair.ToIntPtr());
-        }
+        }  
 
         private static DownloadCb DownloadResultCallbackEx = OnDownloadCompleted;
 
@@ -303,40 +321,7 @@ namespace NIM.Nos
             var pair = CallbackDataPair.FromIntPtr(user_data);
             if (pair.Callback != null)
                 ((DownloadInfoCb)pair.Callback)(actual_download_size, download_speed, json_extension, pair.Data);
-        }
-
-        /// <summary>
-        /// 获取资源(扩展)
-        /// </summary>
-        /// <param name="msg">包含附件的消息体</param>
-        ///<param name="param">下载扩展信息</param> 
-        /// <param name="resCb"></param>
-        /// <param name="resData"></param>
-        /// <param name="prgCb"></param>
-        /// <param name="prgData"></param>
-        /// <param name="speedCb"></param>
-        /// <param name="speedData"></param>
-        /// <param name="infoCb"></param>
-        /// <param name="infoData"></param>
-        public static void DownloadMediaEx(NIMIMMessage msg,
-            HttpExtendedParameters param,
-            DownloadCb resCb, IntPtr resData,
-            DownloadPrgCb prgCb, IntPtr prgData,
-            DownloadSpeedCb speedCb, IntPtr speedData,
-            DownloadInfoCb infoCb, IntPtr infoData)
-        {
-            var msgJson = msg.Serialize();
-            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
-            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
-            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
-            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
-            NosNativeMethods.nim_nos_download_media_ex(msgJson,
-                param == null ? null : param.Serialize(),
-                DownloadResultCallbackEx, resPair.ToIntPtr(),
-                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
-                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
-                DownloadInfoCallbackEx, infoPair.ToIntPtr());
-        }
+        }  
 
         private static UploadCb UploadCallbackEx = OnUploadCompleted;
 
@@ -373,6 +358,39 @@ namespace NIM.Nos
             if (pair.Callback != null)
                 ((UploadInfoCb)pair.Callback)(actual_upload_size, upload_speed, json_extension, pair.Data);
         }
+        
+        /// <summary>
+        /// (全局回调)注册上传回调，通过注册回调获得HTTP上传结果通知（所有触发HTTP上传任务的接口的参数列表里无法设置通知回调处理函数的通知都走这个通知，比如发送文件图片语音消息等）
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="data"></param>
+        public static void RegisterDefaultUploadCallback(UploadCb callback, IntPtr data)
+        {
+            CallbackDataPair pair = new CallbackDataPair(callback, data);
+            NosNativeMethods.nim_nos_reg_upload_cb(UploadCallbackEx, pair.ToIntPtr());
+        }
+
+#if !UNITY
+
+        /// <summary>
+        /// 停止上传资源(只能用于调用了nim_nos_upload_ex接口的上传任务)
+        /// </summary>
+        /// <param name="taskId">停止上传任务的ID</param>
+        /// <param name="ext"></param>
+        public static void StopUploadEx(string taskId, string ext = null)
+        {
+            NosNativeMethods.nim_nos_stop_upload_ex(taskId, ext);
+        }
+
+        /// <summary>
+        /// 停止下载资源(只能用于调用了nim_nos_download_ex接口的下载任务)
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="ext"></param>
+        public static void StopDownloadEx(string taskId, string ext = null)
+        {
+            NosNativeMethods.nim_nos_stop_download_ex(taskId, ext);
+        }
 
         /// <summary>
         /// 上传资源(扩展)
@@ -408,35 +426,72 @@ namespace NIM.Nos
         }
 
         /// <summary>
-        /// (全局回调)注册上传回调，通过注册回调获得HTTP上传结果通知（所有触发HTTP上传任务的接口的参数列表里无法设置通知回调处理函数的通知都走这个通知，比如发送文件图片语音消息等）
+        /// 获取资源(扩展)
         /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="data"></param>
-        public static void RegisterDefaultUploadCallback(UploadCb callback, IntPtr data)
+        /// <param name="msg">包含附件的消息体</param>
+        ///<param name="param">下载扩展信息</param> 
+        /// <param name="resCb"></param>
+        /// <param name="resData"></param>
+        /// <param name="prgCb"></param>
+        /// <param name="prgData"></param>
+        /// <param name="speedCb"></param>
+        /// <param name="speedData"></param>
+        /// <param name="infoCb"></param>
+        /// <param name="infoData"></param>
+        public static void DownloadMediaEx(NIMIMMessage msg,
+            HttpExtendedParameters param,
+            DownloadCb resCb, IntPtr resData,
+            DownloadPrgCb prgCb, IntPtr prgData,
+            DownloadSpeedCb speedCb, IntPtr speedData,
+            DownloadInfoCb infoCb, IntPtr infoData)
         {
-            CallbackDataPair pair = new CallbackDataPair(callback, data);
-            NosNativeMethods.nim_nos_reg_upload_cb(UploadCallbackEx, pair.ToIntPtr());
+            var msgJson = msg.Serialize();
+            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
+            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
+            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
+            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
+            NosNativeMethods.nim_nos_download_media_ex(msgJson,
+                param == null ? null : param.Serialize(),
+                DownloadResultCallbackEx, resPair.ToIntPtr(),
+                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
+                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
+                DownloadInfoCallbackEx, infoPair.ToIntPtr());
         }
 
         /// <summary>
-        /// 停止上传资源(只能用于调用了nim_nos_upload_ex接口的上传任务)
+        ///下载资源(扩展) 
         /// </summary>
-        /// <param name="taskId">停止上传任务的ID</param>
-        /// <param name="ext"></param>
-        public static void StopUploadEx(string taskId, string ext = null)
+        /// <param name="url">下载资源的URL</param>
+        /// <param name="param">http 扩展参数</param>
+        /// <param name="resCb">下载结果的回调函数</param>
+        /// <param name="resData">下载结果回调自定义用户数据，</param>
+        /// <param name="prgCb">下载进度的回调函数</param>
+        /// <param name="prgData">进度回调自定义用户数据</param>
+        /// <param name="speedCb">下载速度的回调函数</param>
+        /// <param name="speedData">下载速度回调自定义用户数据</param>
+        /// <param name="infoCb">返回最终下载信息的回调函数</param>
+        /// <param name="infoData">下载信息回调的自定义用户数据</param>
+        public static void DownloadEx(string url,
+            HttpExtendedParameters param,
+            DownloadCb resCb, IntPtr resData,
+            DownloadPrgCb prgCb, IntPtr prgData,
+            DownloadSpeedCb speedCb, IntPtr speedData,
+            DownloadInfoCb infoCb, IntPtr infoData)
         {
-            NosNativeMethods.nim_nos_stop_upload_ex(taskId, ext);
+            CallbackDataPair resPair = new CallbackDataPair(resCb, resData);
+            CallbackDataPair prgPair = new CallbackDataPair(prgCb, prgData);
+            CallbackDataPair speedPair = new CallbackDataPair(speedCb, speedData);
+            CallbackDataPair infoPair = new CallbackDataPair(infoCb, infoData);
+
+            NosNativeMethods.nim_nos_download_ex(url,
+                param != null ? param.Serialize() : string.Empty,
+                DownloadResultCallbackEx, resPair.ToIntPtr(),
+                DownloadPrgCallbackEx, prgPair.ToIntPtr(),
+                DownloadSpeedCallbackEx, speedPair.ToIntPtr(),
+                DownloadInfoCallbackEx, infoPair.ToIntPtr());
         }
 
-        /// <summary>
-        /// 停止下载资源(只能用于调用了nim_nos_download_ex接口的下载任务)
-        /// </summary>
-        /// <param name="taskId"></param>
-        /// <param name="ext"></param>
-        public static void StopDownloadEx(string taskId, string ext = null)
-        {
-            NosNativeMethods.nim_nos_stop_download_ex(taskId, ext);
-        }
+#endif
     }
 
     public enum NIMNosUploadType

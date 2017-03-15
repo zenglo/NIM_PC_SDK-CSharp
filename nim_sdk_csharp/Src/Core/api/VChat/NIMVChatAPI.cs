@@ -173,7 +173,7 @@ namespace NIM
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
                             if (info != null)
-                                session_status.onSessionConnectNotify.DynamicInvoke(channel_id, code, info.RecordAddr, info.RecordFile);
+                                session_status.onSessionConnectNotify.DynamicInvoke(channel_id, code, info.RecordFile, info.VideoRecordFile);
                             else
                                 session_status.onSessionConnectNotify.DynamicInvoke(channel_id, code, null, null);
                         }
@@ -357,7 +357,7 @@ namespace NIM
 
         private static void OnNormalOpCompleted(bool ret, int code, string json_extension, IntPtr user_data)
         {
-            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_opt_cb_func>(user_data, ret, code, json_extension, IntPtr.Zero);
+            NimUtility.DelegateConverter.Invoke<nim_vchat_opt_cb_func>(user_data, ret, code, json_extension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace NIM
 
         private static void OnMP4RecordOpCompleted(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
         {
-            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_mp4_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+            NimUtility.DelegateConverter.Invoke<nim_vchat_mp4_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
         }
 
         /// <summary>
@@ -392,11 +392,47 @@ namespace NIM
             VChatNativeMethods.nim_vchat_stop_record(json_extension, VChatMP4RecordOptCb, ptr);
         }
 
+
+		private static  nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
+		
+		private static void OnAudioRecordStartCallback(bool ret, int code,string file,Int64 time,string json_extension,IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+		}
+
+		/// <summary>
+		/// 开始录制音频文件，一次只允许一个音频录制文件
+		/// </summary>
+		/// <param name="path">文件录制路径</param>
+		/// <param name="cb"></param>
+		public static void StartAudioRecord(string path,nim_vchat_audio_record_opt_cb_func cb)
+		{
+			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			VChatNativeMethods.nim_vchat_start_audio_record(path, "", VChatAudioRecordStartCb, ptr);
+		}
+
+		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStopCb = OnAudioRecordStopCallback;
+
+		private static void OnAudioRecordStopCallback(bool ret, int code, string file, Int64 time, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+		}
+
+		/// <summary>
+		/// 停止录制音频文件
+		/// </summary>
+		/// <param name="cb"></param>
+		public static void StopAudioRecord(nim_vchat_audio_record_opt_cb_func cb)
+		{
+			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+			VChatNativeMethods.nim_vchat_stop_audio_record("", VChatAudioRecordStopCb, ptr);
+		}
+
         private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreated;
 
         private static void OnVchatRoomCreated(int code, long channel_id, string json_extension, IntPtr user_data)
         {
-            NimUtility.DelegateConverter.InvokeOnce<nim_vchat_opt2_cb_func>(user_data, code, channel_id, json_extension, IntPtr.Zero);
+            NimUtility.DelegateConverter.Invoke<nim_vchat_opt2_cb_func>(user_data, code, channel_id, json_extension, IntPtr.Zero);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿/** @file NIMSDKConfig.cs
+﻿/** @file NimConfig.cs
   * @brief NIM SDK提供的SDK配置定义
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author Harrison
@@ -28,12 +28,6 @@ namespace NimUtility
     public class SdkCommonSetting
     {
         /// <summary>
-        /// AppKey
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("app_key")]
-        public string AppKey { get; set; }
-
-        /// <summary>
         /// 数据库秘钥，必填，目前只支持最多32个字符的加密密钥！建议使用32个字符
         /// </summary>
         [Newtonsoft.Json.JsonProperty("db_encrypt_key")]
@@ -46,7 +40,7 @@ namespace NimUtility
         public bool PredownloadAttachmentThumbnail { get; set; }
 
         /// <summary>
-        /// 定义见NIMSDKLogLevel，选填，SDK默认的内置级别为kNIMSDKLogLevelPro
+        /// 定义见SdkLogLevel选填，SDK默认的内置级别为Pro
         /// </summary>
         [Newtonsoft.Json.JsonProperty("sdk_log_level")]
         public SdkLogLevel LogLevel { get; set; }
@@ -61,7 +55,7 @@ namespace NimUtility
         {
             PredownloadAttachmentThumbnail = true;
             UsePriviteServer = false;
-            LogLevel = SdkLogLevel.App;
+            LogLevel = SdkLogLevel.Pro;
         }
     }
 
@@ -129,6 +123,12 @@ namespace NimUtility
 
         [Newtonsoft.Json.JsonProperty(PropertyName = "private_server_setting", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public SdkPrivateServerSetting PrivateServerSetting { get; set; }
+
+        /// <summary>
+        /// AppKey
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("app_key")]
+        public string AppKey { get; set; }
 
         public bool IsValiad()
         {

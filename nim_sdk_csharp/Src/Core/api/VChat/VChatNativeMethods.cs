@@ -43,7 +43,23 @@ namespace NIM
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
         IntPtr user_data);
 
-    class VChatNativeMethods
+	/// <summary>
+	/// 音频录制操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
+	/// </summary>
+	/// <param name="ret">结果代码，true表示成功</param>
+	/// <param name="code">对应NIMVChatAudioRecordCode，用于获得失败时的错误原因</param>
+	/// <param name="file">文件路径</param>
+	/// <param name="time">录制结束时有效，对应毫秒级的录制时长</param>
+	/// <param name="json_extension">无效扩展字段</param>
+	/// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public delegate void nim_vchat_audio_record_opt_cb_func(bool ret, int code,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string file,
+	Int64 time,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+	IntPtr user_data);
+
+	class VChatNativeMethods
     {
         //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
         #region NIM C SDK native methods
@@ -134,9 +150,24 @@ namespace NIM
             nim_vchat_mp4_record_opt_cb_func cb,
             IntPtr user_data);
 
+		//开始录制音频文件
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_start_audio_record(
+		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string path,
+		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+		 nim_vchat_audio_record_opt_cb_func cb,
+		 IntPtr user_data);
 
-        //创建一个多人房间（后续需要主动调用加入接口进入房间）
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_create_room", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		//停止录制音频文件
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_stop_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_stop_audio_record(
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+			nim_vchat_audio_record_opt_cb_func cb,
+			IntPtr user_data);
+
+
+		//创建一个多人房间（后续需要主动调用加入接口进入房间）
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_create_room", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_create_room(
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string room_name,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string custom_info,

@@ -55,13 +55,63 @@ namespace NIM
         /// <param name="appInstallDir">目前不需要传入（SDK可以自动获取）.</param>
         /// <param name="config">The config.</param>
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
+        [Obsolete]
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
-            if (_sdkInitialized)
-                return true;
+			if (_sdkInitialized) {
+				RegisterSdkCallbacks();//需要重新注册；
+				return true;
+			}
             string configJson = null;
             if (config != null && config.IsValiad())
                 configJson = config.Serialize();
+            try
+            {
+                _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+			if (_sdkInitialized) {
+				RegisterSdkCallbacks();
+			}
+            //调用com.netease.nimlib.SystemUtil的初始化接口
+            InitSystemUtil();
+
+            return _sdkInitialized;
+        }
+
+#if !UNITY
+        /// <summary>
+        /// NIM SDK初始化 
+        /// </summary>
+        /// <param name="appKey">AppKey,必填</param>
+        /// <param name="appDataDir">使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！）.</param>
+        /// <param name="appInstallDir">目前不需要传入（SDK可以自动获取）.</param>
+        /// <param name="config">The config.</param>
+        /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
+        public static bool Init(string appKey, string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
+        {
+            if (_sdkInitialized)
+            {
+                RegisterSdkCallbacks();//需要重新注册；
+                return true;
+            }
+            string configJson = null;
+            if (config != null && config.IsValiad())
+            {
+                if (string.IsNullOrEmpty(appKey))
+                    config.AppKey = appKey;
+                configJson = config.Serialize();
+            }
+            else
+            {
+                config = new NimConfig();
+                config.AppKey = appKey;
+                configJson = config.Serialize();
+            }
+                
             try
             {
                 _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
@@ -79,6 +129,8 @@ namespace NIM
 
             return _sdkInitialized;
         }
+
+#endif
 
         [Conditional("UNITY")]
         private static void InitSystemUtil()

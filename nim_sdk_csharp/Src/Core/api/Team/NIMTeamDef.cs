@@ -311,6 +311,7 @@ namespace NIM.Team
         {
             IsValid = 1;
             IsMemberValid = 1;
+            TeamType = NIMTeamType.kNIMTeamTypeNormal;
         }
     }
 

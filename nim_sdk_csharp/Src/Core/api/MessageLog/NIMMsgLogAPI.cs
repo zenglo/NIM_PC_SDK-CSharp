@@ -128,6 +128,31 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_query_msg_online_async(id, sType, limit, sTimetag, eTimetag, endMsgId, reverse, saveLocal, null, QueryLogCompleted, ptr);
         }
 
+#if !UNITY
+        /// <summary>
+        ///     在线查询消息
+        /// </summary>
+        /// <param name="id">会话id，对方的account id或者群组tid</param>
+        /// <param name="sType">会话类型</param>
+        /// <param name="limit">本次查询的消息条数上限(最多100条)</param>
+        /// <param name="sTimetag">起始时间点，单位：毫秒</param>
+        /// <param name="eTimetag">结束时间点，单位：毫秒</param>
+        /// <param name="endMsgId">结束查询的最后一条消息的server_msg_id(不包含在查询结果中) </param>
+        /// <param name="reverse">true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false）</param>
+        /// <param name="saveLocal">true: 将在线查询结果保存到本地，false: 不保存</param>
+        /// <param name="autoDownloadAttach">查询结果回来后，是否需要sdk自动下载消息附件</param>
+        /// <param name="action"></param>
+        public static void QueryMsglogOnline(string id, NIMSessionType sType, int limit, long sTimetag, long eTimetag,
+            long endMsgId, bool reverse, bool saveLocal,bool autoDownloadAttach, QueryMsglogResultDelegate action)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(action);
+            System.Collections.Generic.Dictionary<string, bool> dic = new System.Collections.Generic.Dictionary<string, bool>();
+            dic[QueryMsglogParams.AutoDownloadAttachJsonKey] = autoDownloadAttach;
+            var jsonExt = JsonParser.Serialize(dic);
+            MsglogNativeMethods.nim_msglog_query_msg_online_async(id, sType, limit, sTimetag, eTimetag, endMsgId, reverse, saveLocal, jsonExt, QueryLogCompleted, ptr);
+        }
+
+#endif
         /// <summary>
         ///     根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs?doc=pc&#历史记录
         /// </summary>
@@ -226,13 +251,6 @@ namespace NIM.Messagelog
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             var msgJsonValue = msg.Serialize();
             MsglogNativeMethods.nim_msglog_insert_msglog_async(uid, msgJsonValue, need_update_session, null, OperateMsglogByLogIdCompleted, ptr);
-        }
-
-		public static void WriteMsglogOnlyForTest(string uid, bool need_update_session, NIMIMMessage msg,string json_extension, OperateSingleLogResultDelegate action)
-        {
-            var ptr = DelegateConverter.ConvertToIntPtr(action);
-            var msgJsonValue = msg.Serialize();
-			MsglogNativeMethods.nim_msglog_insert_msglog_async(uid, msgJsonValue, need_update_session, json_extension, OperateMsglogByLogIdCompleted, ptr);
         }
 
         /// <summary>

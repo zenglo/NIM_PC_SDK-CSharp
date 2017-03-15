@@ -106,6 +106,9 @@ namespace NIM.Messagelog
         internal static extern void nim_msglog_reg_status_changed_cb(string json_extension, NimMsglogStatusChangedCbFunc cb, IntPtr user_data);
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_msglog_update_localext_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_msglog_update_localext_async(string msg_id, string local_ext, string json_extension, NimMsglogResCbFunc cb, IntPtr user_data);
+        internal static extern void nim_msglog_update_localext_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string msg_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string local_ext,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            NimMsglogResCbFunc cb, IntPtr user_data);
     }
 }

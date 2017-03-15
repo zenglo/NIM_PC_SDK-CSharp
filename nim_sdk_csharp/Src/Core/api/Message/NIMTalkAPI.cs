@@ -300,5 +300,22 @@ namespace NIM
             NimUtility.DelegateConverter.Invoke<RecallMessageDelegate>(userData, (ResponseCode)resCode, data);
 
         }
+
+#if !UNITY
+        /// <summary>
+        /// 从消息的中获取附件（图片、语音、视频等）的本地路径
+        /// </summary>
+        /// <param name="msg">消息对象</param>
+        /// <returns>消息如果有附件，不管是否已下载，返回附件的本地路径；消息如果没有附件，返回空字符串""</returns>
+        public static string GetAttachmentPathFromMsg(NIMIMMessage msg)
+        {
+            var jsonMsg = msg.Serialize();
+            var ptr = TalkNativeMethods.nim_talk_get_attachment_path_from_msg(jsonMsg);
+            NimUtility.Utf8StringMarshaler marshaler = new NimUtility.Utf8StringMarshaler();
+            var path = marshaler.MarshalNativeToManaged(ptr) as string;
+            GlobalAPI.FreeBuffer(ptr);
+            return path;
+        }
+#endif
     }
 }
