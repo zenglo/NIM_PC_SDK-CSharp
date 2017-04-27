@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NIMAPI_UNDER_WIN_DESKTOP_ONLY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -30,7 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NIMAPI_UNDER_WIN_DESKTOP_ONLY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -190,6 +190,9 @@
     <Compile Include="api\NIMToolsAPI.cs" />
     <Compile Include="api\NIMToolsDef.cs" />
     <Compile Include="api\Session\SessionNativeMethods.cs" />
+    <Compile Include="api\Subscribe\NIMEventInfo.cs" />
+    <Compile Include="api\Subscribe\NIMSubscribeApi.cs" />
+    <Compile Include="api\Subscribe\NIMSubscribeNativeMethods.cs" />
     <Compile Include="api\SysMessage\NIMSysMessage.cs" />
     <Compile Include="api\SysMessage\NIMSysMsgAPI.cs" />
     <Compile Include="api\SysMessage\NIMSysMsgDef.cs" />

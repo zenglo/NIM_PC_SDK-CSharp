@@ -396,6 +396,8 @@ namespace NIM
 		/// </summary>
 		kNIMVChatAudioRecordInvalid = 404,      
 	};
+
+	/* 3.6.0 sdk已不支持
 	/// <summary>
 	/// NIMVChatSetStreamingModeCode 设置推流模式返回码
 	/// </summary>
@@ -438,11 +440,35 @@ namespace NIM
 		/// </summary>
         kNIMVChatBypassStreamingErrorTimeout = 408,	
     };
+	*/
 
-   /// <summary>
-    ///  NIMVChatVideoSplitMode 主播设置的直播分屏模式 
-   /// </summary>
-   public enum NIMVChatVideoSplitMode
+	/// <summary>
+	/// @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  *
+	/// </summary>
+	public enum NIMVChatVideoFrameScaleType
+	{
+		/// <summary>
+		/// 默认，不裁剪
+		/// </summary>
+		kNIMVChatVideoFrameScaleNone = 0,
+		/// <summary>
+		///  裁剪成1：1的形状
+		/// </summary>   
+		kNIMVChatVideoFrameScale1x1 = 1,
+		/// <summary>
+		/// 裁剪成4：3的形状，如果是
+		/// </summary>
+		kNIMVChatVideoFrameScale4x3 = 2,
+		/// <summary>
+		/// 裁剪成16：9的形状
+		/// </summary>
+		kNIMVChatVideoFrameScale16x9 = 3, 
+	};
+
+	/// <summary>
+	///  NIMVChatVideoSplitMode 主播设置的直播分屏模式 
+	/// </summary>
+	public enum NIMVChatVideoSplitMode
     {
        /// <summary>
        ///  底部横排浮窗
@@ -467,10 +493,10 @@ namespace NIM
     /// </summary>
     public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
     {
-        /// <summary>
-        /// 成员id列表，主动发起非空
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty(PropertyName = "uids", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 成员id列表，主动发起非空(必填)
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "uids", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public List<string> Uids { get; set; }
 
         /// <summary>
@@ -515,10 +541,10 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("frame_rate")]
         public int FrameRate { get; set; }
 
-        /// <summary>
-        /// 直播推流地址，非空代表主播旁路直播，此时MeetingMode、kNRTCChatBypassRtmp无效
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("rtmp_url")]
+		/// <summary>
+		/// 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("rtmp_url")]
         public string RtmpUrl { get; set; }
 
         /// <summary>
@@ -578,11 +604,7 @@ namespace NIM
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty("keepcalling")]
 		public int KeepCalling { get; set; }
-		/// <summary>
-		///  是否使用多人模式 >0表示是
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("meeting_mode")]
-        public int MeetingMode { get; set; }
+
 
       
         public NIMVChatInfo()
@@ -593,7 +615,6 @@ namespace NIM
 			ServerVideoRecord = 0;
             AudioHighRate = 0;
             MaxVideoRate = 0;
-            MeetingMode = 0;
             VideoQuality = 0;
             FrameRate = 0;
             RtmpUrl = "";
@@ -605,38 +626,64 @@ namespace NIM
             PayLoad = "";
             Sound = "";
 			KeepCalling = 1;
-            MeetingMode = 0;
             Uids = null;
         }
     }
 
     public class NIMVChatSessionInfo : NimUtility.NimJsonObject<NIMVChatSessionInfo>
     {
-        [Newtonsoft.Json.JsonProperty(PropertyName = "uid", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 用户账号uid
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "uid", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Uid { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "status", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 状态
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "status", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Status { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "record_addr", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 录制地址（服务器开启录制时有效）
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "record_addr", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RecordAddr { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 服务器音频录制文件名（服务器开启录制时有效）
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RecordFile { get; set; }
 
+		/// <summary>
+		/// 服务器视频录制文件名（服务器开启录制时有效）
+		/// </summary>
 		[Newtonsoft.Json.JsonProperty(PropertyName = "video_record_file", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public string VideoRecordFile { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 状态
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Type { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "time", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 时间 单位毫秒
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "time", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long Time { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "accept", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 是否接受 >0表示接受
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "accept", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Accept { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "client", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 客户端类型 NIMClientType 见NIMClientDef.cs
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "client", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Client { get; set; }
 
         public NIMVChatSessionInfo()
@@ -685,10 +732,10 @@ namespace NIM
             public ReceiverState[] Receivers { get; set; }
         }
 
-        /// <summary>
-        /// 音量状态
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty(PropertyName = "audio_volume", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 音频实时音量通知，包含发送的音量kNIMVChatSelf和接收音量kNIMVChatReceiver，kNIMVChatStatus的音量值是pcm的平均值最大为int16_max
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "audio_volume", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public AudioVolume Volume { get; set; }
     }
 
@@ -710,10 +757,16 @@ namespace NIM
 
             public class Audio
             {
-                [Newtonsoft.Json.JsonProperty(PropertyName = "fps", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+				/// <summary>
+				/// 每秒帧率或者每秒发包数
+				/// </summary>
+				[Newtonsoft.Json.JsonProperty(PropertyName = "fps", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
                 public int FPS { get; set; }
 
-                [Newtonsoft.Json.JsonProperty(PropertyName = "KBps", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+				/// <summary>
+				/// 每秒流量，单位为“千字节”
+				/// </summary>
+				[Newtonsoft.Json.JsonProperty(PropertyName = "KBps", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
                 public int KBps { get; set; }
             }
 
@@ -730,19 +783,126 @@ namespace NIM
             public Audio AudioState { get; set; }
         }
 
-        /// <summary>
-        /// 状态信息
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty(PropertyName = "static_info", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		/// <summary>
+		/// 音视频实时状态
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "static_info", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public StateInfo Info { get; set; }
     }
 
-    /// <summary>
-    /// 调用接口回调
-    /// </summary>
-    /// <param name="channel_id">频道id</param>
-    /// <param name="code">结果</param>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+
+	/// <summary>
+	/// 录制MP4文件接口封装的json类
+	/// </summary>
+	public class NIMVChatMP4RecordJsonEx : NimUtility.NimJsonObject<NIMVChatMP4RecordJsonEx>
+	{
+		/// <summary>
+		/// kNIMVChatUid录制的成员，如果是自己填空
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "uid", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public string RecordUid { get; set; }
+
+		public NIMVChatMP4RecordJsonEx()
+		{
+			RecordUid = "";
+		}
+	}
+	/// <summary>
+	/// 加入聊天室的josn拓展封装类
+	/// </summary>
+	public class NIMJoinRoomJsonEx:NimUtility.NimJsonObject<NIMJoinRoomJsonEx>
+	{
+		//{"custom_video":0, "custom_audio":0, "video_quality":0, "session_id":"1231sda", "rtmp_url":"", "bypass_rtmp":0}
+		/// <summary>
+		/// 是否用自主的视频数据 >0表示是
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_video", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int CustomVideo { get; set; }
+
+		/// <summary>
+		/// 是否用自主的音频数据 >0表示是
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_audio", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int CustomAudio { get; set; }
+
+		/// <summary>
+		/// 视频聊天分辨率选择 NIMVChatVideoQuality
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "video_quality", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int VideoQuality { get; set; }
+
+		/// <summary>
+		/// 发起会话的标识id，将在创建通话及结束通话时有效，帮助针对无channelid的情况下进行映射
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "session_id", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public string SessionId { get; set; }
+
+		/// <summary>
+		/// 直播推流地址(加入多人时有效)，非空代表主播旁路直播， BypassRtmp决定是否开始推流
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "rtmp_url", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public string RtmpUrl { get; set; }
+
+		/// <summary>
+		/// 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "bypass_rtmp", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int BypassRtmp { get; set; }
+
+		public NIMJoinRoomJsonEx()
+		{
+			CustomVideo = 0;
+			CustomAudio = 0;
+			VideoQuality = 0;
+			SessionId = "";
+			RtmpUrl = "";
+			BypassRtmp = 0;
+		}
+	}
+
+
+	public class NIMVChatCustomAudioJsonEx : NimUtility.NimJsonObject<NIMVChatCustomAudioJsonEx>
+	{
+
+		/// <summary>
+		/// 采样频率
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "sample_rate", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int SampleRate { get; set; }
+
+		/// <summary>
+		/// 采样位深
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "sample_bit", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int SampleBit { get; set; }
+
+		public NIMVChatCustomAudioJsonEx()
+		{
+			SampleRate = 16000;
+			SampleBit = 16;
+		}
+	}
+
+	public class NIMVChatCustomVideoJsonEx: NimUtility.NimJsonObject<NIMVChatCustomVideoJsonEx>
+	{
+		/// <summary>
+		/// 视频数据类型，NIMVideoSubType
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "subtype", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int VideoSubType { get; set; }
+		public NIMVChatCustomVideoJsonEx()
+		{
+			VideoSubType = Convert.ToInt32(NIMVideoSubType.kNIMVideoSubTypeI420);
+		}
+	}
+
+
+	/// <summary>
+	/// 调用接口回调
+	/// </summary>
+	/// <param name="channel_id">频道id</param>
+	/// <param name="code">结果</param>
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void onSessionHandler(long channel_id, int code);
 
     /// <summary>

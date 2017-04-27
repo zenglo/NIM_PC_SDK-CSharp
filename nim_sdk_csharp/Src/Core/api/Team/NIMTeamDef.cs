@@ -305,6 +305,13 @@ namespace NIM.Team
         public bool NotifyNewMessage
         {
             get { return (ConfigBits & (int) NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify) == 0; }
+            set
+            {
+                if (value)
+                    ConfigBits |= (int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify;
+                else
+                    ConfigBits &= (~(int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify);
+            }
         }
 
         public NIMTeamInfo()
@@ -312,6 +319,7 @@ namespace NIM.Team
             IsValid = 1;
             IsMemberValid = 1;
             TeamType = NIMTeamType.kNIMTeamTypeNormal;
+            ConfigBits = 0;
         }
     }
 

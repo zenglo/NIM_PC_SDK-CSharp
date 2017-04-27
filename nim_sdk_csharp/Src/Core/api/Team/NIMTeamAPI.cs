@@ -22,7 +22,7 @@ namespace NIM.Team
 
     public delegate void QueryMyTeamsInfoResultDelegate(NIMTeamInfo[] infoList);
 
-    public delegate void QueryTeamMembersInfoResultDelegate(NIMTeamMemberInfo[] infoList);
+    public delegate void QueryTeamMembersInfoResultDelegate(string tid, int memberCount, bool includeUserInfo,NIMTeamMemberInfo[] infoList);
 
     public delegate void QuerySingleMemberResultDelegate(NIMTeamMemberInfo info);
 
@@ -71,18 +71,18 @@ namespace NIM.Team
 
         private static NIMTeamEventData ParseTeamEventData(int resCode, int nid, string tid, string result)
         {
-            NIMTeamEventData eventData = null;
+            NIMTeamEventData eventData = new NIMTeamEventData();
             if (!string.IsNullOrEmpty(result))
             {
                 eventData = NIMTeamEventData.Deserialize(result);
-                if (eventData.TeamEvent == null)
-                {
-                    eventData.TeamEvent = new NIMTeamEvent();
-                }
-                eventData.TeamEvent.TeamId = tid;
-                eventData.TeamEvent.ResponseCode = (ResponseCode)Enum.Parse(typeof(ResponseCode), resCode.ToString());
-                eventData.TeamEvent.NotificationType = (NIMNotificationType)Enum.Parse(typeof(NIMNotificationType), nid.ToString());
             }
+            if (eventData.TeamEvent == null)
+            {
+                eventData.TeamEvent = new NIMTeamEvent();
+            }
+            eventData.TeamEvent.TeamId = tid;
+            eventData.TeamEvent.ResponseCode = (ResponseCode)Enum.Parse(typeof(ResponseCode), resCode.ToString());
+            eventData.TeamEvent.NotificationType = (NIMNotificationType)Enum.Parse(typeof(NIMNotificationType), nid.ToString());
             return eventData;
         }
 
@@ -408,7 +408,7 @@ namespace NIM.Team
             if (userData != IntPtr.Zero)
             {
                 var membersInfo = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
-                NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(userData, (object)membersInfo);
+                NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(userData, tid,memberCount,includeUserInfo,(object)membersInfo);
             }
         }
 

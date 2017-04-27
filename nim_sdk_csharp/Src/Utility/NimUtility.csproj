@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NDEBUGVERSION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DEBUGVERSION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -152,6 +152,7 @@
     <Compile Include="Json\JsonExtension.cs" />
     <Compile Include="Json\JsonKeyValuePairConverter.cs" />
     <Compile Include="Json\JsonParser.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="MonoPInvokeCallback.cs" />
     <Compile Include="NativeConfig.cs" />
     <Compile Include="NimConfig.cs" />

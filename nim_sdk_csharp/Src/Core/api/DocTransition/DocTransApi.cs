@@ -14,7 +14,7 @@ namespace NIM.DocTransition
     public class DocTransApi
     {
         /// <summary>
-        /// 册文档转换的结果的回调通知（服务器异步转换，客户端需要等待通知才知道转换结果）
+        /// 注册册文档转换的结果的回调通知（服务器异步转换，客户端需要等待通知才知道转换结果）
         /// </summary>
         /// <param name="cb"></param>
         public static void RegisterNotifyCallback(DocTransDelegate cb)

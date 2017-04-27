@@ -101,7 +101,7 @@ namespace NIM.SysMessage
 				content.ClientMsgId = content.GenerateMsgId();
             var jsonMsg = content.Serialize();
 
-			//Debug.Log (content.Dump () + jsonMsg);
+			//NimUtility.Log.Info (content.Dump () + jsonMsg);
             SysMsgNativeMethods.nim_sysmsg_send_custom_notification(jsonMsg, null);
         }
 

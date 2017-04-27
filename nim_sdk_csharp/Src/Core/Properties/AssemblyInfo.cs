@@ -38,6 +38,6 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: AssemblyVersion("3.5.0.0313")]
-[assembly: AssemblyFileVersion("3.5.0.0")]
+[assembly: AssemblyFileVersion("3.6.0.0")]
 [assembly: InternalsVisibleTo("NIMTestProject")]
 //#endif

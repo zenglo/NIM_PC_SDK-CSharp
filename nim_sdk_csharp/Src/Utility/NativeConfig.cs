@@ -11,47 +11,73 @@ namespace NIM
     public class NativeConfig
     {
 #if UNITY
-    #if DEBUGVERSION
-    #else
-        #if UNITY_IOS
+#if DEBUGVERSION
+#if UNITY_IOS
             public const string NIMNativeDLL = "__Internal";
             public const string NIMAudioNativeDLL = "__Internal";
             public const string NIMHttpNativeDLL = "__Internal";
             public const string ChatRoomNativeDll = "__Internal";
-        #elif UNITY_ANDROID
+#elif UNITY_ANDROID
             public const string NIMNativeDLL = "nim";
             public const string NIMAudioNativeDLL = "nim_audio";
             public const string NIMHttpNativeDLL = "nim_tools_http";
             public const string ChatRoomNativeDll = "nim_chatroom";
-        #elif UNITY_STANDALONE_LINUX
+#elif UNITY_STANDALONE_LINUX
             public const string NIMNativeDLL = "nim_linux";
             public const string NIMAudioNativeDLL = "nim_audio";
             public const string NIMHttpNativeDLL = "nim_tools_http";
             public const string ChatRoomNativeDll = "nim_chatroom";
-        #elif UNITY_STANDALONE_WIN
-            public const string NIMNativeDLL = "nim";
-            public const string NIMAudioNativeDLL = "nim_audio";
-            public const string NIMHttpNativeDLL = "nim_tools_http";
-            public const string ChatRoomNativeDll = "nim_chatroom";
-		#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+#elif UNITY_STANDALONE_WIN
+        public const string NIMNativeDLL = "nim";
+        public const string NIMAudioNativeDLL = "nim_audio";
+        public const string NIMHttpNativeDLL = "nim_tools_http";
+        public const string ChatRoomNativeDll = "nim_chatroom";
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 			public const string NIMNativeDLL = "nim_sdk";
 			public const string NIMAudioNativeDLL = "nim_audio_sdk";
 			public const string NIMHttpNativeDLL = "nim_tools_http";
 			public const string ChatRoomNativeDll = "nim_chatroom_sdk";
-        #endif
-    #endif
+#endif
 #else
-    #if DEBUGVERSION
+#if UNITY_IOS
+            public const string NIMNativeDLL = "__Internal";
+            public const string NIMAudioNativeDLL = "__Internal";
+            public const string NIMHttpNativeDLL = "__Internal";
+            public const string ChatRoomNativeDll = "__Internal";
+#elif UNITY_ANDROID
+            public const string NIMNativeDLL = "nim";
+            public const string NIMAudioNativeDLL = "nim_audio";
+            public const string NIMHttpNativeDLL = "nim_tools_http";
+            public const string ChatRoomNativeDll = "nim_chatroom";
+#elif UNITY_STANDALONE_LINUX
+            public const string NIMNativeDLL = "nim_linux";
+            public const string NIMAudioNativeDLL = "nim_audio";
+            public const string NIMHttpNativeDLL = "nim_tools_http";
+            public const string ChatRoomNativeDll = "nim_chatroom";
+#elif UNITY_STANDALONE_WIN
+            public const string NIMNativeDLL = "nim";
+            public const string NIMAudioNativeDLL = "nim_audio";
+            public const string NIMHttpNativeDLL = "nim_tools_http";
+            public const string ChatRoomNativeDll = "nim_chatroom";
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+			public const string NIMNativeDLL = "nim_sdk";
+			public const string NIMAudioNativeDLL = "nim_audio_sdk";
+			public const string NIMHttpNativeDLL = "nim_tools_http";
+			public const string ChatRoomNativeDll = "nim_chatroom_sdk";
+#endif
+#endif
+#else
+#if DEBUGVERSION1
         public const string NIMNativeDLL = "nim_d.dll";
         public const string NIMAudioNativeDLL = "nim_audio_d.dll";
         public const string NIMHttpNativeDLL = "nim_tools_http_d.dll";
         public const string ChatRoomNativeDll = "nim_chatroom_d.dll";
-    #else
+#else
         public const string NIMNativeDLL = "nim.dll";
         public const string NIMAudioNativeDLL = "nim_audio.dll";
         public const string NIMHttpNativeDLL = "nim_tools_http.dll";
         public const string ChatRoomNativeDll = "nim_chatroom.dll";
-    #endif
+#endif
 #endif
     }
 }

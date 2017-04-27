@@ -219,17 +219,25 @@ namespace NIM
             nim_vchat_opt_cb_func cb,
             IntPtr user_data);
 
+		/* 3.6.0 sdk无此接口
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_streaming_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_streaming_mode(bool streaming,
            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
            nim_vchat_opt_cb_func cb,
            IntPtr user_data);
+		  */
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_net_detect", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern ulong nim_vchat_net_detect(
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
             nim_vchat_opt_cb_func cb, IntPtr user_data);
-        #endregion
-    }
+
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_frame_scale", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_set_video_frame_scale(NIMVChatVideoFrameScaleType type);
+
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_video_frame_scale_type", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int nim_vchat_get_video_frame_scale_type();
+		#endregion
+	}
 }
 #endif

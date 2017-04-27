@@ -16,7 +16,7 @@ namespace NimUtility
     {
         public virtual string Serialize()
         {
-            return NimUtility.Json.JsonParser.Serialize(this);
+            return NimUtility.Json.JsonParser.Serialize(this,IgnoreDefauleValue);
         }
 
         public virtual string SerializeWithIndented()
@@ -36,12 +36,15 @@ namespace NimUtility
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("SDKJsonObject.Deserialize\r\n" + e.ToString() + "\r\njson:" + json);
+                NimUtility.Log.Error("SDKJsonObject.Deserialize\r\n" + e.ToString() + "\r\njson:" + json);
                 return default(T);
             }
         }
 
         [JsonIgnore]
         public string RawJson { get; private set; }
+
+        [JsonIgnore]
+        protected virtual bool IgnoreDefauleValue { get; set; }
     }
 }

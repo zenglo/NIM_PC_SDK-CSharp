@@ -32,4 +32,13 @@ namespace NimUtility
             return baton;
         }
     }
+
+#if UNITY
+
+    public class AotTypes : UnityEngine.MonoBehaviour
+    {
+        private static System.ComponentModel.TypeConverter _unused = new System.ComponentModel.TypeConverter();
+    }
+#endif
+
 }

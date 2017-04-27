@@ -55,9 +55,12 @@ namespace NIM
         /// <param name="appInstallDir">目前不需要传入（SDK可以自动获取）.</param>
         /// <param name="config">The config.</param>
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
+#if !UNITY
         [Obsolete]
+#endif
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
+            Log.Info("try to init sdk");
 			if (_sdkInitialized) {
 				RegisterSdkCallbacks();//需要重新注册；
 				return true;
@@ -71,14 +74,14 @@ namespace NIM
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                NimUtility.Log.Error(ex.Message);
             }
 			if (_sdkInitialized) {
 				RegisterSdkCallbacks();
 			}
             //调用com.netease.nimlib.SystemUtil的初始化接口
             InitSystemUtil();
-
+            Log.InfoFormat("init sdk:{0}", _sdkInitialized);
             return _sdkInitialized;
         }
 
@@ -118,7 +121,7 @@ namespace NIM
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                NimUtility.Log.Error(ex.Message);
             }
             if (_sdkInitialized)
             {
@@ -150,11 +153,11 @@ namespace NIM
                         AndroidJavaClass clsSystemUtil = new AndroidJavaClass("com.netease.nimlib.NIMSDK");
                         if (clsSystemUtil != null)
                         {
-                            UnityEngine.Debug.Log("com.netease.nimlib.NIMSDK found");
-                            Boolean init = clsSystemUtil.CallStatic<Boolean>("init", curActivityContext, "nim");
-                            UnityEngine.Debug.Log("init:" + init);
+                            NimUtility.Log.Info("com.netease.nimlib.NIMSDK found");
+							Boolean init = clsSystemUtil.CallStatic<Boolean>("init", curActivityContext, "fjni_wrapper");
+                            NimUtility.Log.Info("init:" + init);
                             //string androidId = clsSystemUtil.CallStatic<String>("getAndroidId");
-                            //Debug.Log("androidId:" + androidId);
+                            //NimUtility.Log.Info("androidId:" + androidId);
                         }
                     }
                 }

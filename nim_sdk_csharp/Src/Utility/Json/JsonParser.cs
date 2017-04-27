@@ -16,19 +16,22 @@ namespace NimUtility.Json
         {
             try
             {
-                var setting = new JsonSerializerSettings();
-                setting.NullValueHandling = NullValueHandling.Ignore;
-                setting.Converters.Add(new JExtConverter());
-                T ret = JsonConvert.DeserializeObject<T>(json, setting);
-                return ret;
+                if(!string.IsNullOrEmpty(json))
+                {
+                    var setting = new JsonSerializerSettings();
+                    setting.NullValueHandling = NullValueHandling.Ignore;
+                    setting.Converters.Add(new JExtConverter());
+                    T ret = JsonConvert.DeserializeObject<T>(json, setting);
+                    return ret;
+                }
             }
             catch (JsonException jsonException)
             {
-                System.Diagnostics.Debug.WriteLine("Deserialize JsonException:" + jsonException.Message);
+                NimUtility.Log.Error("Deserialize JsonException:" + jsonException.Message);
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("JsonParser Deserialize error:\n" + e.Message + "Json string: " + json);
+                NimUtility.Log.Error("JsonParser Deserialize error:\n" + e.Message + "Json string: " + json);
             }
             return default(T);
         }
@@ -51,11 +54,11 @@ namespace NimUtility.Json
             }
             catch (JsonException jsonException)
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json));
+                NimUtility.Log.Error(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json));
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json));
+                NimUtility.Log.Error(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json));
             }
             return null;
         }
@@ -92,12 +95,16 @@ namespace NimUtility.Json
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string Serialize(object obj)
+        public static string Serialize(object obj,bool ignoreDefaultValue = false)
         {
             if(obj != null)
             {
                 JsonSerializerSettings setting = new JsonSerializerSettings();
                 setting.NullValueHandling = NullValueHandling.Ignore;
+                if(ignoreDefaultValue)
+                {
+                    setting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                }
                 setting.Converters.Add(new JExtConverter());
                 return JsonConvert.SerializeObject(obj, Formatting.None, setting);
             }

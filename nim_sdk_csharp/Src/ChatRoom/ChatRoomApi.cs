@@ -94,7 +94,7 @@ namespace NIMChatRoom
             catch(Exception e)
             {
                 _chatRoomInitialized = false;
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                NimUtility.Log.Error(e.Message);
             }
             _chatRoomInitialized = true;
         }
@@ -181,7 +181,7 @@ namespace NIMChatRoom
         [MonoPInvokeCallback(typeof(NimChatroomSendmsgAckCbFunc))]
         private static void OnSendMsgCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
-            System.Diagnostics.Debug.WriteLine("send chatroom message :" + result);
+            //NimUtility.Log.Error("send chatroom message :" + result);
             if (SendMessageHandler != null)
             {
                 var message = NimUtility.Json.JsonParser.Deserialize<Message>(result);
@@ -394,18 +394,21 @@ namespace NIMChatRoom
             var json = info.Serialize();
             ChatRoomNativeMethods.nim_chatroom_update_my_role_async(roomId, json, notify, notify_ext, null, CallbackBridge.UpdateMyRoleCallback, ptr);
         }
-        /// <summary>
-        /// 排序列出所有麦序元素 
-        /// </summary>
-        /// <param name="roomId">房间号</param>
-        /// <param name="cb"></param>
-        /// <param name="json_extension"></param>
-        public static void QueueListAsync(long roomId, nim_chatroom_queue_list_cb_func cb, string json_extension = "")
+
+
+
+		/// <summary>
+		/// 排序列出所有麦序元素 
+		/// </summary>
+		/// <param name="roomId">房间号</param>
+		/// <param name="cb"></param>
+		/// <param name="json_extension"></param>
+		public static void QueueListAsync(long roomId, ChatRoomQueueListDelegate cb, string json_extension = "")
         {
             //ChatRoomQueueListDelegate
-            // 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            // 			ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
-            ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+          	ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
+            //ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
@@ -414,12 +417,12 @@ namespace NIMChatRoom
         /// <param name="roomId"></param>
         /// <param name="cb"></param>
         /// <param name="json_extension"></param>
-        public static void QueueDropAsync(long roomId, nim_chatroom_queue_drop_cb_func cb, string json_extension = "")
+        public static void QueueDropAsync(long roomId, ChatRoomQueueDropDelegate cb, string json_extension = "")
         {
             //ChatRoomQueueDropDelegate
-            // 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            // 			ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
-            ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
+            //ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
@@ -429,12 +432,12 @@ namespace NIMChatRoom
         /// <param name="element_key">需要取出的元素的UniqKey,长度限制128字节,传空传表示取出第一个元素</param>
         /// <param name="cb"></param>
         /// <param name="json_extension"></param>
-        public static void QueuePollAsync(long roomId, string element_key, nim_chatroom_queue_poll_cb_func cb, string json_extension = "")
+        public static void QueuePollAsync(long roomId, string element_key, ChatRoomQueuePollDelegate cb, string json_extension = "")
         {
             //ChatRoomQueuePollDelegate
-            //var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            //ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
-            ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
+           // ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
@@ -445,11 +448,11 @@ namespace NIMChatRoom
         /// <param name="elemnet_value">新元素内容，长度限制4096字节 </param>
         /// <param name="cb"></param>
         /// <param name="json_extension"></param>
-        public static void QueueOfferAsync(long roomId, string element_key, string elemnet_value, nim_chatroom_queue_offer_cb_func cb, string json_extension = "")
+        public static void QueueOfferAsync(long roomId, string element_key, string elemnet_value, ChatRoomQueueOfferDelegate cb, string json_extension = "")
         {
-            //var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            //ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
-            ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
+           //ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
         }
     }
 }

@@ -221,7 +221,7 @@ namespace NIM.Messagelog
 				if (log != null) {
 					
 					//foreach (var v in log) {
-					//	UnityEngine.Debug.Log (v.Dump ());
+					//	NimUtility.Log.Info (v.Dump ());
 					//}
 					this.MsglogCollection = log.ToArray ();
 				}

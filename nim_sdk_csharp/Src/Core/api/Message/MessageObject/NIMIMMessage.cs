@@ -157,7 +157,7 @@ namespace NIM
         }
 
         /// <summary>
-        /// (可选)开发者自定义的反垃圾字段,长度限制：5000字符 
+        /// (可选)开发者自定义的反垃圾字段,长度限制：5000字符, 格式为json string,{"type" : 1:文本，2：图片，3视频, "data" : "文本内容or图片地址or视频地址"}
         /// </summary>
         [JsonProperty(PropertyName = "anti_spam_content")]
         public string AntiSpamContent { get; set; }

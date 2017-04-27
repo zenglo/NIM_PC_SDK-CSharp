@@ -74,39 +74,21 @@ namespace NIM
         /// </summary>
         public onSessionRealtimeInfoNotify onSessionRealtimeStateChanged;
     }
+
     public class VChatAPI
     {
-        /// <summary>
-        /// VCHAT初始化，需要在SDK的Client.Init成功之后
-        /// </summary>
-        /// <returns></returns>
-        public static bool Init()
-        {
-            return VChatNativeMethods.nim_vchat_init("");
-        }
-
-        /// <summary>
-        /// VCHAT释放，需要在SDK的Client.Cleanup之前
-        /// </summary>
-        /// <returns></returns>
-        public static void Cleanup()
-        {
-            VChatNativeMethods.nim_vchat_cleanup("");
-        }
-
-
-        static nim_vchat_cb_func VChatStatusCb = new nim_vchat_cb_func(VChatSessionStatusCallback);
-        /// <summary>
-        /// 设置统一的通话回调或者服务器通知
-        /// </summary>
-        /// <param name="session">回调通知对象</param>
-        public static void SetSessionStatusCb(NIMVChatSessionStatus session)
-        {
-            session_status = session;
-            VChatNativeMethods.nim_vchat_set_cb_func(VChatStatusCb, IntPtr.Zero);
-        }
-        private static NIMVChatSessionStatus session_status;
-        private static void VChatSessionStatusCallback(NIMVideoChatSessionType type, long channel_id, int code, string json_extension, IntPtr user_data)
+		private static NIMVChatSessionStatus session_status;
+		private static nim_vchat_cb_func VChatStatusCb =VChatSessionStatusCallback;
+		private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompletedCallback;
+		private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreatedCallback;
+		private static nim_vchat_mp4_record_opt_cb_func VChatMP4RecordOptCb = OnMP4RecordOpCompletedCallback;
+		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
+		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStopCb = OnAudioRecordStopCallback;
+		private static void OnNormalOpCompletedCallback(bool ret, int code, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_opt_cb_func>(user_data, ret, code, json_extension, IntPtr.Zero);
+		}
+		private static void VChatSessionStatusCallback(NIMVideoChatSessionType type, long channel_id, int code, string json_extension, IntPtr user_data)
         {
             if (json_extension == null)
             {
@@ -237,311 +219,372 @@ namespace NIM
                     break;
             }
         }
+		private static void OnMP4RecordOpCompletedCallback(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_mp4_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+		}
+		private static void OnAudioRecordStartCallback(bool ret, int code, string file, Int64 time, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+		}
+		private static void OnAudioRecordStopCallback(bool ret, int code, string file, Int64 time, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
+		}
+		private static void OnVchatRoomCreatedCallback(int code, long channel_id, string json_extension, IntPtr user_data)
+		{
+			NimUtility.DelegateConverter.Invoke<nim_vchat_opt2_cb_func>(user_data, code, channel_id, json_extension, IntPtr.Zero);
+		}
 
-        /// <summary>
-        /// 启动通话
-        /// </summary>
-        /// <param name="mode">启动音视频通话类型</param>
-        /// <param name="json_extension">扩展，kNIMVChatUids成员id列表(必填),其他可选 如{"uids":["uid_temp"],"custom_video":0, "custom_audio":0}</param>
-        /// <returns></returns>
-        public static bool Start(NIMVideoChatMode mode, NIMVChatInfo info)
+
+		/// <summary>
+		/// VCHAT初始化，需要在SDK的Client.Init成功之后
+		/// </summary>
+		/// <returns>初始化结果，如果是false则以下所有接口调用无效</returns>
+		public static bool Init()
+		{
+			return VChatNativeMethods.nim_vchat_init("");
+		}
+
+		/// <summary>
+		/// VCHAT释放，需要在SDK的Client.Cleanup之前
+		/// </summary>
+		/// <returns>无返回值</returns>
+		public static void Cleanup()
+		{
+			VChatNativeMethods.nim_vchat_cleanup("");
+		}
+
+		/// <summary>
+		/// 设置统一的通话回调或者服务器通知
+		/// </summary>
+		/// <param name="session">回调通知对象</param>
+		/// <returns>无返回值</returns>
+		public static void SetSessionStatusCb(NIMVChatSessionStatus session)
+		{
+			session_status = session;
+			VChatNativeMethods.nim_vchat_set_cb_func(VChatStatusCb, IntPtr.Zero);
+		}
+
+		/// <summary>
+		/// 启动通话
+		/// </summary>
+		/// <param name="mode">启动音视频通话类型</param>
+		/// <param name="info">json扩展封装类，见NIMVChatInfo</param>
+		/// <returns> bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
+		public static bool Start(NIMVideoChatMode mode, NIMVChatInfo info)
         {
-            string json_extension = info.Serialize();
+			string json_extension = "";
+			if(info!=null)
+				json_extension= info.Serialize();
             return VChatNativeMethods.nim_vchat_start(mode, null, null, json_extension, IntPtr.Zero);
         }
 
-        /// <summary>
-        /// 设置通话模式，在更改通话模式后，通知底层
-        /// </summary>
-        /// <param name="mode">音视频通话类型</param>
-        /// <returns></returns>
-        public static bool SetMode(NIMVideoChatMode mode)
+		/// <summary>
+		/// 设置通话模式，在更改通话模式后，通知底层
+		/// </summary>
+		/// <param name="mode">音视频通话类型</param>
+		/// <returns>true 调用成功，false 调用失败</returns>
+		/// 
+		public static bool SetMode(NIMVideoChatMode mode)
         {
             return VChatNativeMethods.nim_vchat_set_talking_mode(mode, "");
         }
 
-        /// <summary>
-        /// 回应音视频通话邀请
-        /// </summary>
-        /// <param name="channel_id">音视频通话通道id</param>
-        /// <param name="accept">true 接受，false 拒绝</param>
-        /// <param name="json_extension">接起时有效 参数可选 如{"custom_video":0, "custom_audio":0}</param>
-        /// <returns></returns>
-        public static bool CalleeAck(long channel_id, bool accept, NIMVChatInfo info)
+		/// <summary>
+		/// 回应音视频通话邀请
+		/// </summary>
+		/// <param name="channel_id">音视频通话通道id</param>
+		/// <param name="accept">true 接受，false 拒绝</param>
+		/// <param name="info">json扩展封装类，见NIMVChatInfo</param>
+		/// <returns>bool true 调用成功，false 调用失败（可能channel_id无匹配，如要接起另一路通话前先结束当前通话）</returns>
+		public static bool CalleeAck(long channel_id, bool accept, NIMVChatInfo info)
         {
             string json_extension = info.Serialize();
             return VChatNativeMethods.nim_vchat_callee_ack(channel_id, accept, json_extension, IntPtr.Zero);
         }
 
-        /// <summary>
-        /// 音视频通话控制操作
-        /// </summary>
-        /// <param name="channel_id">音视频通话通道id</param>
-        /// <param name="type">操作类型</param>
-        /// <returns></returns>
-        public static bool ChatControl(long channel_id, NIMVChatControlType type)
+		/// <summary>
+		/// 音视频通话控制操作
+		/// </summary>
+		/// <param name="channel_id">音视频通话通道id</param>
+		/// <param name="type">操作类型</param>
+		/// <returns>bool true 调用成功，false 调用失败</returns>
+		public static bool ChatControl(long channel_id, NIMVChatControlType type)
         {
             return VChatNativeMethods.nim_vchat_control(channel_id, type, "", IntPtr.Zero);
         }
 
-        /// <summary>
-        /// 结束通话(需要主动在通话结束后调用，用于底层挂断和清理数据)
-        /// </summary>
-        public static void End()
+		/// <summary>
+		/// 结束通话(需要主动在通话结束后调用，用于底层挂断和清理数据)
+		/// </summary>
+		/// <param name="jsonExtension">可扩展添加session_id，用于关闭对应的通话，如果session_id缺省.则关闭当前通话.如.{"session_id":"leewp"}</param>
+		/// <returns>无返回值</returns>
+		public static void End(string jsonExtension="")
         {
-            VChatNativeMethods.nim_vchat_end("");
+            VChatNativeMethods.nim_vchat_end(jsonExtension);
         }
 
-        /// <summary>
-        /// 设置观众模式（多人模式下），全局有效（重新发起时也生效）
-        /// </summary>
-        /// <param name="viewer"></param>
-        public static void SetViewerMode(bool viewer)
+		/// <summary>
+		/// 设置观众模式（多人模式下），全局有效（重新发起时也生效）
+		/// </summary>
+		/// <param name="viewer">是否观众模式</param>
+		/// <returns>无返回值</returns>
+		public static void SetViewerMode(bool viewer)
         {
             VChatNativeMethods.nim_vchat_set_viewer_mode(viewer);
         }
 
-        /// <summary>
-        /// 获取当前是否是观众模式
-        /// </summary>
-        /// <returns></returns>
-        public static bool GetViewerMode()
+		/// <summary>
+		/// 获取当前是否是观众模式
+		/// </summary>
+		/// <returns>bool true 观众模式，false 非观众模式</returns>
+		public static bool GetViewerMode()
         {
             return VChatNativeMethods.nim_vchat_get_viewer_mode();
         }
 
-        /// <summary>
-        /// 设置音频静音，全局有效（重新发起时也生效）
-        /// </summary>
-        /// <param name="muted"></param>
-        public static void SetAudioMute(bool muted)
+		/// <summary>
+		/// 设置音频静音，全局有效（重新发起时也生效）
+		/// </summary>
+		/// <param name="muted">true 静音，false 不静音</param>
+		/// <returns>无返回值</returns>
+		public static void SetAudioMute(bool muted)
         {
             VChatNativeMethods.nim_vchat_set_audio_mute(muted);
         }
 
-        /// <summary>
-        /// 获取音频静音状态
-        /// </summary>
-        /// <returns></returns>
-        public static bool GetAudioMuteEnabled()
+		/// <summary>
+		/// 获取音频静音状态
+		/// </summary>
+		/// <returns>bool true 静音，false 不静音</returns>
+		public static bool GetAudioMuteEnabled()
         {
             return VChatNativeMethods.nim_vchat_audio_mute_enabled();
         }
 
-        public static void SetRotateRemoteVideo(bool rotate)
+		/// <summary>
+		/// 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）
+		/// </summary>
+		/// <param name="rotate"> true 自动旋转，false 不旋转</param>
+		/// <returns>无返回值</returns>
+		public static void SetRotateRemoteVideo(bool rotate)
         {
             VChatNativeMethods.nim_vchat_set_rotate_remote_video(rotate);
         }
 
-        public static bool IsRotateRemoteVideo(bool rotate)
+		/// <summary>
+		/// 获取自动旋转对方画面设置状态
+		/// </summary>
+		/// <param name="rotate"></param>
+		/// <returns>true 自动旋转，false 不旋转</returns>
+		public static bool IsRotateRemoteVideo(bool rotate)
         {
             return VChatNativeMethods.nim_vchat_rotate_remote_video_enabled();
         }
 
-        /// <summary>
-        /// 设置单个成员的黑名单状态，即是否显示对方的音频或视频数据，当前通话有效(只能设置进入过房间的成员)
-        /// </summary>
-        /// <param name="uid">uid成员 account</param>
-        /// <param name="add">true:添加到黑名单.false:从黑名单中移除</param>
-        /// <param name="audio">ture:表示音频黑名单.false:表示视频黑名单</param>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb">返回的json_extension无效</param>
-        /// <param name="user_data"> APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void SetMemberInBlackList(string uid, bool add, bool audio, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 设置单个成员的黑名单状态，即是否显示对方的音频或视频数据，当前通话有效(只能设置进入过房间的成员)
+		/// </summary>
+		/// <param name="uid">uid成员 account</param>
+		/// <param name="add">true:添加到黑名单.false:从黑名单中移除</param>
+		/// <param name="audio">ture:表示音频黑名单.false:表示视频黑名单</param>
+		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="cb">返回的json_extension无效</param>
+		/// <returns>无返回值</returns>
+		public static void SetMemberInBlackList(string uid, bool add, bool audio, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_member_in_blacklist(uid, add, audio, json_extension, VChatNormalOptCb, ptr);
         }
 
-        private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompleted;
-
-        private static void OnNormalOpCompleted(bool ret, int code, string json_extension, IntPtr user_data)
+		/// <summary>
+		/// 开始录制MP4，，同一个成员一次只允许一个MP4录制文件，在通话开始的时候才有实际数据
+		/// </summary>
+		/// <param name="path">文件录制路径</param>
+		/// <param name="recordInfo">json扩展封装类，见NIMVChatMP4RecordJsonEx</param>
+		/// <param name="cb">结果回调</param>
+		/// <returns>无返回值</returns>
+		public static void StartRecord(string path, NIMVChatMP4RecordJsonEx recordInfo, nim_vchat_mp4_record_opt_cb_func cb)
         {
-            NimUtility.DelegateConverter.Invoke<nim_vchat_opt_cb_func>(user_data, ret, code, json_extension, IntPtr.Zero);
-        }
-
-        /// <summary>
-        /// 开始录制MP4，一次只允许一个录制文件，在通话开始的时候才有实际数据。状态变化见nim_vchat_cb_func通知，type值对应kNIMVideoChatSessionTypeMp4Notify。
-        /// </summary>
-        /// <param name="path">文件录制路径</param>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb"></param>
-        /// <param name="user_data">APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void StartRecord(string path, string json_extension, nim_vchat_mp4_record_opt_cb_func cb, IntPtr user_data)
-        {
+			string json_extension = recordInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_start_record(path, json_extension, VChatMP4RecordOptCb, ptr);
         }
 
-        private static nim_vchat_mp4_record_opt_cb_func VChatMP4RecordOptCb = OnMP4RecordOpCompleted;
-
-        private static void OnMP4RecordOpCompleted(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
+		/// <summary>
+		/// 停止录制MP4
+		/// </summary>
+		/// <param name="recordInfo">json扩展封装类，见NIMVChatMP4RecordJsonEx</param>
+		/// <param name="cb">结果回调</param>
+		/// <returns>无返回值</returns>
+		public static void StopRecord(NIMVChatMP4RecordJsonEx recordInfo, nim_vchat_mp4_record_opt_cb_func cb)
         {
-            NimUtility.DelegateConverter.Invoke<nim_vchat_mp4_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
-        }
-
-        /// <summary>
-        /// 停止录制MP4
-        /// </summary>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb"></param>
-        /// <param name="user_data">APP的自定义数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void StopRecord(string json_extension, nim_vchat_mp4_record_opt_cb_func cb, IntPtr user_data)
-        {
+			string json_extension = recordInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_stop_record(json_extension, VChatMP4RecordOptCb, ptr);
         }
-
-
-		private static  nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
-		
-		private static void OnAudioRecordStartCallback(bool ret, int code,string file,Int64 time,string json_extension,IntPtr user_data)
-		{
-			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
-		}
 
 		/// <summary>
 		/// 开始录制音频文件，一次只允许一个音频录制文件
 		/// </summary>
 		/// <param name="path">文件录制路径</param>
-		/// <param name="cb"></param>
+		/// <param name="cb">结果回调</param>
+		/// <returns>无返回值</returns>
 		public static void StartAudioRecord(string path,nim_vchat_audio_record_opt_cb_func cb)
 		{
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
 			VChatNativeMethods.nim_vchat_start_audio_record(path, "", VChatAudioRecordStartCb, ptr);
 		}
 
-		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStopCb = OnAudioRecordStopCallback;
-
-		private static void OnAudioRecordStopCallback(bool ret, int code, string file, Int64 time, string json_extension, IntPtr user_data)
-		{
-			NimUtility.DelegateConverter.Invoke<nim_vchat_audio_record_opt_cb_func>(user_data, ret, code, file, time, json_extension, IntPtr.Zero);
-		}
-
 		/// <summary>
 		/// 停止录制音频文件
 		/// </summary>
-		/// <param name="cb"></param>
+		/// <param name="cb">结果回调</param>
+		/// <returns>无返回值</returns>
 		public static void StopAudioRecord(nim_vchat_audio_record_opt_cb_func cb)
 		{
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
 			VChatNativeMethods.nim_vchat_stop_audio_record("", VChatAudioRecordStopCb, ptr);
 		}
 
-        private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreated;
-
-        private static void OnVchatRoomCreated(int code, long channel_id, string json_extension, IntPtr user_data)
-        {
-            NimUtility.DelegateConverter.Invoke<nim_vchat_opt2_cb_func>(user_data, code, channel_id, json_extension, IntPtr.Zero);
-        }
-
-        /// <summary>
-        ///创建一个多人房间（后续需要主动调用加入接口进入房间） 
-        /// </summary>
-        /// <param name="room_name">房间名</param>
-        /// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb"></param>
-        public static void CreateRoom(string room_name, string custom_info, string json_extension, nim_vchat_opt2_cb_func cb)
+		/// <summary>
+		///创建一个多人房间（后续需要主动调用加入接口进入房间） 
+		/// </summary>
+		/// <param name="room_name">房间名</param>
+		/// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
+		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="cb">结果回调</param>
+		/// <returns>无返回值</returns>
+		public static void CreateRoom(string room_name, string custom_info, string json_extension, nim_vchat_opt2_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_create_room(room_name, custom_info, json_extension, VChatOpt2Cb, ptr);
         }
 
-
-        /// <summary>
-        /// 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
-        /// </summary>
-        /// <param name="room_name"></param>
-        /// <param name="json_extension"></param>
-        /// <param name="cb"></param>
-        /// <param name="user_data"></param>
-        /// <returns></returns>
-        public static bool JoinRoom(NIMVideoChatMode mode, string room_name, string json_extension, nim_vchat_opt2_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
+		/// </summary>
+		/// <param name="mode">音视频通话类型</param>
+		/// <param name="room_name">房间名</param>
+		/// <param name="joinRoomInfo">json封装类，见NIMJoinRoomJsonEx</param>
+		/// <param name="cb">cb 结果回调,返回的json_extension扩展字段中包含 "custom_info","session_id"</param>
+		/// <returns>bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
+		public static bool JoinRoom(NIMVideoChatMode mode, string room_name, NIMJoinRoomJsonEx joinRoomInfo, nim_vchat_opt2_cb_func cb)
         {
+			string json_extension = joinRoomInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, VChatOpt2Cb, ptr);
         }
 
-        public static void UpdateRtmpUrl(string rtmp_url, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 通话中修改直播推流地址（主播有效）
+		/// </summary>
+		/// <param name="rtmp_url">新的rtmp推流地址</param>
+		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="cb">结果回调,返回的json_extension无效</param>
+		/// <returns>无返回值</returns>
+		public static void UpdateRtmpUrl(string rtmp_url, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_update_rtmp_url(rtmp_url, json_extension, VChatNormalOptCb, ptr);
         }
 
-        /// <summary>
-        /// 通话中修改分辨率
-        /// </summary>
-        /// <param name="video_quality"> 分辨率模式</param>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb">返回的json_extension无效</param>
-        /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 通话中修改分辨率
+		/// </summary>
+		/// <param name="video_quality"> 分辨率模式</param>
+		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="cb">结果回调，返回的json_extension无效</param>
+		/// <returns>无返回值</returns>
+		public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_video_quality(video_quality, json_extension, VChatNormalOptCb, ptr);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="frame_rate"></param>
-        /// <param name="json_extension"></param>
-        /// <param name="cb"></param>
-        /// <param name="user_data"></param>
-        public static void SetFrameRate(NIMVChatVideoFrameRate frame_rate, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 实时设置视频发送帧率上限
+		/// </summary>
+		/// <param name="frame_rate">帧率类型 见NIMVChatVideoFrameRate定义</param>
+		/// <param name="json_extension">json_extension  无效备用</param>
+		/// <param name="cb">cb 结果回调</param>
+		/// <returns>无返回值</returns>
+		public static void SetFrameRate(NIMVChatVideoFrameRate frame_rate, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_frame_rate(frame_rate, json_extension, VChatNormalOptCb, ptr);
         }
 
-        /// <summary>
-        /// 通话中修改自定义音视频数据模式
-        /// </summary>
-        /// <param name="custom_audio">true:表示使用自定义的音频数据.false:表示不使用</param>
-        /// <param name="custom_video">true:表示使用自定义的视频数据.false:表示不使用</param>
-        /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb"></param>
-        /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理</param>
-        public static void SetCustomData(bool custom_audio, bool custom_video, string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 通话中修改自定义音视频数据模式
+		/// </summary>
+		/// <param name="custom_audio">true:表示使用自定义的音频数据.false:表示不使用</param>
+		/// <param name="custom_video">true:表示使用自定义的视频数据.false:表示不使用</param>
+		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="cb">cb 结果回调</param>
+		/// <returns>无返回值</returns>
+		public static void SetCustomData(bool custom_audio, bool custom_video, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_custom_data(custom_audio, custom_video, json_extension, VChatNormalOptCb, ptr);
         }
 
-        /// <summary>
-        /// 音视频网络探测接口
-        /// </summary>
-        /// <param name="json_extension"></param>
-        /// <param name="cb">
-        /// 回调函数json_extension keys:
-        /// "task_id":uint64 任务id
-        /// "loss":int 丢包率百分比
-        /// "rttmax":int rtt 最大值
-        /// "rttmin":int rtt 最小值
-        /// "rttavg":int rtt 平均值
-        /// "rttmdev":int rtt 偏差值 mdev
-        /// "detailinfo":string 扩展信息
-        /// </param>
-        /// <param name="user_data"></param>
-        /// <returns>探测任务id
-        /// 200:成功
-        /// 0:流程错误
-        /// 400:非法请求格式
-        /// 417:请求数据不对
-        /// 606:ip为内网ip
-        /// 607:频率超限
-        /// 20001:探测类型错误
-        /// 20002:ip错误
-        /// 20003:sock错误
-        /// </returns>
-        public static ulong DetectNetwork(string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data)
+		/// <summary>
+		/// 音视频网络探测接口,需要在sdk初始化时带上app key
+		/// </summary>
+		/// <param name="json_extension">json扩展参数（备用，目前不需要）</param>
+		/// <param name="cb">操作结果的回调函数</param>
+		/// <returns>探测任务id</returns>
+		/// 回调函数json_extension keys:
+		/// "task_id":uint64 任务id
+		/// "loss":int 丢包率百分比
+		/// "rttmax":int rtt 最大值
+		/// "rttmin":int rtt 最小值
+		/// "rttavg":int rtt 平均值
+		/// "rttmdev":int rtt 偏差值 mdev
+		/// "detailinfo":string 扩展信息
+		/// </param>
+		/// <param name="user_data"></param>
+		/// <returns>探测任务id
+		/// 200:成功
+		/// 0:流程错误
+		/// 400:非法请求格式
+		/// 417:请求数据不对
+		/// 606:ip为内网ip
+		/// 607:频率超限
+		/// 20001:探测类型错误
+		/// 20002:ip错误
+		/// 20003:sock错误
+		/// </returns>
+		public static ulong DetectNetwork(string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             var ret = VChatNativeMethods.nim_vchat_net_detect(json_extension, VChatNormalOptCb, ptr);
             return ret;
         }
 
-    }
+		/// <summary>
+		/// 设置发送时视频画面的长宽比例裁剪模式，裁剪的时候不改变横竖屏（重新发起时也生效）
+		/// </summary>
+		/// <param name="type">裁剪模式NIMVChatVideoFrameScaleType</param>
+		/// <returns>无返回值</returns>
+		public static void SetVideoFrameScale(NIMVChatVideoFrameScaleType type)
+		{
+			VChatNativeMethods.nim_vchat_set_video_frame_scale(type);
+		}
+
+		/// <summary>
+		/// 获取视频画面的裁剪模式
+		/// </summary>
+		/// <returns>当前的裁剪模式NIMVChatVideoFrameScaleType</returns>
+		public static NIMVChatVideoFrameScaleType GetVideoFrameScale()
+		{
+			int ret = VChatNativeMethods.nim_vchat_get_video_frame_scale_type();
+			return (NIMVChatVideoFrameScaleType)Enum.ToObject(typeof(NIMVChatVideoFrameScaleType), ret);
+		}
+
+
+	}
 }
 #endif

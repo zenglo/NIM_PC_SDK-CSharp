@@ -32,13 +32,13 @@ namespace NIMChatRoom
 
     public delegate void TempMuteMemberDelegate(long roomId, NIM.ResponseCode errorCode, MemberInfo info);
 
-    public delegate void ChatRoomQueueListDelegate(long room_id, NIM.ResponseCode error_code, string result, string json_extension, IntPtr user_data);
+    public delegate void ChatRoomQueueListDelegate(long room_id, NIM.ResponseCode error_code, string result);
 
     public delegate void ChatRoomQueueDropDelegate(long room_id, NIM.ResponseCode error_code);
 
-    public delegate void ChatRoomQueuePollDelegate(long room_id, int error_code, string result, string json_extension, IntPtr user_data);
+    public delegate void ChatRoomQueuePollDelegate(long room_id, NIM.ResponseCode error_code, string result);
 
-    public delegate void ChatRoomQueueOfferDelegate(long room_id, int error_code, string json_extension, IntPtr user_data);
+    public delegate void ChatRoomQueueOfferDelegate(long room_id, NIM.ResponseCode error_code);
 
     internal static class CallbackBridge
     {
@@ -116,7 +116,8 @@ namespace NIMChatRoom
         {
             if (userData != IntPtr.Zero)
             {
-                var info = MemberInfo.Deserialize(result);
+                //var info = MemberInfo.Deserialize(result);
+				MemberInfo info = string.IsNullOrEmpty(result) ? null : NimUtility.Json.JsonParser.Deserialize<MemberInfo>(result);
                 NimUtility.DelegateConverter.InvokeOnce<TempMuteMemberDelegate>(userData, roomId, (NIM.ResponseCode)resCode, info);
             }
         }
@@ -146,7 +147,7 @@ namespace NIMChatRoom
         {
             if (user_data != IntPtr.Zero)
             {
-                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueListDelegate>(user_data, room_id, error_code, result, json_extension);
+                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueListDelegate>(user_data, room_id, error_code, result);
             }
         }
 
@@ -157,18 +158,19 @@ namespace NIMChatRoom
         {
             if (user_data != IntPtr.Zero)
             {
-                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueDropDelegate>(user_data, room_id, error_code, json_extension);
+                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueDropDelegate>(user_data, room_id, error_code);
             }
         }
 
         public static readonly nim_chatroom_queue_poll_cb_func ChatroomQueuePollCallback = OnPopMICQueue;
+
 
         [MonoPInvokeCallback(typeof(nim_chatroom_queue_poll_cb_func))]
         private static void OnPopMICQueue(long room_id, NIM.ResponseCode error_code, string result, string json_extension, IntPtr user_data)
         {
             if (user_data != IntPtr.Zero)
             {
-                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueuePollDelegate>(user_data, room_id, error_code, result, json_extension);
+                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueuePollDelegate>(user_data, room_id, error_code, result);
             }
         }
 
@@ -179,7 +181,7 @@ namespace NIMChatRoom
         {
             if (user_data != IntPtr.Zero)
             {
-                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueOfferDelegate>(user_data, room_id, error_code, json_extension);
+                NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueOfferDelegate>(user_data, room_id, error_code);
             }
         }
     }

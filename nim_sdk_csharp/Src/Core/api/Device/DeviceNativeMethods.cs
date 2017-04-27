@@ -84,7 +84,11 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_process_info", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vid);
 
-        #endregion
-    }
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_data_cb_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_set_audio_data_cb_ex(int type,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_audio_data_cb_func_ex cb, IntPtr user_data);
+
+		#endregion
+	}
 }
 #endif

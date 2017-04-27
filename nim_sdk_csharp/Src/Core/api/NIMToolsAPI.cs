@@ -16,6 +16,14 @@ namespace NIM
     public class ToolsAPI
     {
         /// <summary>
+        /// 语音转文字结果委托
+        /// </summary>
+        /// <param name="rescode">错误码</param>
+        /// <param name="text">转换后的文字</param>
+        /// <param name="userData">自定义数据</param>
+        public delegate void Audio2TextDelegate(int rescode, string text, object userData); 
+
+        /// <summary>
         ///     获取SDK里app account对应的app data目录（各个帐号拥有独立的目录，其父目录相同）
         /// </summary>
         /// <param name="appAccount">APP account。如果传入空字符串，则将获取到各个帐号目录的父目录（谨慎删除！）</param>
@@ -131,6 +139,35 @@ namespace NIM
         private static void OnConverteAudio2TextCompleted(int rescode, string text, string json_extension, IntPtr user_data)
         {
             NimUtility.DelegateConverter.InvokeOnce<NIMTools.GetAudioTextCb>(user_data, rescode, text, json_extension, IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// 语音转文字
+        /// </summary>
+        /// <param name="audioInfo">语音信息</param>
+        /// <param name="cb">转换结果回调</param>
+        /// <param name="userData">自定义数据，在回调函数中使用</param>
+        public static void ConverteAudio2Text(NIMAudioInfo audioInfo, Audio2TextDelegate cb, object userData = null)
+        {
+            NimUtility.DelegateBaton<Audio2TextDelegate> baton = new NimUtility.DelegateBaton<Audio2TextDelegate>();
+            baton.Action = cb;
+            baton.Data = userData;
+            var json = audioInfo.Serialize();
+            var ptr = baton.ToIntPtr();
+            nim_tool_get_audio_text_async(json, null, ConverteAudio2TextCallback2, ptr);
+        }
+
+        private static readonly NIMTools.GetAudioTextCb ConverteAudio2TextCallback2 = OnConverteAudio2TextCompleted2;
+
+        [MonoPInvokeCallback(typeof(NIMTools.GetAudioTextCb))]
+        private static void OnConverteAudio2TextCompleted2(int rescode, string text, string json_extension, IntPtr user_data)
+        {
+            var baton = NimUtility.DelegateBaton<Audio2TextDelegate>.FromIntPtr(user_data);
+            if (baton != null)
+            {
+                baton.Action(rescode, text, baton.Data);
+            }
+            NimUtility.DelegateConverter.FreeMem(user_data);
         }
 
         #region NIM C SDK native methods

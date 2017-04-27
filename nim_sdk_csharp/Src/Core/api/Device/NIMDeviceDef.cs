@@ -36,9 +36,10 @@ namespace NIM
 		/// 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效
 		/// </summary>
 		kNIMDeviceTypeSoundcardCapturer = 4,   
-
-		kNIMDeviceTypeAudioHook=5,/**< 伴音，启动第三方播放器并获取音频数据（只允许存在一个进程钩子）,只混音到发送的通话声音中 */
-
+		/// <summary>
+		/// 伴音，启动第三方播放器并获取音频数据（只允许存在一个进程钩子）,只混音到发送的通话声音中
+		/// </summary>
+		kNIMDeviceTypeAudioHook=5,
 	};
 
     /// <summary>
@@ -149,7 +150,20 @@ namespace NIM
         }
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public class NIMCustomVideoDataInfo : NimUtility.NimJsonObject<NIMCustomVideoDataInfo>
+	{
+		/// <summary>
+		/// 视频数据类型，NIMVideoSubType
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "subtype", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int VideoSubType { get; set; }
+		public NIMCustomVideoDataInfo()
+		{
+			VideoSubType = Convert.ToInt32(NIMVideoSubType.kNIMVideoSubTypeI420);
+		}
+	}
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type,
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
@@ -171,6 +185,12 @@ namespace NIM
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_video_data_cb_func(ulong time, IntPtr data, uint size, uint width, uint height,
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public delegate void nim_vchat_audio_data_cb_func_ex(ulong time, IntPtr data, uint size, int channels, int rate, int volume, 
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+
+
 
 }
 #endif

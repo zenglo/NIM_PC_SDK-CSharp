@@ -154,7 +154,7 @@ namespace NIMChatRoom
         /// 临时禁言
         /// </summary>
         [JsonProperty("temp_mute")]
-        public int TempMuted { get; set; }
+        public bool TempMuted { get; set; }
 
         /// <summary>
         /// 临时禁言的解除时长,单位秒

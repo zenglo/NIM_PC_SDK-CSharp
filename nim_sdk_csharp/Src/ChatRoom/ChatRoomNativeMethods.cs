@@ -249,7 +249,7 @@ IntPtr user_data);
         /// </summary>
         [DllImport(NIM.NativeConfig.ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_offer_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_chatroom_queue_offer_async(
-        Int64 room_id,
+        long room_id,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_key,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_value,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
@@ -262,7 +262,7 @@ IntPtr user_data);
         /// </summary>
         [DllImport(NIM.NativeConfig.ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_poll_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_chatroom_queue_poll_async(
-        Int64 room_id,
+        long room_id,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string element_key,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_poll_cb_func cb,
@@ -273,7 +273,7 @@ IntPtr user_data);
         /// </summary>
         [DllImport(NIM.NativeConfig.ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_list_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_chatroom_queue_list_async(
-        Int64 room_id,
+        long room_id,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_list_cb_func cb,
         IntPtr user_data);
@@ -283,7 +283,7 @@ IntPtr user_data);
         /// </summary>
         [DllImport(NIM.NativeConfig.ChatRoomNativeDll, EntryPoint = "nim_chatroom_queue_drop_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_chatroom_queue_drop_async(
-        Int64 room_id,
+        long room_id,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_drop_cb_func cb,
         IntPtr user_data);

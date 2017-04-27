@@ -202,7 +202,7 @@ namespace NIM
         {
             if (string.IsNullOrEmpty(content) || OnReceiveMessageHandler == null)
                 return;
-            System.Diagnostics.Debug.WriteLine("receive message:" + content);
+            NimUtility.Log.Error("receive message:" + content);
             var obj = Newtonsoft.Json.Linq.JObject.Parse(content);
             NIMReceivedMessage msg = new NIMReceivedMessage();
             var resCode = obj.SelectToken(NIMReceivedMessage.ResCodePath);
