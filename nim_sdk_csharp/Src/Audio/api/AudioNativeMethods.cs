@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 
 namespace NIMAudio
 {
@@ -54,50 +50,23 @@ namespace NIMAudio
         /// <param name="resCode">操作结果，一切正常200</param>
         /// <param name="deviecs">设备列表</param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void NIMEnumCaptureDevicesCb(int resCode, 
+        public delegate void NIMEnumCaptureDevicesCb(int resCode,
             [MarshalAs(UnmanagedType.LPWStr)]string deviecs);
     }
 
     class AudioNativeMethods
     {
         //引用C中的方法
-#region NIM Audio C SDK native methods
-
-        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_init_module", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_audio_init_module(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string user_data_parent_path);
+        #region NIM Audio C SDK native methods
 
         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_uninit_module", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_audio_uninit_module();
 
-        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_play_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_audio_play_audio(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string filePath,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string callerId,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string resId,
-            int format);
-
         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_stop_play_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_audio_stop_play_audio();
 
-        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_start_capture", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_audio_start_capture(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string call_id,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string res_id,
-            int audio_format,
-            int volume,
-            int loudness,
-            [MarshalAs(UnmanagedType.LPWStr)]string device
-            );
-
-
         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_stop_capture", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_audio_stop_capture();
-
-        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_cancel_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_audio_cancel_audio(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string file_path
-            );
 
         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_reg_start_play_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_audio_reg_start_play_cb(NIMAudio.ResCodeIdCb cb);
@@ -120,6 +89,57 @@ namespace NIMAudio
         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_enum_capture_device", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_audio_enum_capture_device();
 
-#endregion
+#if NIM_WIN_DESKTOP_ONLY_SDK
+        //pc 接口路径使用宽字符
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_init_module", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_init_module([MarshalAs(UnmanagedType.LPWStr)]string user_data_parent_path);
+
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_play_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_play_audio(
+           [MarshalAs(UnmanagedType.LPWStr)]string filePath,
+           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string callerId,
+           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string resId,
+           int format);
+
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_start_capture", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_start_capture(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string call_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string res_id,
+            int audio_format,
+            int volume,
+            [MarshalAs(UnmanagedType.LPWStr)]string device
+            );
+
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_cancel_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_cancel_audio([MarshalAs(UnmanagedType.LPWStr)]string file_path);
+#else
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_init_module", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_init_module(
+           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string user_data_parent_path);
+
+         [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_play_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_play_audio(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string filePath,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string callerId,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string resId,
+            int format);
+
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_start_capture", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_start_capture(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string call_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string res_id,
+            int audio_format,
+            int volume,
+            int loudness,
+            [MarshalAs(UnmanagedType.LPWStr)]string device
+            );
+
+        [DllImport(NIM.NativeConfig.NIMAudioNativeDLL, EntryPoint = "nim_audio_cancel_audio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_audio_cancel_audio(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string file_path
+            );
+#endif
+
+        #endregion
     }
 }

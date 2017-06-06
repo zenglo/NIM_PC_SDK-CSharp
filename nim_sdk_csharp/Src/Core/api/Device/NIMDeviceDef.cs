@@ -163,6 +163,30 @@ namespace NIM
 		}
 	}
 
+	public class NIMStartDeviceJsonEX : NimUtility.NimJsonObject<NIMStartDeviceJsonEX>
+	{
+		/// <summary>
+		/// 视频画面宽
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "width", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int VideoWidth { get; set; }
+
+		/// <summary>
+		/// 视频画面高
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "height", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int VideoHeight { get; set; }
+
+
+		public NIMStartDeviceJsonEX()
+		{
+			VideoWidth = 640;
+			VideoHeight = 480;
+		}
+	}
+
+
+
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type,
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);

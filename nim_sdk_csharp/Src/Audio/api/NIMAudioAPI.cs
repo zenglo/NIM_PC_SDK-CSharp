@@ -189,9 +189,9 @@ namespace NIMAudio
         /// <param name="loudness">默认0</param>
         /// <param name="device">录音设备</param>
         /// <returns></returns>
-        public static bool StartCapture(string callID, string resID, NIMAudioType format = 0, int volume = 180, int loudness = 0, string device = null)
+        public static bool StartCapture(string callID, string resID, NIMAudioType format = 0, int volume = 180, string device = null)
         {
-            return AudioNativeMethods.nim_audio_start_capture(callID, resID, (int)format, volume, loudness, device);
+            return AudioNativeMethods.nim_audio_start_capture(callID, resID, (int)format, volume, device);
         }
 
         /// <summary>

@@ -31,7 +31,6 @@ namespace NimUtility
             try
             {
                 T ret = NimUtility.Json.JsonParser.Deserialize<T>(json);
-                ret.RawJson = json;
                 return ret;
             }
             catch (Exception e)
@@ -40,9 +39,6 @@ namespace NimUtility
                 return default(T);
             }
         }
-
-        [JsonIgnore]
-        public string RawJson { get; private set; }
 
         [JsonIgnore]
         protected virtual bool IgnoreDefauleValue { get; set; }

@@ -274,9 +274,9 @@ namespace NIM
 		/// <returns> bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
 		public static bool Start(NIMVideoChatMode mode, NIMVChatInfo info)
         {
-			string json_extension = "";
-			if(info!=null)
-				json_extension= info.Serialize();
+			if (info == null)
+				info = new NIMVChatInfo();
+			string json_extension = info.Serialize();
             return VChatNativeMethods.nim_vchat_start(mode, null, null, json_extension, IntPtr.Zero);
         }
 
@@ -300,6 +300,8 @@ namespace NIM
 		/// <returns>bool true 调用成功，false 调用失败（可能channel_id无匹配，如要接起另一路通话前先结束当前通话）</returns>
 		public static bool CalleeAck(long channel_id, bool accept, NIMVChatInfo info)
         {
+			if (info == null)
+				info = new NIMVChatInfo();
             string json_extension = info.Serialize();
             return VChatNativeMethods.nim_vchat_callee_ack(channel_id, accept, json_extension, IntPtr.Zero);
         }
@@ -407,6 +409,8 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void StartRecord(string path, NIMVChatMP4RecordJsonEx recordInfo, nim_vchat_mp4_record_opt_cb_func cb)
         {
+			if (recordInfo == null)
+				recordInfo = new NIMVChatMP4RecordJsonEx();
 			string json_extension = recordInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_start_record(path, json_extension, VChatMP4RecordOptCb, ptr);
@@ -420,7 +424,9 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void StopRecord(NIMVChatMP4RecordJsonEx recordInfo, nim_vchat_mp4_record_opt_cb_func cb)
         {
-			string json_extension = recordInfo.Serialize();
+			if (recordInfo == null)
+				recordInfo = new NIMVChatMP4RecordJsonEx();
+			string json_extension= recordInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_stop_record(json_extension, VChatMP4RecordOptCb, ptr);
         }
@@ -472,7 +478,9 @@ namespace NIM
 		/// <returns>bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
 		public static bool JoinRoom(NIMVideoChatMode mode, string room_name, NIMJoinRoomJsonEx joinRoomInfo, nim_vchat_opt2_cb_func cb)
         {
-			string json_extension = joinRoomInfo.Serialize();
+			if (joinRoomInfo == null)
+				joinRoomInfo = new NIMJoinRoomJsonEx();
+			string	json_extension = joinRoomInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, VChatOpt2Cb, ptr);
         }

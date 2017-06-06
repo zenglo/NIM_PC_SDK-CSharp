@@ -7,11 +7,9 @@
   * @date 2015/12/8
   */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using NimUtility;
+using System;
+using System.Diagnostics;
 
 #if UNITY
 using UnityEngine;
@@ -61,27 +59,23 @@ namespace NIM
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
             Log.Info("try to init sdk");
-			if (_sdkInitialized) {
-				RegisterSdkCallbacks();//需要重新注册；
-				return true;
-			}
+            if (_sdkInitialized)
+            {
+                RegisterSdkCallbacks();//需要重新注册；
+                return true;
+            }
             string configJson = null;
             if (config != null && config.IsValiad())
                 configJson = config.Serialize();
-            try
+
+            _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+
+            if (_sdkInitialized)
             {
-                _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
+                RegisterSdkCallbacks();
             }
-            catch (Exception ex)
-            {
-                NimUtility.Log.Error(ex.Message);
-            }
-			if (_sdkInitialized) {
-				RegisterSdkCallbacks();
-			}
             //调用com.netease.nimlib.SystemUtil的初始化接口
             InitSystemUtil();
-            Log.InfoFormat("init sdk:{0}", _sdkInitialized);
             return _sdkInitialized;
         }
 
@@ -114,15 +108,8 @@ namespace NIM
                 config.AppKey = appKey;
                 configJson = config.Serialize();
             }
-                
-            try
-            {
-                _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
-            }
-            catch (Exception ex)
-            {
-                NimUtility.Log.Error(ex.Message);
-            }
+
+            _sdkInitialized = ClientNativeMethods.nim_client_init(appDataDir, appInstallDir, configJson);
             if (_sdkInitialized)
             {
                 RegisterSdkCallbacks();
@@ -175,7 +162,10 @@ namespace NIM
 #endif
         }
 
-        private static void RegisterSdkCallbacks()
+        /// <summary>
+        /// 注册全局回调函数，在切换账号都需要重新注册
+        /// </summary>
+        public static void RegisterSdkCallbacks()
         {
             NIM.Friend.FriendAPI.RegisterCallbacks();
             NIM.TalkAPI.RegisterCallbacks();

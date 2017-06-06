@@ -14,7 +14,7 @@ namespace NIM.DocTransition
 
     class DocTransNativeMethods
     {
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_friend_reg_changed_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_doctrans_reg_notify_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_doctrans_reg_notify_cb(
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string jsonExt, 
             nim_doctrans_opt_cb_func cb, 

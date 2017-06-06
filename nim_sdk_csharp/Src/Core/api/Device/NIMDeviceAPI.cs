@@ -89,7 +89,15 @@ namespace NIM
 
 		private static void StartDeviceCallback(NIMDeviceType type, bool ret, string jsonExtension, IntPtr userData)
 		{
-			NimUtility.DelegateConverter.Invoke<StartDeviceResultHandler>(userData, type, ret);
+			try
+			{
+				NimUtility.DelegateConverter.Invoke<StartDeviceResultHandler>(userData, type, ret);
+			}
+			catch
+			{
+
+			}
+
 		}
 
 		private static void StartExtendCamerCallback(NIMDeviceType type, bool ret, string jsonExtension, IntPtr userData)
@@ -165,12 +173,18 @@ namespace NIM
 		/// <param name="type">设备类型</param>
 		/// <param name="devicePath">设备路径对应</param>
 		/// <param name="fps">摄像头为采样频率（一般传电源频率取50）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）</param>
+		/// <param name="StartDeviceInfo">启动设备json封装类</param>
 		/// <param name="handler">回调</param>
 		/// <returns>无返回值</returns>
-		public static void StartDevice(NIMDeviceType type, string devicePath, uint fps, StartDeviceResultHandler handler)
+		public static void StartDevice(NIMDeviceType type, string devicePath, uint fps, NIMStartDeviceJsonEX StartDeviceInfo,StartDeviceResultHandler handler)
 		{
+			if(StartDeviceInfo==null)
+			{
+				StartDeviceInfo = new NIMStartDeviceJsonEX();
+			}
+			string json_info = StartDeviceInfo.Serialize();
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-			DeviceNativeMethods.nim_vchat_start_device(type, devicePath, fps, "", StartDeviceCb, ptr);
+			DeviceNativeMethods.nim_vchat_start_device(type, devicePath, fps, json_info, StartDeviceCb, ptr);
 		}
 
 		/// <summary>
@@ -269,10 +283,11 @@ namespace NIM
 		public static void SetVideoCaptureDataCb(VideoDataHandler handler, NIMVChatCustomVideoJsonEx videoJsonEx)
 		{
 			string json_extension = "";
-			if(videoJsonEx!=null)
+			if(videoJsonEx==null)
 			{
-				json_extension = videoJsonEx.Serialize();
+				videoJsonEx = new NIMVChatCustomVideoJsonEx();
 			}
+			json_extension = videoJsonEx.Serialize();
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
 			DeviceNativeMethods.nim_vchat_set_video_data_cb(true, json_extension, VideoDataCb, ptr);
 		}

@@ -16,16 +16,13 @@ namespace NimUtility
     public static class Log
     {
         private static string _filePath = null;
-        private const string LogFileName = "nim_unity_cs.log";
+        private const string LogFileName = "nim_cs.log";
         private const int MaxLogFileLegth = 2 * 1024 * 1024; //2M
         private static object _lockObj = new object(); 
 
         static Log()
         {
-#if DEBUGVERSION
             CreateLogFile();
-            AppendLogHeader();
-#endif
         }
 
         static void AppendLogHeader()
@@ -35,7 +32,8 @@ namespace NimUtility
             OutPutLog(head);
         }
 
-        static string CreateLogFile()
+        [Conditional("DEBUG")]
+        static void CreateLogFile()
         {
 #if UNITY
             string targetDir = UnityEngine.Application.persistentDataPath;
@@ -61,7 +59,7 @@ namespace NimUtility
                     stream = File.Open(_filePath, FileMode.CreateNew,FileAccess.ReadWrite,FileShare.Write);
             }
             stream.Close();
-            return _filePath;
+            AppendLogHeader();
         }
 
         static void WriteFile(string log)
@@ -73,7 +71,7 @@ namespace NimUtility
             }
         }
 
-        static string Format(LogLevel level, string log)
+        static string FormatLog(LogLevel level, string log)
         {
 
             StringBuilder builder = new StringBuilder();
@@ -81,23 +79,6 @@ namespace NimUtility
                 level.ToString(), log);
             builder.AppendLine();
             return builder.ToString();
-        }
-
-        static void WriteLine(LogLevel level, string format, params object[] args)
-        {
-            string log;
-            try
-            {
-                log = string.Format(format, args);
-                log = log.Trim().TrimEnd(new char[] { '\r', '\n' });
-                log = Format(level, log);
-            }
-            catch (Exception e)
-            {
-                log = e.ToString();
-                log = string.Format("Log.WriteLine Error:{0}{1}", System.Environment.NewLine, log);
-            }
-            OutPutLog(log);
         }
 
         static void OutPutLog(string log)
@@ -112,24 +93,19 @@ namespace NimUtility
             WriteFile(log);
         }
 
-        [Conditional("DEBUGVERSION")]
-        public static void InfoFormat(string format, params object[] args)
-        {
-            WriteLine(LogLevel.Info, format, args);
-        }
-
-        [Conditional("DEBUGVERSION")]
+        [Conditional("DEBUG")]
         public static void Info(string log)
         {
             OutPutLog(log);
         }
 
-        [Conditional("DEBUGVERSION")]
-        public static void Error(string format, params object[] args)
+        [Conditional("DEBUG")]
+        public static void Error(string logTxt)
         {
             StringBuilder builder = new StringBuilder();
             StackTrace st = new StackTrace(true);
             var frames = st.GetFrames();
+            builder.AppendLine();
             builder.AppendLine(new string('*', 20) + "Error:");
             foreach(var sf in frames)
             {
@@ -138,10 +114,8 @@ namespace NimUtility
                 builder.AppendFormat("Method:{0}", sf.GetMethod().Name);
                 builder.AppendLine();
             }
-            
             var trace = builder.ToString();
-            var log = string.Format(format, args);
-            WriteLine(LogLevel.Error, log + trace);
+            OutPutLog(logTxt + System.Environment.NewLine + trace);
         }
     }
 }

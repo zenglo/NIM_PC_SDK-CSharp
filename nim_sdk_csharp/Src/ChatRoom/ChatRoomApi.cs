@@ -388,11 +388,11 @@ namespace NIMChatRoom
         /// <param name="cb">操作结果回调</param>
         /// <param name="notify">是否聊天室内广播通知</param>
         /// <param name="notify_ext">通知中的自定义字段，长度限制2048</param>
-        public static void UpdateMyRoleInfo(long roomId, MemberInfo info, UpdateMyRoleDelegate cb, bool notify, string notify_ext)
+        public static void UpdateMyRoleInfo(long roomId, MemberInfo info, UpdateMyRoleDelegate cb, bool notify, string notify_ext,string jsonExt = null)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             var json = info.Serialize();
-            ChatRoomNativeMethods.nim_chatroom_update_my_role_async(roomId, json, notify, notify_ext, null, CallbackBridge.UpdateMyRoleCallback, ptr);
+            ChatRoomNativeMethods.nim_chatroom_update_my_role_async(roomId, json, notify, notify_ext, jsonExt, CallbackBridge.UpdateMyRoleCallback, ptr);
         }
 
 

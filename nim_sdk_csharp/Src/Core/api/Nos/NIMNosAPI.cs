@@ -562,6 +562,8 @@ namespace NIM.Nos
 
     }
 
+
+#if !UNITY
     /// <summary>
     /// HTTP上传转码文档参数
     /// </summary>
@@ -600,4 +602,5 @@ namespace NIM.Nos
         //static const char* kNIMNosResId = "res_id";     /**< string 上传文件的id，如果是文档转换则为服务器的文档id */
         /** @}*/ //NOS扩展上传回调参数json_extension, Json key for upload cb
     }
+#endif
 }

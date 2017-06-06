@@ -238,6 +238,12 @@ namespace NIM
             /// </summary>
             [JsonProperty("keepcalling")]
             public int KeepCalling { get; set; }
+
+            /// <summary>
+            /// 是否支持webrtc互通（针对点对点中的音频通话）,1表示是，0表示否。默认否 
+            /// </summary>
+            [JsonProperty("webrtc")]
+            public int Webrtc { get; set; }
         }
 
         /// <summary>
