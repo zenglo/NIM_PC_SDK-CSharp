@@ -84,7 +84,7 @@ namespace NIM
 		}
 		private static void DeviceStatusCallback(NIMDeviceType type, uint status, string devicePath, string jsonExtension, IntPtr userData)
 		{
-			NimUtility.DelegateConverter.Invoke<DeviceStatusHandler>(userData, devicePath);
+			NimUtility.DelegateConverter.Invoke<DeviceStatusHandler>(userData,type,status,devicePath);
 		}
 
 		private static void StartDeviceCallback(NIMDeviceType type, bool ret, string jsonExtension, IntPtr userData)
@@ -286,6 +286,7 @@ namespace NIM
 			if(videoJsonEx==null)
 			{
 				videoJsonEx = new NIMVChatCustomVideoJsonEx();
+				videoJsonEx.VideoSubType = Convert.ToInt32(NIMVideoSubType.kNIMVideoSubTypeARGB);
 			}
 			json_extension = videoJsonEx.Serialize();
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);

@@ -72,7 +72,12 @@ namespace NIM
         /// <summary>
         /// 实时状态通知
         /// </summary>
-        public onSessionRealtimeInfoNotify onSessionRealtimeStateChanged;
+        public onSessionRealtimeInfoNotify onSessionRealtimeStateNotify;
+
+		/// <summary>
+		/// 直播状态通知
+		/// </summary>
+		public OnSessionLiveStateInfoNotify onSessionLiveStateNotify;
     }
 
     public class VChatAPI
@@ -211,13 +216,22 @@ namespace NIM
                     }
                     break;
                 case NIMVideoChatSessionType.kNIMVideoChatSessionTypeInfoNotify:
-                    if (session_status.onSessionRealtimeStateChanged != null)
+                    if (session_status.onSessionRealtimeStateNotify != null)
                     {
                         var state = NIMVChatRealtimeState.Deserialize(json_extension);
-                        session_status.onSessionRealtimeStateChanged(channel_id, code, state);
+                        session_status.onSessionRealtimeStateNotify(channel_id, code, state);
                     }
                     break;
-            }
+				case NIMVideoChatSessionType.kNIMVideoChatSessionTypeLiveState:
+					{
+						if (session_status.onSessionLiveStateNotify != null)
+						{
+							var state = NIMVChatLiveState.Deserialize(json_extension);
+							session_status.onSessionLiveStateNotify(channel_id, code, state);
+						}
+					}
+					break;
+			}
         }
 		private static void OnMP4RecordOpCompletedCallback(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
 		{
@@ -459,11 +473,16 @@ namespace NIM
 		/// </summary>
 		/// <param name="room_name">房间名</param>
 		/// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
-		/// <param name="json_extension">无效扩展字段</param>
+		/// <param name="createRoomInfo">json封装类，见NIMCreateRoomJsonEx</param>
 		/// <param name="cb">结果回调</param>
 		/// <returns>无返回值</returns>
-		public static void CreateRoom(string room_name, string custom_info, string json_extension, nim_vchat_opt2_cb_func cb)
+		public static void CreateRoom(string room_name, string custom_info, NIMCreateRoomJsonEx createRoomInfo, nim_vchat_opt2_cb_func cb)
         {
+			string json_extension = null;
+			if(createRoomInfo!=null)
+			{
+				json_extension = createRoomInfo.Serialize();
+			}
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_create_room(room_name, custom_info, json_extension, VChatOpt2Cb, ptr);
         }

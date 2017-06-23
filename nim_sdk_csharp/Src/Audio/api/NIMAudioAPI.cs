@@ -191,14 +191,18 @@ namespace NIMAudio
         /// <returns></returns>
         public static bool StartCapture(string callID, string resID, NIMAudioType format = 0, int volume = 180, string device = null)
         {
-            return AudioNativeMethods.nim_audio_start_capture(callID, resID, (int)format, volume, device);
-        }
+#if NIM_WIN_DESKTOP_ONLY_SDK
+			return AudioNativeMethods.nim_audio_start_capture(callID, resID, (int)format, volume, device);
+#else
+			return AudioNativeMethods.nim_audio_start_capture(callID, resID, (int)format, volume,0,device);
+#endif
+		}
 
-        /// <summary>
-        /// 停止录制语音
-        /// </summary>
-        /// <returns></returns>
-        public static bool StopCapture()
+		/// <summary>
+		/// 停止录制语音
+		/// </summary>
+		/// <returns></returns>
+		public static bool StopCapture()
         {
             return AudioNativeMethods.nim_audio_stop_capture();
         }
