@@ -162,6 +162,12 @@ namespace NIM.Session
         [Newtonsoft.Json.JsonProperty("extend_data")]
         public string ExtendString { get; set; }
 
+        /// <summary>
+        /// 是否为机器人会话
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("robot_session")]
+        public bool IsRobot { get; set; }
+
         public void ParseAttachmentInfo()
         {
             if (MsgType != NIMMessageType.kNIMMessageTypeUnknown && !string.IsNullOrEmpty(Attach))
@@ -176,6 +182,7 @@ namespace NIM.Session
         public SessionInfo()
         {
             MsgType = NIMMessageType.kNIMMessageTypeUnknown;
+            IsRobot = false;
         }
     }
 

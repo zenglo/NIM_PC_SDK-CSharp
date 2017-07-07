@@ -51,11 +51,45 @@ namespace NimUtility
         [Newtonsoft.Json.JsonProperty("private_server_setting")]
         public bool UsePriviteServer { get; set; }
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+        /// <summary>
+        /// 设置是否已读未读状态多端同步，默认true
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("sync_session_ack")]
+        public bool SyncSessionAck { get; set; }
+
+        /// <summary>
+        /// 登录超时，单位秒，默认30
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("custom_timeout")]
+        public int CustomTimeout { get; set; }
+
+        /// <summary>
+        /// 登录重试最大次数，如需设置建议设置大于3次
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("login_retry_max_times")]
+        public int MaxLoginRetry { get; set; }
+
+        /// <summary>
+        /// 是否启用HTTPS协议，默认为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("use_https")]
+        public bool UseHttps { get; set; }
+
+#endif
+
         public SdkCommonSetting()
         {
             PredownloadAttachmentThumbnail = true;
             UsePriviteServer = false;
             LogLevel = SdkLogLevel.Pro;
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY 
+            SyncSessionAck = true;
+            CustomTimeout = 30;
+            UseHttps = false;
+#endif
         }
     }
 
@@ -121,6 +155,9 @@ namespace NimUtility
         [Newtonsoft.Json.JsonProperty("global_config")]
         public SdkCommonSetting CommonSetting { get; set; }
 
+        /// <summary>
+        /// 私有服务器配置（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！
+        /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "private_server_setting", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public SdkPrivateServerSetting PrivateServerSetting { get; set; }
 

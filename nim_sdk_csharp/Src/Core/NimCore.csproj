@@ -182,6 +182,12 @@
     <Compile Include="api\Core\Common\NIMGlobalDef.cs" />
     <Compile Include="api\Nos\NIMNosAPI.cs" />
     <Compile Include="api\Nos\NosNativeMethods.cs" />
+    <Compile Include="api\Robot\MessageTemplate.cs" />
+    <Compile Include="api\Robot\NIMRobotAPI.cs" />
+    <Compile Include="api\Robot\NIMRobotDef.cs" />
+    <Compile Include="api\Robot\RobotMessage.cs" />
+    <Compile Include="api\Robot\RobotNativeMethods.cs" />
+    <Compile Include="api\Robot\RobotResponse.cs" />
     <Compile Include="api\Rts\NIMRtsAPI.cs" />
     <Compile Include="api\Rts\NIMRtsDef.cs" />
     <Compile Include="api\Rts\RtsNativeMethods.cs" />

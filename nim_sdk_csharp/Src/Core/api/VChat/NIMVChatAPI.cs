@@ -132,7 +132,7 @@ namespace NIM
                         if (session_status.onSessionCalleeAckNotify != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionCalleeAckNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Accept > 0);
+                            session_status.onSessionCalleeAckNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Accept > 0, info.CustomInfo);
                         }
                     }
                     break;
@@ -179,7 +179,8 @@ namespace NIM
                     {
                         if (session_status.onSessionNetStatus != null)
                         {
-                            session_status.onSessionNetStatus.DynamicInvoke(channel_id, code);
+							info = NIMVChatSessionInfo.Deserialize(json_extension);
+							session_status.onSessionNetStatus.DynamicInvoke(channel_id, code,info.Uid);
                         }
                     }
                     break;

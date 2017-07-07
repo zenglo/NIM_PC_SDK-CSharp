@@ -47,6 +47,9 @@ namespace NIM
                 case NIMMessageType.kNIMMessageTypeTips:
                     message = NimUtility.Json.JsonParser.Deserialize<NIMTipMessage>(msgJsonValue);
                     break;
+                case NIMMessageType.kNIMMessageTypeRobot:
+                    message = Robot.ResponseMessage.Deserialize(token);
+                    break;
                 default:
                     message = NimUtility.Json.JsonParser.Deserialize<NIMUnknownMessage>(msgJsonValue);
                     ((NIMUnknownMessage) message).RawMessage = token.ToString(Formatting.None);

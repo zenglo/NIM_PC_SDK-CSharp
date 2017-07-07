@@ -135,7 +135,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvailableRooms.cs" />
     <Compile Include="CallbackBridge.cs" />
     <Compile Include="ChatRoomApi.cs" />
     <Compile Include="ChatRoomEnumDefine.cs" />

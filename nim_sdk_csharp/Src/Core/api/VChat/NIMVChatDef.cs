@@ -759,7 +759,13 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty(PropertyName = "client", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public int Client { get; set; }
 
-		public NIMVChatSessionInfo()
+        /// <summary>
+		/// 自定义数据
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_info", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CustomInfo { get; set; }
+
+        public NIMVChatSessionInfo()
 		{
 			Uid = null;
 			Status = 0;
@@ -1045,7 +1051,8 @@ namespace NIM
     /// <param name="mode">通话类型</param>
     /// <param name="accept">结果</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void onSessionCalleeAckNotify(long channel_id, string uid, int mode, bool accept);
+    public delegate void onSessionCalleeAckNotify(long channel_id, string uid, int mode, bool accept,
+         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string customInfo);
 
     /// <summary>
     /// 控制操作结果
@@ -1089,8 +1096,9 @@ namespace NIM
     /// </summary>
     /// <param name="channel_id">频道id</param>
     /// <param name="status">状态</param>
+	/// <param name="uid">账号</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void onSessionNetStatus(long channel_id, int status);
+    public delegate void onSessionNetStatus(long channel_id, int status,string uid);
 
     /// <summary>
     /// 其他端接听挂断后的同步通知

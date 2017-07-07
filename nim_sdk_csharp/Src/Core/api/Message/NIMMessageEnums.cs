@@ -51,6 +51,11 @@ namespace NIM
         kNIMMessageTypeTips = 10,
 
         /// <summary>
+        /// 波特机器人消息
+        /// </summary>
+        kNIMMessageTypeRobot = 11,
+
+        /// <summary>
         /// 自定义消息
         /// </summary>
         kNIMMessageTypeCustom = 100,
