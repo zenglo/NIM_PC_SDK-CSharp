@@ -281,18 +281,19 @@ namespace NIM
 			VChatNativeMethods.nim_vchat_set_cb_func(VChatStatusCb, IntPtr.Zero);
 		}
 
-		/// <summary>
-		/// 启动通话
-		/// </summary>
-		/// <param name="mode">启动音视频通话类型</param>
-		/// <param name="info">json扩展封装类，见NIMVChatInfo</param>
-		/// <returns> bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
-		public static bool Start(NIMVideoChatMode mode, NIMVChatInfo info)
+        /// <summary>
+        /// 启动通话
+        /// </summary>
+        /// <param name="mode">启动音视频通话类型</param>
+        /// <param name="info">json扩展封装类，见NIMVChatInfo</param>
+        /// <param name="customInfo">自定义信息</param> 
+        /// <returns> bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
+        public static bool Start(NIMVideoChatMode mode, NIMVChatInfo info,string customInfo = null)
         {
 			if (info == null)
 				info = new NIMVChatInfo();
 			string json_extension = info.Serialize();
-            return VChatNativeMethods.nim_vchat_start(mode, null, null, json_extension, IntPtr.Zero);
+            return VChatNativeMethods.nim_vchat_start(mode, null, customInfo, json_extension, IntPtr.Zero);
         }
 
 		/// <summary>

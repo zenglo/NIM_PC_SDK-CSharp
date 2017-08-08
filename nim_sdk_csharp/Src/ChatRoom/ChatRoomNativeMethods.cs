@@ -78,6 +78,12 @@ IntPtr user_data);
     public delegate void nim_chatroom_queue_drop_cb_func(long room_id, NIM.ResponseCode error_code,
 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
  IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void nim_chatroom_queue_header_cb_func(long room_id, int error_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+        IntPtr user_data);
+
     internal static class ChatRoomNativeMethods
     {
         /// <summary>
@@ -199,7 +205,7 @@ IntPtr user_data);
         /// <summary>
         /// 获取登陆状态
         /// </summary>
-        
+
         [DllImport(NIM.NativeConfig.ChatRoomNativeDll, EntryPoint = "nim_chatroom_get_login_state", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int nim_chatroom_get_login_state(
             long room_id,
@@ -287,6 +293,18 @@ IntPtr user_data);
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_drop_cb_func cb,
         IntPtr user_data);
+
+        /// <summary>
+        /// 查看麦序头元素
+        /// </summary>
+        /// <param name="room_id">聊天室ID</param>
+        /// <param name="json_extension">扩展参数，备用</param>
+        /// <param name="cb"></param>
+        /// <param name="user_data"></param>
+        [DllImport(NIM.NativeConfig.ChatRoomNativeDll,CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_chatroom_queue_header_async(long room_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            nim_chatroom_queue_header_cb_func cb, IntPtr user_data);
 
     }
 }

@@ -18,7 +18,7 @@ namespace NimUtility
         private static string _filePath = null;
         private const string LogFileName = "nim_cs.log";
         private const int MaxLogFileLegth = 2 * 1024 * 1024; //2M
-        private static object _lockObj = new object(); 
+        private static Mutex _mutex = new Mutex(false, "SHARED_LOG_MUTEX");
 
         static Log()
         {
@@ -50,6 +50,7 @@ namespace NimUtility
 #else
             _filePath = Path.Combine(System.Environment.CurrentDirectory, LogFileName);
 #endif
+            _mutex.WaitOne();
             var stream = File.Open(_filePath, FileMode.OpenOrCreate,FileAccess.ReadWrite, FileShare.Write);
             if (stream.Length > MaxLogFileLegth)
             {
@@ -60,15 +61,17 @@ namespace NimUtility
             }
             stream.Close();
             AppendLogHeader();
+            _mutex.ReleaseMutex();
         }
 
         static void WriteFile(string log)
         {
-            lock(_lockObj)
+            _mutex.WaitOne();
             {
                 if (!string.IsNullOrEmpty(log))
                     File.AppendAllText(_filePath, log);
             }
+            _mutex.ReleaseMutex();
         }
 
         static string FormatLog(LogLevel level, string log)

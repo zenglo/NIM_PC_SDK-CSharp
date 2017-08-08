@@ -759,13 +759,13 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty(PropertyName = "client", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public int Client { get; set; }
 
-        /// <summary>
+		/// <summary>
 		/// 自定义数据
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_info", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string CustomInfo { get; set; }
+		public String CustomInfo { get; set; }
 
-        public NIMVChatSessionInfo()
+		public NIMVChatSessionInfo()
 		{
 			Uid = null;
 			Status = 0;
@@ -776,6 +776,7 @@ namespace NIM
 			Time = 0;
 			Accept = 0;
 			Client = 0;
+			CustomInfo = null;
 		}
 	}
 
@@ -905,14 +906,24 @@ namespace NIM
 	public class NIMVChatMP4RecordJsonEx : NimUtility.NimJsonObject<NIMVChatMP4RecordJsonEx>
 	{
 		/// <summary>
-		/// kNIMVChatUid录制的成员，如果是自己填空
+		/// kNIMVChatUid录制的成员，如果是自己填空，(录制时允许同时混音对端声音，需要填kNIMVChatMp4AudioType)
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty(PropertyName = "uid", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public string RecordUid { get; set; }
 
+		/// <summary>
+		/// kNIMVChatMp4AudioType mp4录制时音频情况，0标识只录制当前成员，1标识录制通话全部混音（等同音频文件录制的声音）
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty(PropertyName = "mp4_audio", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+		public int RecordPeopleType
+		{
+			get;
+			set;
+		}
 		public NIMVChatMP4RecordJsonEx()
 		{
 			RecordUid = "";
+			RecordPeopleType = 0;
 		}
 	}
 
@@ -1052,7 +1063,7 @@ namespace NIM
     /// <param name="accept">结果</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void onSessionCalleeAckNotify(long channel_id, string uid, int mode, bool accept,
-         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string customInfo);
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string customInfo);
 
     /// <summary>
     /// 控制操作结果

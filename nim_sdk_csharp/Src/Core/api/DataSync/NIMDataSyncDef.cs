@@ -31,7 +31,14 @@ namespace NIM.DataSync
         /// <summary>
         /// 群成员列表同步
         /// </summary>
-        kNIMDataSyncTypeTeamUserList = 1000,		
+        kNIMDataSyncTypeTeamUserList = 1000,
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 所有群的成员列表同步完毕, json_attachment为空 
+        /// </summary>
+        kNIMDataSyncTypeAllTeamUserList = 1001,
+#endif
     }
 
     /// <summary>

@@ -235,11 +235,11 @@ namespace NIM.Team
         [JsonProperty("join_mode")]
         public NIMTeamJoinMode? JoinMode { get; set; }
 
-        /// <summary>
-        /// 群属性配置 
-        /// </summary>
-        [JsonProperty("bits")]
-        private long? ConfigBits { get; set; }
+        ///// <summary>
+        ///// 群属性配置 
+        ///// </summary>
+        //[JsonProperty("bits")]
+        //private long? ConfigBits { get; set; }
 
         /// <summary>
         /// 第三方扩展字段（仅负责存储和透传）
@@ -284,6 +284,12 @@ namespace NIM.Team
         public NIMTeamUpdateCustomMode? UpdateCustomMode { get; set; }
 
         /// <summary>
+        /// 群全员禁言标记 0:未禁言，1:禁言
+        /// </summary>
+        [JsonProperty("mute_all")]
+        public int MuteAll { get; set; }
+
+        /// <summary>
         /// 群有效性
         /// </summary>
         [JsonIgnore]
@@ -298,28 +304,11 @@ namespace NIM.Team
             get { return IsMemberValid != null && int.Parse(IsMemberValid.ToString()) > 0; }
         }
 
-        /// <summary>
-        /// 消息提醒
-        /// </summary>
-        [JsonIgnore]
-        public bool NotifyNewMessage
-        {
-            get { return (ConfigBits & (int) NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify) == 0; }
-            set
-            {
-                if (value)
-                    ConfigBits |= (int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify;
-                else
-                    ConfigBits &= (~(int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify);
-            }
-        }
-
         public NIMTeamInfo()
         {
             IsValid = 1;
             IsMemberValid = 1;
             TeamType = NIMTeamType.kNIMTeamTypeNormal;
-            ConfigBits = 0;
         }
     }
 
@@ -366,6 +355,22 @@ namespace NIM.Team
         public void SetMuted(bool flag)
         {
             Muted = flag ? 1 : 0;
+        }
+
+        /// <summary>
+        /// 消息提醒
+        /// </summary>
+        [JsonIgnore]
+        public bool NotifyNewMessage
+        {
+            get { return (ConfigBits & (int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify) == 0; }
+            set
+            {
+                if (value)
+                    ConfigBits &= (~(int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify);
+                else
+                    ConfigBits |= (int)NIMTeamBitsConfigMask.kNIMTeamBitsConfigMaskMuteNotify;
+            }
         }
     }
 }

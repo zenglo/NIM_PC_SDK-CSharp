@@ -80,11 +80,6 @@ namespace NIM
         kNIMClientTypePCWindows = 4,
 
         /// <summary>
-        /// Windows Phone
-        /// </summary>
-        kNIMClientTypeWindowsPhone = 8,
-
-        /// <summary>
         /// Web
         /// </summary>
         kNIMClientTypeWeb = 16,
@@ -92,7 +87,12 @@ namespace NIM
         /// <summary>
         /// RestAPI 
         /// </summary>
-        kNIMClientTypeRestAPI = 32
+        kNIMClientTypeRestAPI = 32,
+
+        /// <summary>
+        /// Mac
+        /// </summary>
+        kNIMClientTypeMacOS = 64
     }
 
     /// <summary>

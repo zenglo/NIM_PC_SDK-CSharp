@@ -197,29 +197,13 @@ namespace NIM
                 OnSendMessageCompleted(null, new MessageArcEventArgs(arc));
             }
         }
-		[MonoPInvokeCallback(typeof(IMReceiveMessageCallback))]
-        static void OnReceiveIMMessage(string content, string jsonArcResult, IntPtr userData)
+        [MonoPInvokeCallback(typeof(IMReceiveMessageCallback))]
+        static void OnReceiveIMMessage(string content, string jsonAckResult, IntPtr userData)
         {
-            if (string.IsNullOrEmpty(content) || OnReceiveMessageHandler == null)
+            if (OnReceiveMessageHandler == null)
                 return;
-            NimUtility.Log.Info("receive message:" + content);
-            var obj = Newtonsoft.Json.Linq.JObject.Parse(content);
-            NIMReceivedMessage msg = new NIMReceivedMessage();
-            var resCode = obj.SelectToken(NIMReceivedMessage.ResCodePath);
-            var feature = obj.SelectToken(NIMReceivedMessage.FeaturePath);
-            var token = obj.SelectToken(NIMReceivedMessage.MessageContentPath);
-            if (resCode != null)
-                msg.ResponseCode = resCode.ToObject<ResponseCode>();
-            if (feature != null)
-                msg.Feature = feature.ToObject<NIMMessageFeature>();
-
-            if (token != null && token.Type == Newtonsoft.Json.Linq.JTokenType.Object)
-            {
-                var contentObj = token.ToObject<Newtonsoft.Json.Linq.JObject>();
-                var realMsg = MessageFactory.CreateMessage(contentObj);
-                msg.MessageContent = realMsg;
-                OnReceiveMessageHandler(null, new NIMReceiveMessageEventArgs(msg));
-            }
+            NIMReceivedMessage msg = NIMReceivedMessage.Deserialize(content);
+            OnReceiveMessageHandler(null, new NIMReceiveMessageEventArgs(msg));
         }
 
         /// <summary>
@@ -239,9 +223,18 @@ namespace NIM
             List<NIMReceivedMessage> msgs = null;
             if (!string.IsNullOrEmpty(content))
             {
-                msgs = NimUtility.Json.JsonParser.Deserialize<List<NIMReceivedMessage>>(content);
+                var list = NimUtility.Json.JsonParser.Deserialize<List<Newtonsoft.Json.Linq.JObject>>(content);
+                if(list != null)
+                {
+                    msgs = new List<NIMReceivedMessage>();
+                    foreach(var obj in list)
+                    {
+                        NIMReceivedMessage msg = NIMReceivedMessage.Deserialize(obj);
+                        msgs.Add(msg);
+                    }
+                }
             }
-            NimUtility.DelegateConverter.InvokeOnce<ReceiveBatchMesaagesDelegate>(userData, msgs);
+            NimUtility.DelegateConverter.Invoke<ReceiveBatchMesaagesDelegate>(userData, msgs);
         }
 
         /// <summary>

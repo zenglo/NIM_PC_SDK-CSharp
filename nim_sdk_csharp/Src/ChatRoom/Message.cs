@@ -95,7 +95,12 @@ namespace NIMChatRoom
         /// <summary>
         /// RestAPI
         /// </summary>
-        kNIMChatRoomClientTypeRestAPI = 32
+        kNIMChatRoomClientTypeRestAPI = 32,
+
+        /// <summary>
+        /// Mac
+        /// </summary>
+        kNIMChatRoomClientTypeMacOS = 64
     }
 
     /// <summary>

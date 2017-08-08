@@ -25,6 +25,38 @@ namespace NIM
 
         [JsonProperty(ResCodePath)]
         public ResponseCode ResponseCode { get; set; }
+
+        [JsonIgnore]
+        public TeamForecePushMessage TeamPushMsg { get; set; }
+
+        public new static NIMReceivedMessage Deserialize(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+                return null;
+            var obj = Newtonsoft.Json.Linq.JObject.Parse(content);
+            return Deserialize(obj);
+        }
+
+        public static NIMReceivedMessage Deserialize(Newtonsoft.Json.Linq.JObject obj)
+        {
+            NIMReceivedMessage msg = new NIMReceivedMessage();
+            var resCode = obj.SelectToken(NIMReceivedMessage.ResCodePath);
+            var feature = obj.SelectToken(NIMReceivedMessage.FeaturePath);
+            var token = obj.SelectToken(NIMReceivedMessage.MessageContentPath);
+            if (resCode != null)
+                msg.ResponseCode = resCode.ToObject<ResponseCode>();
+            if (feature != null)
+                msg.Feature = feature.ToObject<NIMMessageFeature>();
+
+            if (token != null && token.Type == Newtonsoft.Json.Linq.JTokenType.Object)
+            {
+                var contentObj = token.ToObject<Newtonsoft.Json.Linq.JObject>();
+                msg.TeamPushMsg = TeamForecePushMessage.Deserialize(contentObj);
+                var realMsg = MessageFactory.CreateMessage(contentObj);
+                msg.MessageContent = realMsg;
+            }
+            return msg;
+        }
     }
 
     public class ReceiveMessageArgs : EventArgs

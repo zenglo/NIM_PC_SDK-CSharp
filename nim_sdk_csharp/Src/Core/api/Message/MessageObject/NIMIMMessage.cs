@@ -233,10 +233,15 @@ namespace NIM
         internal const string ClientMessageId = "client_msg_id";
     }
 
+    /// <summary>
+    /// 群强推消息
+    /// </summary>
     public class TeamForecePushMessage
     {
         public List<string> ReceiverList { get; set; }
         public string Content { get; set; }
+
+        public bool IsForcePush { get; private set; }
 
         public const string PushListKey = "force_push_list";
         public const string PushContentKey = "force_push_content";
@@ -259,8 +264,31 @@ namespace NIM
                 dic[PushContentKey] = string.Empty;
             
             dic[ForcePushEnabledKey] = 1;
+            IsForcePush = true;
             var json = JsonParser.Serialize(dic);
             return json;
+        }
+
+        public static TeamForecePushMessage Deserialize(JObject obj)
+        {
+            TeamForecePushMessage result = null;
+
+            JToken token = obj.SelectToken(ForcePushEnabledKey);
+            if(token != null)
+            {
+                result = new TeamForecePushMessage();
+                result.IsForcePush = token.ToObject<int>() == 0 ? false : true;
+                token = obj.SelectToken(PushContentKey);
+                result.Content = token == null ? null : token.ToObject<string>();
+                token = obj.SelectToken(PushListKey);
+                if(token != null)
+                {
+                    var list = token.ToObject<string>();
+                    result.ReceiverList = JsonParser.Deserialize<List<string>>(list);
+                }
+                
+            }
+            return result;
         }
     }
 

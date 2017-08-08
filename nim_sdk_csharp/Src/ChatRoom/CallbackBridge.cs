@@ -40,6 +40,8 @@ namespace NIMChatRoom
 
     public delegate void ChatRoomQueueOfferDelegate(long room_id, NIM.ResponseCode error_code);
 
+    public delegate void ChatRoomQueueHeaderDelegate(long room_id,NIM.ResponseCode error_code,string result);
+
     internal static class CallbackBridge
     {
         public static readonly NimChatroomGetMembersCbFunc QueryMembersCallback = OnQueryMembersCompleted;
@@ -183,6 +185,14 @@ namespace NIMChatRoom
             {
                 NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueOfferDelegate>(user_data, room_id, error_code);
             }
+        }
+
+        public static readonly nim_chatroom_queue_header_cb_func ChatroomQueueHeaderCallback = OnQueueHeader;
+
+        [MonoPInvokeCallback(typeof(nim_chatroom_queue_header_cb_func))]
+        private static void OnQueueHeader(long room_id, int error_code, string result, string json_extension, IntPtr user_data)
+        {
+            NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueHeaderDelegate>(user_data, room_id, (NIM.ResponseCode)error_code, result);
         }
     }
 }

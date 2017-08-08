@@ -82,7 +82,7 @@ namespace NimUtility
                 return false;
             for (int i = 0; i < args.Count(); i++)
             {
-                if (args[i] == null)
+                if (args[i] == null || ps[i].ParameterType.IsValueType)
                     continue;
                 if (!ps[i].ParameterType.IsInstanceOfType(args[i]))
                     return false;

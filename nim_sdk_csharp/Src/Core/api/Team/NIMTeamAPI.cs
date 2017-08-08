@@ -386,13 +386,20 @@ namespace NIM.Team
         /// <summary>
         /// 查询群成员信息
         /// </summary>
-        /// <param name="tid"></param>
+        /// <param name="tid">群ID</param>
         /// <param name="action"></param>
         public static void QueryTeamMembersInfo(string tid, QueryTeamMembersInfoResultDelegate action)
         {
             QueryTeamMembersInfo(tid, true, false, action);
         }
 
+        /// <summary>
+        ///查询群成员信息 
+        /// </summary>
+        /// <param name="tid">群ID</param>
+        /// <param name="includeMemberInfo">是否查询成员详细信息</param>
+        /// <param name="includeInvalidMember">是否包含无效成员</param>
+        /// <param name="action"></param>
         public static void QueryTeamMembersInfo(string tid, bool includeMemberInfo, bool includeInvalidMember, QueryTeamMembersInfoResultDelegate action)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(action);

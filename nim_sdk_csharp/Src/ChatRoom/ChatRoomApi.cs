@@ -181,7 +181,6 @@ namespace NIMChatRoom
         [MonoPInvokeCallback(typeof(NimChatroomSendmsgAckCbFunc))]
         private static void OnSendMsgCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
-            //NimUtility.Log.Error("send chatroom message :" + result);
             if (SendMessageHandler != null)
             {
                 var message = NimUtility.Json.JsonParser.Deserialize<Message>(result);
@@ -408,7 +407,6 @@ namespace NIMChatRoom
             //ChatRoomQueueListDelegate
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
           	ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, CallbackBridge.ChatroomQueueListCallback,ptr);
-            //ChatRoomNativeMethods.nim_chatroom_queue_list_async(roomId, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
@@ -422,11 +420,10 @@ namespace NIMChatRoom
             //ChatRoomQueueDropDelegate
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, CallbackBridge.ChatroomQueueDropCallback, ptr);
-            //ChatRoomNativeMethods.nim_chatroom_queue_drop_async(roomId, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
-        /// (聊天室管理员权限)取出麦序头元素 
+        /// 取出麦序头元素 
         /// </summary>
         /// <param name="roomId">聊天室ID</param>
         /// <param name="element_key">需要取出的元素的UniqKey,长度限制128字节,传空传表示取出第一个元素</param>
@@ -437,11 +434,10 @@ namespace NIMChatRoom
             //ChatRoomQueuePollDelegate
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, CallbackBridge.ChatroomQueuePollCallback, ptr);
-           // ChatRoomNativeMethods.nim_chatroom_queue_poll_async(roomId, element_key, json_extension, cb, IntPtr.Zero);
         }
 
         /// <summary>
-        /// (聊天室管理员权限)新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
+        /// 新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
         /// </summary>
         /// <param name="roomId">聊天室ID</param>
         /// <param name="element_key">新元素的UniqKey,长度限制128字节 </param>
@@ -452,7 +448,18 @@ namespace NIMChatRoom
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
-           //ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, cb, IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// 查看麦序头元素
+        /// </summary>
+        /// <param name="roomID">聊天室ID</param>
+        /// <param name="cb">回调函数</param>
+        /// <param name="json"></param>
+        public static void QueueHeaderAsync(long roomID, ChatRoomQueueHeaderDelegate cb, string json = null)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            ChatRoomNativeMethods.nim_chatroom_queue_header_async(roomID, json, CallbackBridge.ChatroomQueueHeaderCallback, ptr);
         }
     }
 }
