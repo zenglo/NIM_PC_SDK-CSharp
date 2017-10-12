@@ -31,6 +31,7 @@ namespace NIM
         public NIMIMMessage Message { get; set; }
 
         public ReportUploadProgressDelegate ProgressAction { get; set; }
+        
     }
 
     /// <summary>

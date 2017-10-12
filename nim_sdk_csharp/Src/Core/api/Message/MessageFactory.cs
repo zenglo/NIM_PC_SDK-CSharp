@@ -45,6 +45,8 @@ namespace NIM
                     message = NimUtility.Json.JsonParser.Deserialize<NIMCustomMessage<object>>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeTips:
+                    ConvertAttachObjectToString(token);
+                    msgJsonValue = token.ToString(Formatting.None);
                     message = NimUtility.Json.JsonParser.Deserialize<NIMTipMessage>(msgJsonValue);
                     break;
                 case NIMMessageType.kNIMMessageTypeRobot:

@@ -153,8 +153,8 @@ namespace NIM
         {
             if (user_data != IntPtr.Zero)
             {
-                var info = NIMEventInfo.Deserialize(event_list_json);
-                DelegateConverter.Invoke<PushEventDelegate>(user_data, (ResponseCode)res_code, info);
+                var info = NimUtility.Json.JsonParser.Deserialize<List<NIMEventInfo>>(event_list_json);
+                DelegateConverter.Invoke<BatchPushEventDelegaet>(user_data, (ResponseCode)res_code, info);
             }
         }
 

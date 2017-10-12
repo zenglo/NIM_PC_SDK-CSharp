@@ -158,6 +158,11 @@ namespace NIM
         /// </summary>
         kNIMResForcePushCountLimit = 811,
 
+        /// <summary>
+        /// 操作成功，但部分成员的群数量超限
+        /// </summary>
+        kNIMResTeamMemberLimit = 813,		
+
         #endregion
 
         #region 数据解编错误代码

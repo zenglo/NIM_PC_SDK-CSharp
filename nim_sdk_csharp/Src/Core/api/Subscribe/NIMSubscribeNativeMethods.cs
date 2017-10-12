@@ -8,47 +8,48 @@ using System.Text;
 
 namespace NIM
 {
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_push_event_cb_func(int res_code,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string event_info_json,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
             IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_batch_push_event_cb_func(int res_code,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string event_list_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_publish_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string event_info_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_subscribe_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string faild_list_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_unsubscribe_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string faild_list_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_batch_unsubscribe_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_query_subscribe_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string subscribe_list_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
-
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void nim_batch_query_subscribe_event_cb_func(int res_code, int event_type,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string subscribe_list_json,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,

@@ -46,6 +46,12 @@ namespace NIMChatRoom
         ///提醒类型消息 
         /// </summary>
         kNIMChatRoomMsgTypeTips = 10,
+
+        /// <summary>
+        /// 机器人消息
+        /// </summary>
+        kNIMChatRoomMsgTypeRobot,
+
         /// <summary>
         ///自定义消息 
         /// </summary>
@@ -175,10 +181,10 @@ namespace NIMChatRoom
         public bool NeedResend { get; set; }
 
         /// <summary>
-        /// 第三方扩展字段, 格式不限，长度限制4096
+        /// 第三方扩展字段, 长度限制4096, 必须为可以解析为Json的非格式化的字符串
         /// </summary>
         [JsonProperty("ext")]
-        public NimUtility.Json.JsonExtension Extension { get; set; }
+        public string Extension { get; set; }
 
         [JsonProperty(PropertyName = "anti_spam_enable")]
         private int _antiSpamEnabled { get; set; }
@@ -199,6 +205,23 @@ namespace NIMChatRoom
         [JsonProperty(PropertyName = "anti_spam_content")]
         public string AntiSpamContent { get; set; }
 
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+        /// <summary>
+        /// (可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1
+        /// </summary>
+        [JsonProperty(PropertyName = "history_save")]
+        public int SaveHistory { get; set; }
+
+        /// <summary>
+        /// (可选)文本消息内容（聊天室机器人文本消息）
+        /// </summary>
+        [JsonProperty(PropertyName = "body")]
+        public string Body { get; set; }
+
+#endif
+
         /// <summary>
         /// 媒体文件本地绝对路径（客户端）
         /// </summary>
@@ -214,6 +237,9 @@ namespace NIMChatRoom
         public Message()
         {
             _antiSpamEnabled = 0;
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+            SaveHistory = 1;
+#endif
         }
     }
 

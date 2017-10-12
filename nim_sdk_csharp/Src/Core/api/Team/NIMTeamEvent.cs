@@ -25,6 +25,9 @@ namespace NIM.Team
         [JsonProperty("ids")]
         public List<string> IdCollection { get; set; }
 
+        [JsonProperty("invalid_ids")]
+        public List<string> InvalidIDList { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -49,9 +52,15 @@ namespace NIM.Team
 
     public class NIMTeamEventData : NimUtility.NimJsonObject<NIMTeamEventData>
     {
+        /// <summary>
+        /// 群通知信息
+        /// </summary>
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public NIMTeamEvent TeamEvent { get; set; }
 
+        /// <summary>
+        /// 群通知类型
+        /// </summary>
         [JsonProperty("id")]
         public NIMNotificationType NotificationId { get; set; }
     }

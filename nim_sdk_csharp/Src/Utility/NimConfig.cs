@@ -15,12 +15,27 @@ namespace NimUtility
     public enum SdkLogLevel
     {
         /// <summary>
+        /// SDK Fatal级别Log
+        /// </summary>
+        Fatal = 1,
+
+        /// <summary>
+        /// SDK Error级别Log
+        /// </summary>
+        Error = 2,
+
+        /// <summary>
+        /// SDK Warn级别Log
+        /// </summary>
+        Warn = 3,
+
+        /// <summary>
         /// 应用级别Log，正式发布时为了精简sdk log，可采用此级别
         /// </summary>
         App = 5,
 
         /// <summary>
-        /// SDK过程级别Log，更加详细，更有利于开发调试
+        /// SDK调试过程级别Log，更加详细，更有利于开发调试
         /// </summary>
         Pro = 6
     };
@@ -76,6 +91,13 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("use_https")]
         public bool UseHttps { get; set; }
+
+        /// <summary>
+        /// 群通知是否计入未读数，默认为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("team_notification_unread_count")]
+        public bool CountingTeamNotification { get; set; }
+
 
 #endif
 

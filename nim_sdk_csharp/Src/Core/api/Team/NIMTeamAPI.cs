@@ -30,6 +30,8 @@ namespace NIM.Team
 
     public delegate void QueryTeamMutedListDelegate(ResponseCode res,int count,string tid, NIMTeamMemberInfo[] members);
 
+    public delegate void QueryMyInfoInEachTeamDelegate(List<NIMTeamMemberInfo> infoList);
+
     public class TeamAPI
     {
         private static TeamEventDelegate _teamEventNotificationDelegate;
@@ -543,15 +545,15 @@ namespace NIM.Team
         [MonoPInvokeCallback(typeof(nim_team_query_my_all_member_infos_cb_func))]
         private static void OnQueryMyAllMemberInfoCompleted(int team_count, string result, string json_extension, IntPtr user_data)
         {
-            var list = NimUtility.Json.JsonParser.Deserialize<NIMTeamMemberInfo[]>(result);
-            NimUtility.DelegateConverter.InvokeOnce<QueryTeamMembersInfoResultDelegate>(user_data, (object)list);
+            var list = NimUtility.Json.JsonParser.Deserialize<List<NIMTeamMemberInfo>>(result);
+            NimUtility.DelegateConverter.InvokeOnce<QueryMyInfoInEachTeamDelegate>(user_data, (object)list);
         }
 
         /// <summary>
         /// 在自己加的所有群里，查找自己在每个群里的成员信息
         /// </summary>
         /// <param name="cb"></param>
-        public static void QueryMyInfoInEachTeam(QueryTeamMembersInfoResultDelegate cb)
+        public static void QueryMyInfoInEachTeam(QueryMyInfoInEachTeamDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             TeamNativeMethods.nim_team_query_my_all_member_infos_async(null, QueryMyAllMemberInfoCallback, ptr);
