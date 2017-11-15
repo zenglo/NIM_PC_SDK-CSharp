@@ -405,5 +405,15 @@ namespace NIM.Messagelog
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             MsglogNativeMethods.nim_msglog_update_localext_async(msgId, localExt, null, OnUpdateLocalExtCompleted, ptr);
         }
+
+
+#if !UNITY
+        public static void ReadAll(CommonOperationResultDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            MsglogNativeMethods.nim_msglog_read_all_async(null, NormalOperationCompleted, ptr);
+        }
+
+#endif
     }
 }

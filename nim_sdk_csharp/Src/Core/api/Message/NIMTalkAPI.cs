@@ -23,6 +23,10 @@ namespace NIM
 
     public delegate void RecallMessageDelegate(ResponseCode result, RecallNotification[] notify);
 
+    public delegate void ReceiveBroadcastDelegate(NIMBroadcastMessage msg);
+
+    public delegate void ReceiveBroadcastMsgsDelegate(List<NIMBroadcastMessage> msg);
+
     /// <summary>
     /// nos 上传进度回调
     /// </summary>
@@ -42,6 +46,8 @@ namespace NIM
         private static IMReceiveMessageCallback _receivedMessageCallback;
         private static IMMessageArcCallback _messageArcCallback;
         private static UploadFileCallback _uploadFileProgressChanged;
+        private static nim_talk_receive_broadcast_cb_func _receiveBroadcastMsgCallback;
+        private static nim_talk_receive_broadcast_cb_func _receiveBroadcastMsgsCallback;
         /// <summary>
         /// 接收消息事件通知
         /// </summary>
@@ -57,6 +63,8 @@ namespace NIM
             _receivedMessageCallback = new IMReceiveMessageCallback(OnReceiveIMMessage);
             _messageArcCallback = new IMMessageArcCallback(OnReceiveMessageAck);
             _uploadFileProgressChanged = new UploadFileCallback(OnUploadFileProgressChanged);
+            _receiveBroadcastMsgCallback = new nim_talk_receive_broadcast_cb_func(OnReceiveBroadcastMessage);
+            _receiveBroadcastMsgsCallback = new nim_talk_receive_broadcast_cb_func(OnReceiveBroadcastMessages);
             TalkNativeMethods.nim_talk_reg_ack_cb("", _messageArcCallback, IntPtr.Zero);
             TalkNativeMethods.nim_talk_reg_receive_cb("", _receivedMessageCallback, IntPtr.Zero);
         }
@@ -295,6 +303,18 @@ namespace NIM
 
         }
 
+        private static void OnReceiveBroadcastMessage(string content, string json_extension, IntPtr user_data)
+        {
+            var msg = NIMBroadcastMessage.Deserialize(content);
+            NimUtility.DelegateConverter.Invoke<ReceiveBroadcastDelegate>(user_data, msg);
+        }
+
+        private static void OnReceiveBroadcastMessages(string content, string json_extension, IntPtr user_data)
+        {
+            var msgs = NimUtility.Json.JsonParser.Deserialize<List<NIMBroadcastMessage>>(content);
+            NimUtility.DelegateConverter.Invoke<ReceiveBroadcastMsgsDelegate>(user_data, msgs);
+        }
+
 #if !UNITY
         /// <summary>
         /// 从消息的中获取附件（图片、语音、视频等）的本地路径
@@ -309,6 +329,26 @@ namespace NIM
             var path = marshaler.MarshalNativeToManaged(ptr) as string;
             GlobalAPI.FreeBuffer(ptr);
             return path;
+        }
+
+        /// <summary>
+        /// (全局回调)注册接收广播消息回调 （建议全局注册，统一接受回调后分发消息到具体的会话）
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void RegReceiveBroadcastCb(ReceiveBroadcastDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TalkNativeMethods.nim_talk_reg_receive_broadcast_cb(null, _receiveBroadcastMsgCallback, ptr);
+        }
+
+        /// <summary>
+        /// 注册接收批量广播消息回调 （如果在注册了接收消息回调的同时也注册了该批量接口，当有批量消息时，会改走这个接口通知应用层，例如登录后接收到的离线消息等）
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void RegReceiveBroadcastMsgsCb(ReceiveBroadcastMsgsDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TalkNativeMethods.nim_talk_reg_receive_broadcast_msgs_cb(null, _receiveBroadcastMsgsCallback, ptr);
         }
 #endif
     }

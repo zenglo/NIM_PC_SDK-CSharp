@@ -9,32 +9,54 @@ namespace NIM.Messagelog
     {
         ///<summary>查询单条消息历史回调函数定义</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void QuerySingleLogDelegate(int res_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string msg_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+        delegate void QuerySingleLogDelegate(int res_code, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string msg_id,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         ///<summary>本地或在线查询消息的回调函数定义</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void QueryMessageLogDelegate(int res_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string id, NIMSessionType type, 
+        delegate void QueryMessageLogDelegate(int res_code, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string id, 
+            NIMSessionType type, 
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         ///<summary>消息历史操作结果的回调函数定义(按消息历史id操作)</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void OperateMsglogByLogIdDelegate(int res_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string msg_id, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+        delegate void OperateMsglogByLogIdDelegate(int res_code, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string msg_id, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         ///<summary>消息历史操作结果的回调函数定义（按消息对象id操作）(按消息历史id操作)</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void OperateMsglogByObjectIdDelegate(int res_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string uid, NIMSessionType type, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+        delegate void OperateMsglogByObjectIdDelegate(int res_code, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string uid, 
+            NIMSessionType type, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         ///<summary>消息历史操作结果的回调函数定义(只关心rescode)(按消息历史id操作)</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void OperateMsglogCommonDelegate(int res_code, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+        delegate void OperateMsglogCommonDelegate(int res_code, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         ///<summary>消息历史数据库导入过程的回调函数定义(按消息历史id操作)</summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void ImportMsglogProgressDelegate(long imported_count, long total_count, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+        delegate void ImportMsglogProgressDelegate(long imported_count, 
+            long total_count, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void NimMsglogStatusChangedCbFunc(int res_code, string result, string json_extension, IntPtr user_data);
+        delegate void NimMsglogStatusChangedCbFunc(int res_code,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string result,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            IntPtr user_data);
 
         /// <summary>
         /// 本地或在线查询消息的回调函数定义
@@ -110,5 +132,25 @@ namespace NIM.Messagelog
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string local_ext,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
             NimMsglogResCbFunc cb, IntPtr user_data);
+
+#if !UNITY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_msglog_read_all_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+            OperateMsglogCommonDelegate cb, 
+            IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_msglog_query_the_message_of_the_specified_type_async(NIMSessionType to_type,
+                                                           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string id,
+                                                           int limit_count,
+                                                           long from_time, 
+														   long end_time,
+                                                           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string end_client_msg_id,
+                                                           bool reverse,
+                                                           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string msg_types,
+                                                           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
+                                                           QueryMessageLogDelegate cb, 
+														   IntPtr user_data);
+#endif
     }
 }

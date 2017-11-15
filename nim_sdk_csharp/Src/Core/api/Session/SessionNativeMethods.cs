@@ -6,7 +6,8 @@ namespace NIM.Session
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NimSessionChangeCbFunc(int rescode,
-        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string result, int total_unread_counts,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string result, 
+        int total_unread_counts,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
         IntPtr user_data);
 
@@ -62,6 +63,13 @@ namespace NIM.Session
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
             NimSessionChangeCbFunc cb, 
             IntPtr user_data);
+
+#if !UNITY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_reset_all_unread_count_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_session_reset_all_unread_count_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+            NimSessionChangeCbFunc cb, 
+            IntPtr user_data);
+#endif
 
         #endregion
     }

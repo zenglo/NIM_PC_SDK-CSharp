@@ -325,6 +325,11 @@ namespace NIM
         /// </summary>
         kNIMLocalResAPIErrorVersionError = 20003,
 
+        /// <summary>
+        /// 聊天室模式混用错误，不支持同时以登陆状态和匿名状态登陆聊天室
+        /// </summary>
+        kNIMLocalResAPIErrorChatroomMixError = 20004
+
         #endregion
     }
 }

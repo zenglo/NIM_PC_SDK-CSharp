@@ -7,7 +7,12 @@ using System.Text;
 namespace NIM.DocTransition
 {
 #if !UNITY
-    public delegate void DocTransDelegate(int code, DocTransInfo info);
+	/// <summary>
+	/// nim callback function for doc trans result
+	/// </summary>
+	/// <param name="code">200为成功，其他为失败</param>
+	/// <param name="info">json扩展数据，如果查询成功返回文档信息</param>
+	public delegate void DocTransDelegate(int code, DocTransInfo info);
 
     public delegate void GetTransListDelegate(int code, DocTransInfoList list);
 

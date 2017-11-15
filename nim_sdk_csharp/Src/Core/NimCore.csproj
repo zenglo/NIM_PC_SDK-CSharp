@@ -155,6 +155,7 @@
     <Compile Include="api\Message\MessageAttachmentFactory.cs" />
     <Compile Include="api\Message\MessageFactory.cs" />
     <Compile Include="api\Message\MessageObject\NIMAudioMessage.cs" />
+    <Compile Include="api\Message\MessageObject\NIMBroadcastMessage.cs" />
     <Compile Include="api\Message\MessageObject\NIMCustomMessage.cs" />
     <Compile Include="api\Message\MessageObject\NIMFileMessage.cs" />
     <Compile Include="api\Message\MessageObject\NIMImageMessage.cs" />

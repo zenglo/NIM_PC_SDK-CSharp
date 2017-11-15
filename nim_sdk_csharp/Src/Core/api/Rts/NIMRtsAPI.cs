@@ -138,7 +138,7 @@ namespace NIM
         /// 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
         /// </summary>
         /// <param name="name">房间名</param>
-        /// <param name="json_extension">扩展可选参数kNIMRtsDataRecord， 如{"record":1}</param>
+        /// <param name="json_extension">扩展可选参数kNIMRtsDataRecord,kNIMRtsSessionId， 如{"data_record":1, "session_id":"b76e2b7ae065224499e4d7138d643961"}</param>
         /// <param name="cb"></param>
         public static void JoinConference(string name, string json_extension, NimRtsJoinCbFunc cb)
         {

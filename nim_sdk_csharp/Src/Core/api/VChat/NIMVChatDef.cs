@@ -192,12 +192,16 @@ namespace NIM
 		/// 网络状态较好
 		/// </summary>
 		kNIMVideoChatSessionNetStatGood = 1,
+        /// <summary>
+        /// 网络状态较差
+        /// </summary>
+        kNIMVideoChatSessionNetStatPoor = 2, 
+        /// <summary>
+        /// 网络状态很差
+        /// </summary>
+        kNIMVideoChatSessionNetStatBad = 2,
 		/// <summary>
-		/// 网络状态较差
-		/// </summary>
-		kNIMVideoChatSessionNetStatBad = 2,
-		/// <summary>
-		/// 网络状态很差
+		/// 网络状态极差，考虑是否关闭视频
 		/// </summary>
 		kNIMVideoChatSessionNetStatVeryBad = 3,
 	};
@@ -481,32 +485,36 @@ namespace NIM
 		kNIMVChatVideoFrameScale16x9 = 3,
 	};
 
-	/// <summary>
-	///  NIMVChatVideoSplitMode 主播设置的直播分屏模式 
-	/// </summary>
-	public enum NIMVChatVideoSplitMode
-	{
-		/// <summary>
-		///  底部横排浮窗
-		/// </summary>
-		kNIMVChatSplitBottomHorFloating = 0,
-		/// <summary>
-		/// 顶部横排浮窗
-		/// </summary>
-		kNIMVChatSplitTopHorFloating = 1,
-		/// <summary>
-		/// 平铺
-		/// </summary>
-		kNIMVChatSplitLatticeTile = 2,
-		/// <summary>
-		/// 裁剪平铺
-		/// </summary>
-		kNIMVChatSplitLatticeCuttingTile = 3,
-		/// <summary>
-		/// 自定义布局
-		/// </summary>
-		kNIMVChatSplitCustomLayout = 4,
-	};
+    /// <summary>
+    ///  NIMVChatVideoSplitMode 主播设置的直播分屏模式 
+    /// </summary>
+    public enum NIMVChatVideoSplitMode
+    {
+        /// <summary>
+        ///  底部横排浮窗
+        /// </summary>
+        kNIMVChatSplitBottomHorFloating = 0,
+        /// <summary>
+        /// 顶部横排浮窗
+        /// </summary>
+        kNIMVChatSplitTopHorFloating = 1,
+        /// <summary>
+        /// 平铺
+        /// </summary>
+        kNIMVChatSplitLatticeTile = 2,
+        /// <summary>
+        /// 裁剪平铺
+        /// </summary>
+        kNIMVChatSplitLatticeCuttingTile = 3,
+        /// <summary>
+        /// 自定义布局
+        /// </summary>
+        kNIMVChatSplitCustomLayout = 4,
+        /// <summary>
+        /// 纯音频布局
+        /// </summary>
+        kNIMVChatSplitAudioLayout = 5,
+    };
 
 	/// <summary>
 	/// NIMVChatLiveStateCode 直播时的状态码。服务器定时更新，一些存在时间短的状态会获取不到
@@ -548,10 +556,46 @@ namespace NIM
 		kNIMVChatLiveStatePeopleLimit = 508
 	};
 
-	/// <summary>
-	/// 发起和接受通话时的参数
-	/// </summary>
-	public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
+    /// <summary>
+    /// NIMVChatVideoEncodeMode 视频编码策略
+    /// </summary>
+    public enum NIMVChatVideoEncodeMode
+    {
+        /// <summary>
+        /// 默认值，清晰优先
+        /// </summary>
+        kNIMVChatVEModeNormal = 0,
+        /// <summary>
+        /// 流畅优先
+        /// </summary>
+        kNIMVChatVEModeFramerate = 1,
+        /// <summary>
+        /// 清晰优先
+        /// </summary>
+        kNIMVChatVEModeQuality = 2,
+    };
+
+
+    /// <summary>
+    /// NIMNetDetectType 探测类型
+    /// </summary>
+    public enum NIMNetDetectType
+    {
+        /// <summary>
+        /// 默认值，音频探测
+        /// </summary>
+        kNIMNetDetectTypeAudio = 0,
+        /// <summary>
+        /// 视频探测 
+        /// </summary>
+        kNIMNetDetectTypeVideo = 1,     
+    };
+
+
+    /// <summary>
+    /// 发起和接受通话时的参数
+    /// </summary>
+    public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
 	{
 		/// <summary>
 		/// 成员id列表，主动发起非空(必填)
@@ -584,7 +628,7 @@ namespace NIM
 		public int ServerVideoRecord { get; set; }
 
 		/// <summary>
-		///  视频发送编码码率 >=100000 <=600000有效
+		///  视频发送编码码率 [100000,600000]有效
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty("max_video_rate")]
 		public int MaxVideoRate { get; set; }
@@ -665,10 +709,10 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("keepcalling")]
 		public int KeepCalling { get; set; }
 
-		/// <summary>
-		/// 自定义布局，当主播选择kNIMVChatSplitCustomLayout模式时生效
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("custom_layout")]
+        /// <summary>
+        /// 自定义布局，当主播选择kNIMVChatSplitCustomLayout或kNIMVChatSplitAudioLayout模式时生效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("custom_layout")]
 		public string CustomLayout { get; set; }
 
 		/// <summary>
@@ -677,6 +721,11 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("webrtc")]
 		public int Webrtc { get; set; }
 
+        /// <summary>
+        /// 使用的视频编码策略NIMVChatVideoEncodeMode， 默认kNIMVChatVEModeNormal
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("v_encode_mode")]
+        public int VEncodeMode { get; set; }
 
 		public NIMVChatInfo()
 		{
@@ -700,7 +749,9 @@ namespace NIM
 			Uids = null;
 			CustomLayout = "";
 			Webrtc = 0;
-		}
+            VEncodeMode = 0;
+
+        }
 	}
 
 	public class NIMVChatSessionInfo : NimUtility.NimJsonObject<NIMVChatSessionInfo>
@@ -1035,13 +1086,41 @@ namespace NIM
 		}
 	}
 
+    public class NIMVChatNetDetectJsonEx : NimUtility.NimJsonObject<NIMVChatNetDetectJsonEx>
+    {
+        /// <summary>
+        /// 用户的app_key
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "app_key", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AppKey { get; set; }
 
-	/// <summary>
-	/// 调用接口回调
-	/// </summary>
-	/// <param name="channel_id">频道id</param>
-	/// <param name="code">结果</param>
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        /// <summary>
+        /// 毫秒级的探测时长限制,设置时长为0，采用sdk默认时长
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "time", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Int32 DetectTime { get; set; }
+
+        /// <summary>
+        /// 探测类型NIM
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Int32 DetectType { get; set; }
+
+        public NIMVChatNetDetectJsonEx()
+        {
+            DetectTime = 0;
+            DetectType = Convert.ToInt32(NIMNetDetectType.kNIMNetDetectTypeAudio);
+        }
+
+    }
+
+
+    /// <summary>
+    /// 调用接口回调
+    /// </summary>
+    /// <param name="channel_id">频道id</param>
+    /// <param name="code">结果</param>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void onSessionHandler(long channel_id, int code);
 
     /// <summary>
@@ -1052,7 +1131,8 @@ namespace NIM
     /// <param name="mode">通话类型</param>
     /// <param name="time">毫秒级 时间戳</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void onSessionInviteNotify(long channel_id, string uid, int mode, long time);
+    public delegate void onSessionInviteNotify(long channel_id, string uid, int mode, long time,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string customInfo);
 
     /// <summary>
     /// 确认通话，接受拒绝通知

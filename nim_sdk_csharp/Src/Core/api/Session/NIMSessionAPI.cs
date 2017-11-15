@@ -132,5 +132,16 @@ namespace NIM.Session
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             SessionNativeMethods.nim_session_set_extend_data(to_type, id, data, null, SessionChangeCb, ptr);
         }
+
+#if !UNITY
+        /// <summary>
+        /// 最近联系人项全部未读数清零
+        /// </summary>
+        public static void ResetAllUnreadCount(SessionChangeHandler cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SessionNativeMethods.nim_session_reset_all_unread_count_async(null, SessionChangeCb, ptr);
+        }
+#endif
     }
 }

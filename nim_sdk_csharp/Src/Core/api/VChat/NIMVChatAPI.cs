@@ -115,7 +115,10 @@ namespace NIM
                         if (session_status.onSessionInviteNotify != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionInviteNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Time);
+                            if (info != null)
+                            {
+                                session_status.onSessionInviteNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Time, info.CustomInfo);
+                            }
                         }
                     }
                     break;
@@ -132,7 +135,10 @@ namespace NIM
                         if (session_status.onSessionCalleeAckNotify != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionCalleeAckNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Accept > 0, info.CustomInfo);
+                            if (info != null)
+                            {
+                                session_status.onSessionCalleeAckNotify.DynamicInvoke(channel_id, info.Uid, info.Type, info.Accept > 0, info.CustomInfo);
+                            }
                         }
                     }
                     break;
@@ -141,7 +147,10 @@ namespace NIM
                         if (session_status.onSessionControlRes != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionControlRes.DynamicInvoke(channel_id, code, info.Type);
+                            if (info != null)
+                            {
+                                session_status.onSessionControlRes.DynamicInvoke(channel_id, code, info.Type);
+                            }
                         }
                     }
                     break;
@@ -150,7 +159,10 @@ namespace NIM
                         if (session_status.onSessionControlNotify != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionControlNotify.DynamicInvoke(channel_id, info.Uid, info.Type);
+                            if (info != null)
+                            {
+                                session_status.onSessionControlNotify.DynamicInvoke(channel_id, info.Uid, info.Type);
+                            }
                         }
                     }
                     break;
@@ -171,7 +183,10 @@ namespace NIM
                         if (session_status.onSessionPeopleStatus != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionPeopleStatus.DynamicInvoke(channel_id, info.Uid, code);
+                            if (info != null)
+                            {
+                                session_status.onSessionPeopleStatus.DynamicInvoke(channel_id, info.Uid, code);
+                            }
                         }
                     }
                     break;
@@ -180,7 +195,10 @@ namespace NIM
                         if (session_status.onSessionNetStatus != null)
                         {
 							info = NIMVChatSessionInfo.Deserialize(json_extension);
-							session_status.onSessionNetStatus.DynamicInvoke(channel_id, code,info.Uid);
+                            if (info != null)
+                            {
+                                session_status.onSessionNetStatus.DynamicInvoke(channel_id, code, info.Uid);
+                            }
                         }
                     }
                     break;
@@ -205,7 +223,10 @@ namespace NIM
                         if (session_status.onSessionSyncAckNotify != null)
                         {
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
-                            session_status.onSessionSyncAckNotify.DynamicInvoke(channel_id, code, info.Uid, info.Type, info.Accept > 0, info.Time, info.Client);
+                            if (info != null)
+                            {
+                                session_status.onSessionSyncAckNotify.DynamicInvoke(channel_id, code, info.Uid, info.Type, info.Accept > 0, info.Time, info.Client);
+                            }
                         }
                     }
                     break;
@@ -282,7 +303,7 @@ namespace NIM
 		}
 
         /// <summary>
-        /// 启动通话
+        /// 启动点对点通话
         /// </summary>
         /// <param name="mode">启动音视频通话类型</param>
         /// <param name="info">json扩展封装类，见NIMVChatInfo</param>
@@ -519,14 +540,14 @@ namespace NIM
             VChatNativeMethods.nim_vchat_update_rtmp_url(rtmp_url, json_extension, VChatNormalOptCb, ptr);
         }
 
-		/// <summary>
-		/// 通话中修改分辨率
-		/// </summary>
-		/// <param name="video_quality"> 分辨率模式</param>
-		/// <param name="json_extension">无效扩展字段</param>
-		/// <param name="cb">结果回调，返回的json_extension无效</param>
-		/// <returns>无返回值</returns>
-		public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb)
+        /// <summary>
+        /// 通话中修改发送画面分辨率，发送的分辨率限制只对上限限制，如果数据源小于发送分辨率，不会进行放大
+        /// </summary>
+        /// <param name="video_quality"> 分辨率模式</param>
+        /// <param name="json_extension">无效扩展字段</param>
+        /// <param name="cb">结果回调，返回的json_extension无效</param>
+        /// <returns>无返回值</returns>
+        public static void SetVideoQuality(NIMVChatVideoQuality video_quality, string json_extension, nim_vchat_opt_cb_func cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_video_quality(video_quality, json_extension, VChatNormalOptCb, ptr);
@@ -562,7 +583,7 @@ namespace NIM
 		/// <summary>
 		/// 音视频网络探测接口,需要在sdk初始化时带上app key
 		/// </summary>
-		/// <param name="json_extension">json扩展参数（备用，目前不需要）</param>
+		/// <param name="json_extension">扩展参数，允许用户设置探测时间限制kNIMNetDetectTimeLimit，及探测类型kNIMNetDetectType</param>
 		/// <param name="cb">操作结果的回调函数</param>
 		/// <returns>探测任务id</returns>
 		/// 回调函数json_extension keys:
@@ -586,10 +607,13 @@ namespace NIM
 		/// 20002:ip错误
 		/// 20003:sock错误
 		/// </returns>
-		public static ulong DetectNetwork(string json_extension, nim_vchat_opt_cb_func cb)
+		public static ulong DetectNetwork(NIMVChatNetDetectJsonEx json, nim_vchat_opt_cb_func cb)
         {
+            string json_str = "";
+            if (json != null)
+                json_str = json.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
-            var ret = VChatNativeMethods.nim_vchat_net_detect(json_extension, VChatNormalOptCb, ptr);
+            var ret = VChatNativeMethods.nim_vchat_net_detect(json_str, VChatNormalOptCb, ptr);
             return ret;
         }
 

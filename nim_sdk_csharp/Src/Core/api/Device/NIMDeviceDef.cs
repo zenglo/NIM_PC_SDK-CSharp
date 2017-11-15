@@ -91,10 +91,30 @@ namespace NIM
 		/// </summary>
 		kNIMVideoSubTypeI420 = 2,  
 	};
-	/// <summary>
-	/// 设备属性
-	/// </summary>
-	public class NIMDeviceInfo : NimUtility.NimJsonObject<NIMDeviceInfo>
+
+    /// <summary>
+    ///  NIMAudioDataCbType 音频数据监听类型 
+    /// </summary>
+    public enum NIMAudioDataCbType
+    {
+        /// <summary>
+        /// 实时返回伴音数据，伴音数据保留原始的格式，并伴音不再混音到通话数据中
+        /// </summary>
+        kNIMAudioDataCbTypeHook = 1,
+        /// <summary>
+        /// 定时返回伴音和麦克风、声卡的混音数据（伴音或声卡必须工作，麦克风可以不工作），允许重采样（json中带kNIMDeviceSampleRate和kNIMVolumeWork），返回单声道数据，并伴音不再混音到通话数据中
+        /// </summary>
+        kNIMAudioDataCbTypeHookAndMic = 2, 
+    };
+
+
+
+
+
+    /// <summary>
+    /// 设备属性
+    /// </summary>
+    public class NIMDeviceInfo : NimUtility.NimJsonObject<NIMDeviceInfo>
     {
         /// <summary>
         /// 设备名

@@ -8,7 +8,9 @@ using System.Xml;
 
 namespace NIM.Robot
 {
-    public delegate void RobotChangedCallback(ResponseCode resutl, NIMRobotInfoChangeType type, List<RobotInfo> robots, object data);
+    public delegate void RobotChangedCallback(ResponseCode result, NIMRobotInfoChangeType type, List<RobotInfo> robots, object data);
+
+    public delegate void GetRobotsDelegate(ResponseCode result, List<RobotInfo> robots);
 
     /// <summary>
     /// 机器人接口
@@ -102,7 +104,24 @@ namespace NIM.Robot
             TalkAPI.SendMessage(robotMsg);
         }
 
-        
+        private static nim_robot_query_cb_func _getRobotsCallback = new nim_robot_query_cb_func(OnGetRobotsCompleted);
+
+        private static void OnGetRobotsCompleted(int rescode, string result, string json_extension, IntPtr user_data)
+        {
+            var robots = NimUtility.Json.JsonParser.Deserialize<List<RobotInfo>>(result);
+            NimUtility.DelegateConverter.InvokeOnce<GetRobotsDelegate>(user_data, rescode, robots);
+        }
+
+        /// <summary>
+        /// 获取全部机器人信息
+        /// </summary>
+        /// <param name="timetag">时间戳</param>
+        /// <param name="cb"></param>
+        public static void GetRobots(long timetag, GetRobotsDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            RobotNativeMethods.nim_robot_get_robots_async(timetag, null, _getRobotsCallback, ptr);
+        }
     }
 }
 

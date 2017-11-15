@@ -28,6 +28,11 @@ namespace NIM
          [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
          IntPtr user_data);
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    delegate void nim_talk_receive_broadcast_cb_func([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string content,
+         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+         IntPtr user_data);
+
     class TalkNativeMethods
     {
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_send_msg", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -98,6 +103,16 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_get_attachment_path_from_msg", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr nim_talk_get_attachment_path_from_msg(
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_msg);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_reg_receive_broadcast_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void nim_talk_reg_receive_broadcast_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            nim_talk_receive_broadcast_cb_func cb, 
+            IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_reg_receive_broadcast_msgs_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void nim_talk_reg_receive_broadcast_msgs_cb([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
+            nim_talk_receive_broadcast_cb_func cb, 
+            IntPtr user_data);
 #endif
     }
 }

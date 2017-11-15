@@ -21,13 +21,6 @@ namespace NIM
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_params, 
         IntPtr user_data);
 
-    /// <summary>
-    /// 网络探测类型
-    /// </summary>
-    public enum NIMNetDetectType
-    {
-        kNIMNetDetectTypeUdp = 0, //默认udp探测
-    }
 
     /// <summary>
     /// 代理测试步骤

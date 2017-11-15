@@ -377,16 +377,17 @@ namespace NIM
 			DeviceNativeMethods.nim_vchat_set_audio_process_info(aec, ns, vid);
 		}
 
-		/// <summary>
-		///  监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
-		/// </summary>
-		/// <param name="type">暂时无效，只有监听伴音数据，一旦监听，底层将不再混音（测试逻辑）</param>
-		/// <param name="json_extension">暂时无效</param>
-		/// <param name="handler">回调</param>
-		public static void SetAudioDataCbEx(int type, string json_extension, AudioDataExHandler handler)
+        /// <summary>
+        ///  监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
+        /// </summary>
+        /// <param name="type">type 指定NIMAudioDataCbType，监听伴音数据时，一旦监听，底层将不再混音</param>
+        /// <param name="json_extension">json_extension 参考NIMAudioDataCbType的说明</param>
+        /// <param name="handler">回调</param>
+        public static void SetAudioDataCbEx(NIMAudioDataCbType type, string json_extension, AudioDataExHandler handler)
 		{
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-			DeviceNativeMethods.nim_vchat_set_audio_data_cb_ex(type, json_extension, AudioDataExCallback, ptr);
+            int audio_data_type = Convert.ToInt32(type);
+			DeviceNativeMethods.nim_vchat_set_audio_data_cb_ex(audio_data_type, json_extension, AudioDataExCallback, ptr);
 		}
 
 	}
