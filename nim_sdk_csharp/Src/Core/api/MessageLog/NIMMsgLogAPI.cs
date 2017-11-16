@@ -11,6 +11,7 @@ using NimUtility;
 using NimUtility.Json;
 using NIM.Messagelog.Delegate;
 using NIM.Session;
+using System.Collections.Generic;
 #if UNITY
 using UnityEngine;
 using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
@@ -407,13 +408,50 @@ namespace NIM.Messagelog
         }
 
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 全部未读消息历史标记为已读
+        /// </summary>
+        /// <param name="cb"></param>
         public static void ReadAll(CommonOperationResultDelegate cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             MsglogNativeMethods.nim_msglog_read_all_async(null, NormalOperationCompleted, ptr);
         }
 
+        /// <summary>
+        /// 根据指定条件在一个会话中查询指定单个或多个类型的本地消息
+        /// </summary>
+        /// <param name="sessionType">会话类型</param>
+        /// <param name="id">会话id，对方的account id或者群组tid</param>
+        /// <param name="limit">本次查询的消息条数上限(默认100条)</param>
+        /// <param name="fromTime">起始时间点，单位：毫秒</param>
+        /// <param name="endTime">结束时间点，单位：毫秒</param>
+        /// <param name="endClientMsgId">结束查询的最后一条消息的client_msg_id(不包含在查询结果中)（暂不启用）</param>
+        /// <param name="reverse">true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false）</param>
+        /// <param name="msgTypes">检索的消息类型</param>
+        /// <param name="cb">本地查询消息的回调函数</param>
+        /// <param name="jsonExt">json扩展参数（备用，目前不需要）</param>
+        public static void QuerySpecifiedType(NIMSessionType sessionType,string id,int limit,long fromTime,
+            long endTime,string endClientMsgId,bool reverse,List<NIMMessageType> msgTypes, QueryMsglogResultDelegate cb,string jsonExt = null)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            var msgTypeJson = JsonParser.Serialize(msgTypes);
+            MsglogNativeMethods.nim_msglog_query_the_message_of_the_specified_type_async(sessionType,
+                id, limit, fromTime, endTime, endClientMsgId, reverse, msgTypeJson, jsonExt, QueryLogCompleted, ptr);
+        }
+
+        /// <summary>
+        /// 查询收到的消息是否已经发送过已读回执
+        /// </summary>
+        /// <param name="msg">消息</param>
+        /// <param name="jsonExt">json扩展参数（备用，目前不需要）</param>
+        /// <returns></returns>
+        public static bool IsMsgReceiptSended(NIMIMMessage msg,string jsonExt = null)
+        {
+            var msgJson = msg.Serialize();
+            return MsglogNativeMethods.nim_msglog_query_receipt_sent(msgJson, jsonExt);
+        }
 #endif
     }
 }

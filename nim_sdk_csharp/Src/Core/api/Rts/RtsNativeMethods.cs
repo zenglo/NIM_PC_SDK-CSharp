@@ -105,7 +105,7 @@ namespace NIM
         /// <param name="type">成员变化类型NIMRtsMemberStatus</param>
         /// <param name="uid">对方帐号</param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void OnMemberNotify(string sessionId, int channelType, int type, string uid);
+        public delegate void OnMemberNotify(string sessionId, int channelType, int type, string uid, RtsMemberChangeInfo info);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void NimRtsMemberChangeCbFunc(string sessionId, int channelType, int type, string uid,

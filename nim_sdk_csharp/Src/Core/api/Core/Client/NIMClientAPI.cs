@@ -6,7 +6,6 @@
   * @author Harrison
   * @date 2015/12/8
   */
-
 using NimUtility;
 using System;
 using System.Diagnostics;
@@ -18,7 +17,7 @@ using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
 
 namespace NIM
 {
-    public delegate void ConfigMultiportPushDelegate(ResponseCode response,ConfigMultiportPushParam param);
+    public delegate void ConfigMultiportPushDelegate(ResponseCode response, ConfigMultiportPushParam param);
     /// <summary>
     /// NIM SDK提供的Client接口，主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
     /// </summary>
@@ -58,7 +57,6 @@ namespace NIM
 #endif
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
         {
-            Log.Info("try to init sdk");
             if (_sdkInitialized)
             {
                 RegisterSdkCallbacks();//需要重新注册；
@@ -295,7 +293,7 @@ namespace NIM
 
         [MonoPInvokeCallback(typeof(NIMGlobal.JsonTransportCb))]
         static void OnLoginResultCallback(string jsonResult, IntPtr ptr)
-        {            
+        {
             var loginResult = NIMLoginResult.Deserialize(jsonResult);
 
             ptr.Invoke<LoginResultDelegate>(loginResult);
@@ -389,7 +387,7 @@ namespace NIM
         }
 
         private static readonly nim_client_multiport_push_config_cb_func ConfigMultiportPushCb = MultiportPushChanged;
-		[MonoPInvokeCallback(typeof(nim_client_multiport_push_config_cb_func))]
+        [MonoPInvokeCallback(typeof(nim_client_multiport_push_config_cb_func))]
         private static void MultiportPushChanged(int resCode, string content, string jsonExt, IntPtr ptr)
         {
             ConfigMultiportPushParam param = ConfigMultiportPushParam.Deserialize(content);

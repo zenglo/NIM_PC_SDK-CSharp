@@ -1,9 +1,10 @@
-﻿#if !UNITY
+﻿
 using System;
 using System.Runtime.InteropServices;
 
 namespace NIM
 {
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_cb_func(NIMVideoChatSessionType type, long channel_id, int code,
            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
@@ -27,8 +28,10 @@ namespace NIM
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
         IntPtr user_data); //操作回调，通用的操作回调接口
 
+
+#if !UNITY
     /// <summary>
-    /// NIM MP4操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
+    /// NIM MP4操作回调，实际的开始录制和结束都会在NIMVChatHanler中返回
     /// </summary>
     /// <param name="ret">结果代码，true表示成功</param>
     /// <param name="code">对应NIMVChatMp4RecordCode,用于获取失败时的错误原因</param>
@@ -43,27 +46,28 @@ namespace NIM
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
         IntPtr user_data);
 
-	/// <summary>
-	/// 音频录制操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
-	/// </summary>
-	/// <param name="ret">结果代码，true表示成功</param>
-	/// <param name="code">对应NIMVChatAudioRecordCode，用于获得失败时的错误原因</param>
-	/// <param name="file">文件路径</param>
-	/// <param name="time">录制结束时有效，对应毫秒级的录制时长</param>
-	/// <param name="json_extension">无效扩展字段</param>
-	/// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    /// <summary>
+    /// 音频录制操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
+    /// </summary>
+    /// <param name="ret">结果代码，true表示成功</param>
+    /// <param name="code">对应NIMVChatAudioRecordCode，用于获得失败时的错误原因</param>
+    /// <param name="file">文件路径</param>
+    /// <param name="time">录制结束时有效，对应毫秒级的录制时长</param>
+    /// <param name="json_extension">无效扩展字段</param>
+    /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nim_vchat_audio_record_opt_cb_func(bool ret, int code,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string file,
 	Int64 time,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
 	IntPtr user_data);
-
-	class VChatNativeMethods
+#endif
+    class VChatNativeMethods
     {
         //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
-        #region NIM C SDK native methods
+#region NIM C SDK native methods
 
+#if !UNITY || UNITY_STANDALONE_WIN
         //初始化NIM VCHAT,需要在SDK的nim_client_init成功之后
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_init", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_vchat_init(
@@ -120,13 +124,6 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_audio_mute_enabled", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_vchat_audio_mute_enabled();
 
-        //对端画面自动旋转
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_rotate_remote_video", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_vchat_set_rotate_remote_video(bool rotate);
-
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_rotate_remote_video_enabled", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool nim_vchat_rotate_remote_video_enabled();
-
         //设置单个成员的黑名单状态，当前通话有效(只能设置进入过房间的成员)
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_member_in_blacklist", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_member_in_blacklist(
@@ -134,36 +131,6 @@ namespace NIM
              [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
              nim_vchat_opt_cb_func cb,
              IntPtr user_data);
-
-        //开始录制MP4文件，一次只允许一个录制文件，在通话开始的时候才有实际数据
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_start_record(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string path,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-            nim_vchat_mp4_record_opt_cb_func cb,
-            IntPtr user_data);
-
-        //停止录制mp4文件
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_stop_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_stop_record(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-            nim_vchat_mp4_record_opt_cb_func cb,
-            IntPtr user_data);
-
-		//开始录制音频文件
-		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-		internal static extern void nim_vchat_start_audio_record(
-		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string path,
-		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-		 nim_vchat_audio_record_opt_cb_func cb,
-		 IntPtr user_data);
-
-		//停止录制音频文件
-		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_stop_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-		internal static extern void nim_vchat_stop_audio_record(
-			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-			nim_vchat_audio_record_opt_cb_func cb,
-			IntPtr user_data);
 
 
 		//创建一个多人房间（后续需要主动调用加入接口进入房间）
@@ -184,8 +151,54 @@ namespace NIM
              nim_vchat_opt2_cb_func cb,
              IntPtr user_data);
 
-        //通话中修改分辨率
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_quality", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		//通话中修改自定义音视频数据模式
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_custom_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_set_custom_data(bool custom_audio, bool custom_video,
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_opt_cb_func cb,
+			IntPtr user_data);
+#endif
+
+#if !UNITY
+		 //对端画面自动旋转
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_rotate_remote_video", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_vchat_set_rotate_remote_video(bool rotate);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_rotate_remote_video_enabled", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_vchat_rotate_remote_video_enabled();
+
+		//开始录制MP4文件，一次只允许一个录制文件，在通话开始的时候才有实际数据
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_start_record(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string path,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_mp4_record_opt_cb_func cb,
+            IntPtr user_data);
+
+        //停止录制mp4文件
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_stop_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_stop_record(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_mp4_record_opt_cb_func cb,
+            IntPtr user_data);
+
+		//开始录制音频文件
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_start_audio_record(
+		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string path,
+		 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+         nim_vchat_audio_record_opt_cb_func cb,
+		 IntPtr user_data);
+
+		//停止录制音频文件
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_stop_audio_record", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void nim_vchat_stop_audio_record(
+			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            nim_vchat_audio_record_opt_cb_func cb,
+			IntPtr user_data);
+
+		//通话中修改分辨率
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_quality", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_video_quality(NIMVChatVideoQuality video_quality,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
             nim_vchat_opt_cb_func cb,
@@ -205,12 +218,7 @@ namespace NIM
            nim_vchat_opt_cb_func cb,
            IntPtr user_data);
 
-        //通话中修改自定义音视频数据模式
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_custom_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_vchat_set_custom_data(bool custom_audio, bool custom_video,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-            nim_vchat_opt_cb_func cb,
-            IntPtr user_data);
+        
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_update_rtmp_url", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_update_rtmp_url(
@@ -223,13 +231,13 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_streaming_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_streaming_mode(bool streaming,
            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
-           nim_vchat_opt_cb_func cb,
+           NIMVChatOptHandler cb,
            IntPtr user_data);
 		  */
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_net_detect", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern ulong nim_vchat_net_detect(
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
             nim_vchat_opt_cb_func cb, IntPtr user_data);
 
 		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_frame_scale", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -237,7 +245,8 @@ namespace NIM
 
 		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_video_frame_scale_type", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int nim_vchat_get_video_frame_scale_type();
-		#endregion
-	}
-}
 #endif
+
+#endregion
+    }
+}

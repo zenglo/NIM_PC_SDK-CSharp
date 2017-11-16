@@ -293,7 +293,7 @@ IntPtr user_data);
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
         nim_chatroom_queue_drop_cb_func cb,
         IntPtr user_data);
-
+#if !UNITY
         /// <summary>
         /// 查看麦序头元素
         /// </summary>
@@ -305,6 +305,7 @@ IntPtr user_data);
         internal static extern void nim_chatroom_queue_header_async(long room_id,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
             nim_chatroom_queue_header_cb_func cb, IntPtr user_data);
+#endif
 
     }
 }

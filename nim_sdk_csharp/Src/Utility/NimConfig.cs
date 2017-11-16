@@ -65,8 +65,28 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("private_server_setting")]
         public bool UsePriviteServer { get; set; }
+#if UNITY_IPHONE || UNITY_IOS
+		/// <summary>
+		/// iOS 推送证书名配置
+		/// </summary>
+		[Newtonsoft.Json.JsonProperty("push_cer_name")]
+		public string PushCerName { get; set;}
+#endif
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+
+        /// <summary>
+        /// 预下载图片质量,选填,范围0-100
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("preload_image_quality")]
+        public int PreloadImageQuality { get; set; }
+
+        /// <summary>
+        /// 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x 
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("preload_image_resize")]
+        public string PreloadImageResize { get; set; }
 
         /// <summary>
         /// 设置是否已读未读状态多端同步，默认true
@@ -111,6 +131,7 @@ namespace NimUtility
             SyncSessionAck = true;
             CustomTimeout = 30;
             UseHttps = false;
+            PreloadImageQuality = 100;
 #endif
         }
     }

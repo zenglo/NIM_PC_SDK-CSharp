@@ -48,12 +48,18 @@ namespace NIM.Session
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension,
             NimSessionChangeCbFunc cb, IntPtr user_data);
 
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_set_top", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_session_set_top(NIMSessionType to_type, 
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string id, 
-            bool top, 
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_reset_all_unread_count_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_session_reset_all_unread_count_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
             NimSessionChangeCbFunc cb, 
+            IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_set_top", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_session_set_top(NIMSessionType to_type,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string id,
+            bool top,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
+            NimSessionChangeCbFunc cb,
             IntPtr user_data);
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_set_extend_data", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -61,13 +67,7 @@ namespace NIM.Session
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string id,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string data,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
-            NimSessionChangeCbFunc cb, 
-            IntPtr user_data);
-
-#if !UNITY
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_session_reset_all_unread_count_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void nim_session_reset_all_unread_count_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_extension,
-            NimSessionChangeCbFunc cb, 
+            NimSessionChangeCbFunc cb,
             IntPtr user_data);
 #endif
 

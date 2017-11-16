@@ -94,7 +94,7 @@ namespace NIMChatRoom
             catch(Exception e)
             {
                 _chatRoomInitialized = false;
-                NimUtility.Log.Error(e.Message);
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
             _chatRoomInitialized = true;
         }
@@ -450,6 +450,7 @@ namespace NIMChatRoom
             ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
         }
 
+#if !UNITY
         /// <summary>
         /// 查看麦序头元素
         /// </summary>
@@ -461,5 +462,6 @@ namespace NIMChatRoom
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             ChatRoomNativeMethods.nim_chatroom_queue_header_async(roomID, json, CallbackBridge.ChatroomQueueHeaderCallback, ptr);
         }
+#endif
     }
 }

@@ -27,11 +27,11 @@ namespace NimUtility.Json
             }
             catch (JsonException jsonException)
             {
-                NimUtility.Log.Error("Deserialize JsonException:" + jsonException.Message);
+                System.Diagnostics.Debug.WriteLine("Deserialize JsonException:" + jsonException.Message);
             }
             catch (Exception e)
             {
-                NimUtility.Log.Error("JsonParser Deserialize error:\n" + e.Message + "Json string: " + json);
+                System.Diagnostics.Debug.WriteLine("JsonParser Deserialize error:\n" + e.Message + "Json string: " + json);
             }
             return default(T);
         }
@@ -54,11 +54,11 @@ namespace NimUtility.Json
             }
             catch (JsonException jsonException)
             {
-                NimUtility.Log.Error(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json));
+                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", jsonException.Message, json));
             }
             catch (Exception e)
             {
-                NimUtility.Log.Error(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json));
+                System.Diagnostics.Debug.WriteLine(string.Format("JsonParser Deserialize error:{0}\nJson string:{1}", e.Message, json));
             }
             return null;
         }

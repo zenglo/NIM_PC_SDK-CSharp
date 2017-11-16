@@ -2,9 +2,10 @@
   * @brief NIM VChat提供的设备相关接口定义
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author gq
+  * @modify lee
   * @date 2015/12/8
   */
-#if !UNITY
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -72,7 +73,7 @@ namespace NIM
         /// </summary>
         kNIMDeviceStatusEnd = 0x10,
     };
-
+    #if !UNITY
 	/// <summary>
 	/// NIMVideoSubType 视频格式类型
 	/// </summary>
@@ -109,7 +110,7 @@ namespace NIM
 
 
 
-
+#endif
 
     /// <summary>
     /// 设备属性
@@ -170,6 +171,7 @@ namespace NIM
         }
     }
 
+#if !UNITY
 	public class NIMCustomVideoDataInfo : NimUtility.NimJsonObject<NIMCustomVideoDataInfo>
 	{
 		/// <summary>
@@ -182,6 +184,7 @@ namespace NIM
 			VideoSubType = Convert.ToInt32(NIMVideoSubType.kNIMVideoSubTypeI420);
 		}
 	}
+#endif
 
 	public class NIMStartDeviceJsonEX : NimUtility.NimJsonObject<NIMStartDeviceJsonEX>
 	{
@@ -206,20 +209,11 @@ namespace NIM
 	}
 
 
-
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type,
-    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
-
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_start_device_cb_func(NIMDeviceType type, bool ret,
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_device_status_cb_func(NIMDeviceType type, uint status,
-    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path,
-    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
-
+  
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void nim_vchat_audio_data_cb_func(ulong time,
 	IntPtr  data, 
@@ -227,14 +221,22 @@ namespace NIM
     [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void nim_vchat_video_data_cb_func(ulong time, IntPtr data, uint size, uint width, uint height,
-    [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
+	public delegate void nim_vchat_enum_device_devpath_sync_cb_func(bool ret, NIMDeviceType type,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+    IntPtr user_data);
+
+#if !UNITY
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public delegate void nim_vchat_device_status_cb_func(NIMDeviceType type, uint status,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path,
+	 [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nim_vchat_audio_data_cb_func_ex(ulong time, IntPtr data, uint size, int channels, int rate, int volume, 
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 
-
-
-}
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	public delegate void nim_vchat_video_data_cb_func(ulong time, IntPtr data, uint size, uint width, uint height,
+	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, IntPtr user_data);
 #endif
+}

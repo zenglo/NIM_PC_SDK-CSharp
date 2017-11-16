@@ -1,5 +1,4 @@
-﻿#if !UNITY
-
+﻿
 using Newtonsoft.Json.Linq;
 /** @file NIMDeviceAPI.cs
 * @brief NIM VChat提供的音视频设备相关接口，使用前请先调用NIMVChatAPI.cs中Init
@@ -13,66 +12,70 @@ using System.Text;
 
 namespace NIM
 {
-	public class DeviceAPI
+    #region 委托定义
+    /// <summary>
+    /// 启动设备委托
+    /// </summary>
+    /// <param name="type">设备类型</param>
+    /// <param name="ret">是否成功</param>
+    public delegate void StartDeviceResultHandler(NIMDeviceType type, bool ret);
+
+    /// <summary>
+    /// 设备状态通知
+    /// </summary>
+    /// <param name="type">设备类型</param>
+    /// <param name="status">NIMDeviceStatus 的或值</param>
+    /// <param name="devicePath">重启设备时的设备路径</param>
+    public delegate void DeviceStatusHandler(NIMDeviceType type, uint status, string devicePath);
+
+    /// <summary>
+    /// 视频数据委托
+    /// </summary>
+    /// <param name="time">毫秒级时间戳</param>
+    /// <param name="data">数据指针， ARGB</param>
+    /// <param name="size">数据长途sizeof(char)</param>
+    /// <param name="width">画面宽</param>
+    /// <param name="height">画面高</param>
+    /// <param name="json_extension">Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount</param>
+    /// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
+    public delegate void VideoDataHandler(ulong time, IntPtr data, uint size, uint width, uint height, string json_extension);
+
+    /// <summary>
+    /// 音频数据委托
+    /// </summary>
+    /// <param name="time">毫秒级时间戳</param>
+    /// <param name="data">数据指针， PCM</param>
+    /// <param name="size">数据长途sizeof(char)</param>
+    /// <param name="rate">PCM数据的采样频率</param>
+    public delegate void AudioDataHandler(ulong time, IntPtr data, uint size, int rate);
+
+    /// <summary>
+    /// 音频数据监听接口
+    /// </summary>
+    /// <param name="time">时间毫秒级，暂时无效</param>
+    /// <param name="data"> 音频数据pcm格式</param>
+    /// <param name="size">data的数据长度</param>
+    /// <param name="channels"> 通道数</param>
+    /// <param name="rate">采样频</param>
+    /// <param name="volume">音量值0-100</param>
+    /// <param name="json_extension">扩展</param>
+    public delegate void AudioDataExHandler(ulong time, IntPtr data, uint size, int channels, int rate, int volume, string json_extension);
+    #endregion
+    public class DeviceAPI
 	{
-		/// <summary>
-		/// 启动设备委托
-		/// </summary>
-		/// <param name="type">设备类型</param>
-		/// <param name="ret">是否成功</param>
-		public delegate void StartDeviceResultHandler(NIMDeviceType type, bool ret);
-
-		/// <summary>
-		/// 设备状态通知
-		/// </summary>
-		/// <param name="type">设备类型</param>
-		/// <param name="status">NIMDeviceStatus 的或值</param>
-		/// <param name="devicePath">重启设备时的设备路径</param>
-		public delegate void DeviceStatusHandler(NIMDeviceType type, uint status, string devicePath);
-
-		/// <summary>
-		/// 视频数据委托
-		/// </summary>
-		/// <param name="time">毫秒级时间戳</param>
-		/// <param name="data">数据指针， ARGB</param>
-		/// <param name="size">数据长途sizeof(char)</param>
-		/// <param name="width">画面宽</param>
-		/// <param name="height">画面高</param>
-		/// <param name="json_extension">Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount</param>
-		/// <param name="user_data">APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！</param>
-		public delegate void VideoDataHandler(ulong time, IntPtr data, uint size, uint width, uint height, string json_extension);
-
-		/// <summary>
-		/// 音频数据委托
-		/// </summary>
-		/// <param name="time">毫秒级时间戳</param>
-		/// <param name="data">数据指针， PCM</param>
-		/// <param name="size">数据长途sizeof(char)</param>
-		/// <param name="rate">PCM数据的采样频率</param>
-		public delegate void AudioDataHandler(ulong time, IntPtr data, uint size, int rate);
-
-		/// <summary>
-		/// 音频数据监听接口
-		/// </summary>
-		/// <param name="time">时间毫秒级，暂时无效</param>
-		/// <param name="data"> 音频数据pcm格式</param>
-		/// <param name="size">data的数据长度</param>
-		/// <param name="channels"> 通道数</param>
-		/// <param name="rate">采样频</param>
-		/// <param name="volume">音量值0-100</param>
-		/// <param name="json_extension">扩展</param>
-		public delegate void AudioDataExHandler(ulong time, IntPtr data, uint size,int channels, int rate, int volume, string json_extension);
-
-		private static readonly nim_vchat_enum_device_devpath_sync_cb_func GetDeviceListCb = GetDeviceListCallback;
-		private static readonly nim_vchat_device_status_cb_func DeviceStatusCb = DeviceStatusCallback;
 		private static readonly nim_vchat_start_device_cb_func StartDeviceCb = StartDeviceCallback;
 		private static readonly nim_vchat_start_device_cb_func StartExtendCameraCb = StartExtendCamerCallback;
 		private static readonly nim_vchat_audio_data_cb_func AudioDataCb = AudioDataCallback;
+        private static readonly nim_vchat_enum_device_devpath_sync_cb_func GetDeviceListCb = GetDeviceListCallback;
+#if !UNITY
+		
+		private static readonly nim_vchat_device_status_cb_func DeviceStatusCb = DeviceStatusCallback;
 		private static readonly nim_vchat_video_data_cb_func VideoDataCb = VideoDataCallback;
 		private static readonly nim_vchat_audio_data_cb_func_ex AudioDataExCb = AudioDataExCallback;
+#endif
 		private static NIMDeviceInfoList _deviceList = null;
 
-		#region callback
+#region callback
 		private static void GetDeviceListCallback(bool ret, NIMDeviceType type, string jsonExtension, IntPtr userData)
 		{
 			_deviceList = null;
@@ -153,19 +156,7 @@ namespace NIM
 				}
 			}
 		}
-		#endregion
-
-
-		/// <summary>
-		/// 遍历设备
-		/// </summary>
-		/// <param name="type">设备类型</param>
-		/// <returns>NIMDeviceInfoList 设备属性列表</returns>
-		public static NIMDeviceInfoList GetDeviceList(NIMDeviceType type)
-		{
-			DeviceNativeMethods.nim_vchat_enum_device_devpath(type, "", GetDeviceListCb, IntPtr.Zero);
-			return _deviceList;
-		}
+#endregion
 
 		/// <summary>
 		/// 启动设备，同一NIMDeviceType下设备将不重复启动，不同的设备会先关闭前一个设备开启新设备
@@ -178,15 +169,104 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void StartDevice(NIMDeviceType type, string devicePath, uint fps, NIMStartDeviceJsonEX StartDeviceInfo,StartDeviceResultHandler handler)
 		{
-			if(StartDeviceInfo==null)
+#if !UNITY || UNITY_STANDALONE_WIN
+            if (StartDeviceInfo==null)
 			{
 				StartDeviceInfo = new NIMStartDeviceJsonEX();
 			}
 			string json_info = StartDeviceInfo.Serialize();
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
 			DeviceNativeMethods.nim_vchat_start_device(type, devicePath, fps, json_info, StartDeviceCb, ptr);
-		}
+#else
+#endif
+        }
 
+		/// <summary>
+		/// 结束设备
+		/// </summary>
+		/// <param name="type">设备类型</param>
+		/// <returns>无返回值</returns>
+		public static void EndDevice(NIMDeviceType type)
+		{
+#if !UNITY || UNITY_STANDALONE_WIN
+            DeviceNativeMethods.nim_vchat_end_device(type, "");
+#else
+#endif
+        }
+
+		/// <summary>
+		/// 监听采集音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut由底层播放）
+		/// </summary>
+		/// <param name="handler">回调</param>
+		/// <param name="audioJsonEx">json封装类，SampleRate有效,(要求返回的音频数据为指定的采样频，缺省为0使用默认采样频</param>
+		/// <returns>无返回值</returns>
+		public static void SetAudioCaptureDataCb(AudioDataHandler handler, NIMVChatCustomAudioJsonEx audioJsonEx)
+		{
+#if !UNITY || UNITY_STANDALONE_WIN
+            string audioInfo = "";
+			if(audioJsonEx!=null)
+				audioInfo = audioJsonEx.Serialize();
+			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
+			DeviceNativeMethods.nim_vchat_set_audio_data_cb(true, audioInfo, AudioDataCb, ptr);
+#else
+#endif
+        }
+
+		/// <summary>
+		/// 监听接收音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOutChat由底层播放）
+		/// </summary>
+		/// <param name="handler">回调</param>
+		/// <returns>无返回值</returns>
+		public static void SetAudioReceiveDataCb(AudioDataHandler handler,NIMVChatCustomAudioJsonEx audioJsonEx)
+		{
+#if !UNITY || UNITY_STANDALONE_WIN
+            string audioInfo = "";
+			if(audioJsonEx!=null)
+			{
+				audioInfo = audioJsonEx.Serialize();
+			}
+			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
+			DeviceNativeMethods.nim_vchat_set_audio_data_cb(false, audioInfo, AudioDataCb, ptr);
+#else
+#endif
+        }
+
+		/// <summary>
+		/// 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
+		/// </summary>
+		/// <param name="time">时间毫秒级</param>
+		/// <param name="data">音频数据pcm格式</param>
+		/// <param name="size">data的数据长度 sizeof(char)</param>
+		/// <param name="info">拓展json封装类</param>
+		/// <returns>bool true 调用成功，false 调用失败</returns>
+		public static bool CustomAudioData(ulong time, IntPtr data, uint size, NIMCustomAudioDataInfo info)
+		{
+#if !UNITY || UNITY_STANDALONE_WIN
+            string jsonExtension = "";
+			if (info != null)
+				jsonExtension = info.Serialize();
+			return DeviceNativeMethods.nim_vchat_custom_audio_data(time, data, size, jsonExtension);
+#else
+            return false;
+#endif
+        }
+
+        /// <summary>
+        /// 遍历设备
+        /// </summary>
+        /// <param name="type">设备类型</param>
+        /// <returns>NIMDeviceInfoList 设备属性列表</returns>
+        public static NIMDeviceInfoList GetDeviceList(NIMDeviceType type)
+        {
+#if !UNITY ||UNITY_STANDALONE_WIN
+            DeviceNativeMethods.nim_vchat_enum_device_devpath(type, "", GetDeviceListCb, IntPtr.Zero);
+            return _deviceList;
+#else
+            return null;
+#endif
+        }
+
+#if !UNITY
 		/// <summary>
 		/// 启动辅助的摄像头，摄像头数据通过SetVideoCaptureDataCb设置采集回调返回，不直接通过视频通话发送给对方，并且不参与设备监听检测
 		/// </summary>
@@ -200,16 +280,6 @@ namespace NIM
 		{
 			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
 			DeviceNativeMethods.nim_vchat_start_extend_camera(id, device_path, fps, json_extension, StartExtendCameraCb, ptr);
-		}
-
-		/// <summary>
-		/// 结束设备
-		/// </summary>
-		/// <param name="type">设备类型</param>
-		/// <returns>无返回值</returns>
-		public static void EndDevice(NIMDeviceType type)
-		{
-			DeviceNativeMethods.nim_vchat_end_device(type, "");
 		}
 
 		/// <summary>
@@ -242,37 +312,6 @@ namespace NIM
 		public static void RemoveDeviceStatusCb(NIMDeviceType type)
 		{
 			DeviceNativeMethods.nim_vchat_remove_device_status_cb(type);
-		}
-
-		/// <summary>
-		/// 监听采集音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut由底层播放）
-		/// </summary>
-		/// <param name="handler">回调</param>
-		/// <param name="audioJsonEx">json封装类，SampleRate有效,(要求返回的音频数据为指定的采样频，缺省为0使用默认采样频</param>
-		/// <returns>无返回值</returns>
-		public static void SetAudioCaptureDataCb(AudioDataHandler handler, NIMVChatCustomAudioJsonEx audioJsonEx)
-		{
-			string audioInfo = "";
-			if(audioJsonEx!=null)
-				audioInfo = audioJsonEx.Serialize();
-			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-			DeviceNativeMethods.nim_vchat_set_audio_data_cb(true, audioInfo, AudioDataCb, ptr);
-		}
-
-		/// <summary>
-		/// 监听接收音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOutChat由底层播放）
-		/// </summary>
-		/// <param name="handler">回调</param>
-		/// <returns>无返回值</returns>
-		public static void SetAudioReceiveDataCb(AudioDataHandler handler,NIMVChatCustomAudioJsonEx audioJsonEx)
-		{
-			string audioInfo = "";
-			if(audioJsonEx!=null)
-			{
-				audioInfo = audioJsonEx.Serialize();
-			}
-			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
-			DeviceNativeMethods.nim_vchat_set_audio_data_cb(false, audioInfo, AudioDataCb, ptr);
 		}
 
 		/// <summary>
@@ -331,23 +370,9 @@ namespace NIM
 			set { DeviceNativeMethods.nim_vchat_set_audio_input_auto_volumn(value); }
 		}
 
-		/// <summary>
-		/// 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
-		/// </summary>
-		/// <param name="time">时间毫秒级</param>
-		/// <param name="data">音频数据pcm格式</param>
-		/// <param name="size">data的数据长度 sizeof(char)</param>
-		/// <param name="info">拓展json封装类</param>
-		/// <returns>bool true 调用成功，false 调用失败</returns>
-		public static bool CustomAudioData(ulong time, IntPtr data, uint size, NIMCustomAudioDataInfo info)
-		{
-			string jsonExtension = "";
-			if (info != null)
-				jsonExtension = info.Serialize();
-			return DeviceNativeMethods.nim_vchat_custom_audio_data(time, data, size, jsonExtension);
-		}
 
-		/// <summary>
+
+				/// <summary>
 		/// 自定义视频数据接口
 		/// </summary>
 		/// <param name="time">时间毫秒级</param>
@@ -389,7 +414,7 @@ namespace NIM
             int audio_data_type = Convert.ToInt32(type);
 			DeviceNativeMethods.nim_vchat_set_audio_data_cb_ex(audio_data_type, json_extension, AudioDataExCallback, ptr);
 		}
-
-	}
-}
 #endif
+
+    }
+}

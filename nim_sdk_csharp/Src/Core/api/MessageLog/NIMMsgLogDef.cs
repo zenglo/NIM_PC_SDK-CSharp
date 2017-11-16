@@ -78,7 +78,12 @@ namespace NIM.Messagelog
         /// <summary>
         ///发送取消 
         /// </summary>
-        kNIMMsgLogStatusSendCancel = 9
+        kNIMMsgLogStatusSendCancel = 9,
+
+        /// <summary>
+        /// 被对方拒绝,比如被对方加入黑名单等等
+        /// </summary>
+        kNIMMsgLogStatusRefused = 10
     }
 
 

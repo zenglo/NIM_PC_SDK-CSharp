@@ -133,7 +133,7 @@ namespace NIM.Messagelog
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension, 
             NimMsglogResCbFunc cb, IntPtr user_data);
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_msglog_read_all_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
             OperateMsglogCommonDelegate cb, 
@@ -151,6 +151,11 @@ namespace NIM.Messagelog
                                                            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
                                                            QueryMessageLogDelegate cb, 
 														   IntPtr user_data);
+
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_msglog_query_receipt_sent([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_msg,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension);
 #endif
     }
 }

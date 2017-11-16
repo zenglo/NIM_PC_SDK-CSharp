@@ -236,7 +236,8 @@ namespace NIM
 
         private static void MemberChangeCallback(string sessionId, int channelType, int type, string uid, string jsonExtension, IntPtr userData)
         {
-            userData.Invoke<OnMemberNotify>(sessionId, channelType, type, uid);
+            RtsMemberChangeInfo info = RtsMemberChangeInfo.Deserialize(jsonExtension);
+            userData.Invoke<OnMemberNotify>(sessionId, channelType, type, uid, info);
         }
 
         private static void ControlNotifyCallback(string sessionId, string info, string uid, string jsonExtension, IntPtr userData)

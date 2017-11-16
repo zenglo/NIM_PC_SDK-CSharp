@@ -69,7 +69,7 @@ namespace NIM
             }
             catch (Exception e)
             {
-                NimUtility.Log.Error("CreateMessage error:" + e.Message);
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
             return null;
         }

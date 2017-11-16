@@ -35,7 +35,7 @@ namespace NimUtility
             }
             catch (Exception e)
             {
-                NimUtility.Log.Error("SDKJsonObject.Deserialize\r\n" + e.ToString() + "\r\njson:" + json);
+                System.Diagnostics.Debug.WriteLine("SDKJsonObject.Deserialize\r\n" + e.ToString() + "\r\njson:" + json);
                 return default(T);
             }
         }

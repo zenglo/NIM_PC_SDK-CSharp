@@ -107,6 +107,29 @@ namespace NIM.Session
             }
         }
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 最近联系人项全部未读数清零
+        /// </summary>
+        public static void ResetAllUnreadCount(SessionChangeHandler cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SessionNativeMethods.nim_session_reset_all_unread_count_async(null, SessionChangeCb, ptr);
+        }
+
+        /// <summary>
+        /// 设置会话项扩展数据(扩展数据只保存在本地)
+        /// </summary>
+        /// <param name="to_type"></param>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="cb"></param>
+        public static void SetSessionExtendData(NIMSessionType to_type, string id, string data, SessionChangeHandler cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            SessionNativeMethods.nim_session_set_extend_data(to_type, id, data, null, SessionChangeCb, ptr);
+        }
+
         /// <summary>
         /// 设置会话项是否置顶(置顶属性只保存在本地)
         /// </summary>
@@ -118,29 +141,6 @@ namespace NIM.Session
         {
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             SessionNativeMethods.nim_session_set_top(to_type, id, top, null, SessionChangeCb, ptr);
-        }
-
-        /// <summary>
-        /// 设置会话项扩展数据(扩展数据只保存在本地)
-        /// </summary>
-        /// <param name="to_type"></param>
-        /// <param name="id"></param>
-        /// <param name="data"></param>
-        /// <param name="cb"></param>
-        public static void SetSessionExtendData(NIMSessionType to_type, string id,string data, SessionChangeHandler cb)
-        {
-            var ptr = DelegateConverter.ConvertToIntPtr(cb);
-            SessionNativeMethods.nim_session_set_extend_data(to_type, id, data, null, SessionChangeCb, ptr);
-        }
-
-#if !UNITY
-        /// <summary>
-        /// 最近联系人项全部未读数清零
-        /// </summary>
-        public static void ResetAllUnreadCount(SessionChangeHandler cb)
-        {
-            var ptr = DelegateConverter.ConvertToIntPtr(cb);
-            SessionNativeMethods.nim_session_reset_all_unread_count_async(null, SessionChangeCb, ptr);
         }
 #endif
     }

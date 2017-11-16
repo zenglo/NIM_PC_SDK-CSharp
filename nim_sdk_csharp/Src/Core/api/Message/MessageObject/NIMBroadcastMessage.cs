@@ -24,11 +24,14 @@ namespace NIM
         public string Sender { get; set; }
 
         /// <summary>
-        /// 
+        /// 时间戳
         /// </summary>
         [JsonProperty("time")]
         public long Timetag { get; set; }
 
+        /// <summary>
+        /// 内容
+        /// </summary>
         [JsonProperty("body")]
         public string Body { get; set; }
     }

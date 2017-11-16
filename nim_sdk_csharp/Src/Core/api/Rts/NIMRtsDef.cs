@@ -57,6 +57,22 @@ namespace NIM
         }
 
         /// <summary>
+        /// 成员退出类型
+        /// </summary>
+        public enum NIMRtsMemberLeftType
+        {
+            /// <summary>
+            /// 成员超时掉线 
+            /// </summary>
+            kNIMRtsMemberLeftTimeout = -1,
+
+            /// <summary>
+            /// 成员离开 
+            /// </summary>
+            kNIMRtsMemberLeftNormal = 0
+        }
+
+        /// <summary>
         ///     音视频通话类型
         /// </summary>
         public enum NIMRtsVideoChatMode
@@ -131,7 +147,7 @@ namespace NIM
         {
             public RtsStartInfo()
             {
-                Mode = (int) NIMRtsVideoChatMode.kNIMRtsVideoChatModeAudio;
+                Mode = (int)NIMRtsVideoChatMode.kNIMRtsVideoChatModeAudio;
                 CustomAudio = 0;
                 CustomVideo = 0;
                 KeepCalling = 1;
@@ -280,6 +296,15 @@ namespace NIM
             /// </summary>
             [JsonProperty("record_file")]
             public string RecordFile { get; set; }
+        }
+
+        public class RtsMemberChangeInfo : NimJsonObject<RtsMemberChangeInfo>
+        {
+            /// <summary>
+            /// 成员退出类型
+            /// </summary>
+            [JsonProperty("leave_type")]
+            public NIMRtsMemberLeftType LeaveType { get; set; }
         }
     }
 }
