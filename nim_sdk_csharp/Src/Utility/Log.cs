@@ -35,7 +35,7 @@ namespace NimUtility
         [Conditional("DEBUG")]
         static void CreateLogFile()
         {
-#if UNITY
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
             string targetDir = UnityEngine.Application.persistentDataPath;
             if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android)
             {
@@ -88,7 +88,7 @@ namespace NimUtility
         {
             if (!log.EndsWith(System.Environment.NewLine))
                 log += System.Environment.NewLine;
-#if UNITY
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
             UnityEngine.Debug.Log(log);
 #else
             System.Diagnostics.Debug.WriteLine(log);

@@ -223,7 +223,7 @@ namespace NIM.Team
             nim_team_query_mute_list_cb_func cb,
             IntPtr user_data);
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_team_query_my_all_member_infos_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_team_query_my_all_member_infos_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string json_extension,
             nim_team_query_my_all_member_infos_cb_func cb, 

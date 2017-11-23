@@ -5,9 +5,20 @@ using System.Text;
 
 namespace NIM
 {
-#if !UNITY
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class MonoPInvokeCallbackAttribute : AOT.MonoPInvokeCallbackAttribute
+    {
+        public MonoPInvokeCallbackAttribute(Type type)
+            : base(type)
+        {
+        }
+    }
+
+#else
     /// <summary>
-    /// Unity IOS 需要使用MonoPInvokeCallbackAttribute 标记P/Invoke 回调函数，为了统一 pc 端定义一个空属性作为标记
+    /// Do nothing on windows desktop
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class MonoPInvokeCallbackAttribute : Attribute

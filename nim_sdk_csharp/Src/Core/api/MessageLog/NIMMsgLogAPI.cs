@@ -12,10 +12,6 @@ using NimUtility.Json;
 using NIM.Messagelog.Delegate;
 using NIM.Session;
 using System.Collections.Generic;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM.Messagelog
 {
@@ -129,7 +125,7 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_query_msg_online_async(id, sType, limit, sTimetag, eTimetag, endMsgId, reverse, saveLocal, null, QueryLogCompleted, ptr);
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         ///     在线查询消息
         /// </summary>
@@ -305,14 +301,7 @@ namespace NIM.Messagelog
         public static void ExportDatabaseFile(string destPath, CommonOperationResultDelegate action)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(action);
-#if UNITY
-#if UNITY_STANDALONE
             MsglogNativeMethods.nim_msglog_export_db_async(destPath, null, NormalOperationCompleted, ptr);
-#endif
-#else
-            MsglogNativeMethods.nim_msglog_export_db_async(destPath, null, NormalOperationCompleted, ptr);
-#endif
-
         }
 
         /// <summary>
@@ -326,13 +315,8 @@ namespace NIM.Messagelog
         {
             var ptr1 = DelegateConverter.ConvertToIntPtr(action);
             var ptr2 = DelegateConverter.ConvertToIntPtr(prg);
-#if UNITY
-#if UNITY_STANDALONE
+
             MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ImportMsglogPrgCb, ptr2);
-#endif
-#else
-            MsglogNativeMethods.nim_msglog_import_db_async(srcPath, null, NormalOperationCompleted, ptr1, ImportMsglogPrgCb, ptr2);
-#endif
         }
 
         private static readonly ImportMsglogProgressDelegate ImportMsglogPrgCb = ReportImportDbProgress;

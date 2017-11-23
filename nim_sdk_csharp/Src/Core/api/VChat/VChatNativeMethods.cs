@@ -29,7 +29,7 @@ namespace NIM
         IntPtr user_data); //操作回调，通用的操作回调接口
 
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
     /// <summary>
     /// NIM MP4操作回调，实际的开始录制和结束都会在NIMVChatHanler中返回
     /// </summary>
@@ -65,9 +65,9 @@ namespace NIM
     class VChatNativeMethods
     {
         //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
-#region NIM C SDK native methods
+        #region NIM C SDK native methods
 
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
         //初始化NIM VCHAT,需要在SDK的nim_client_init成功之后
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_init", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_vchat_init(
@@ -159,8 +159,8 @@ namespace NIM
 			IntPtr user_data);
 #endif
 
-#if !UNITY
-		 //对端画面自动旋转
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        //对端画面自动旋转
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_rotate_remote_video", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool nim_vchat_set_rotate_remote_video(bool rotate);
 
@@ -247,6 +247,6 @@ namespace NIM
 		internal static extern int nim_vchat_get_video_frame_scale_type();
 #endif
 
-#endregion
+        #endregion
     }
 }

@@ -8,10 +8,7 @@
 using System;
 using NimUtility;
 using NIM.Friend.Delegate;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
+
 
 namespace NIM.Friend
 {

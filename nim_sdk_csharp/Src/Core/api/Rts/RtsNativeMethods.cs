@@ -1,4 +1,4 @@
-﻿#if !UNITY
+﻿#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 using System;
 using System.Runtime.InteropServices;
 using NimUtility;
@@ -213,7 +213,7 @@ namespace NIM
         {
             //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
 
-            #region NIM C SDK native methods
+#region NIM C SDK native methods
 
             [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_start", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
             public static extern void nim_rts_start(int channel_type, string uid,
@@ -281,7 +281,7 @@ namespace NIM
                 NimRtsJoinCbFunc cb, 
                 IntPtr user_data);
 
-            #endregion
+#endregion
         }
     }
 }

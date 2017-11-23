@@ -8,10 +8,7 @@
 
 using NimUtility;
 using System;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
+
 
 namespace NIM.DataSync
 {

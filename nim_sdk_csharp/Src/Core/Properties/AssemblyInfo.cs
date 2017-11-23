@@ -1,4 +1,4 @@
-﻿//#if !UNITY
+﻿#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -39,8 +39,8 @@ using System.Runtime.InteropServices;
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 [assembly: AssemblyVersion("4.4.0.0")]
 [assembly: AssemblyFileVersion("4.4.0.0")]
-#elif UNITY
+#elif UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
 [assembly: AssemblyVersion("1.3.0.0")]
 [assembly: AssemblyFileVersion("1.3.0.0")]
 #endif
-//#endif
+#endif

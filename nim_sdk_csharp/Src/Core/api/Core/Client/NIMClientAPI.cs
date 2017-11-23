@@ -10,11 +10,6 @@ using NimUtility;
 using System;
 using System.Diagnostics;
 
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
-
 namespace NIM
 {
     public delegate void ConfigMultiportPushDelegate(ResponseCode response, ConfigMultiportPushParam param);
@@ -52,7 +47,7 @@ namespace NIM
         /// <param name="appInstallDir">目前不需要传入（SDK可以自动获取）.</param>
         /// <param name="config">The config.</param>
         /// <returns><c>true</c> 成功, <c>false</c> 失败</returns>
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         [Obsolete]
 #endif
         public static bool Init(string appDataDir, string appInstallDir = "", NimUtility.NimConfig config = null)
@@ -77,7 +72,7 @@ namespace NIM
             return _sdkInitialized;
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// NIM SDK初始化 
         /// </summary>
@@ -130,12 +125,12 @@ namespace NIM
                  * but it is advisable to keep them in a using(){} statement to ensure they are deleted as soon as possible. 
                  * Without this, you cannot be sure when they will be destroyed.
                  */
-                using (var actClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (var actClass = new UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer"))
                 {
-                    AndroidJavaObject curActivityContext = actClass.GetStatic<AndroidJavaObject>("currentActivity");
+                    UnityEngine.AndroidJavaObject curActivityContext = actClass.GetStatic<UnityEngine.AndroidJavaObject>("currentActivity");
                     if (curActivityContext != null)
                     {
-                        AndroidJavaClass clsSystemUtil = new AndroidJavaClass("com.netease.nimlib.NIMSDK");
+                        UnityEngine.AndroidJavaClass clsSystemUtil = new UnityEngine.AndroidJavaClass("com.netease.nimlib.NIMSDK");
                         if (clsSystemUtil != null)
                         {
                             NimUtility.Log.Info("com.netease.nimlib.NIMSDK found");
@@ -154,7 +149,7 @@ namespace NIM
 #endif
 
 #if UNITY_IPHONE || UNITY_IOS
-		if(Application.platform == RuntimePlatform.IPhonePlayer){
+		if(UnityEngine.Application.platform == UnityEngine.RuntimePlatform.IPhonePlayer){
             //TODO:
 		}
 #endif

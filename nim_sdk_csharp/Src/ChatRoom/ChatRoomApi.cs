@@ -1,12 +1,5 @@
 ﻿using System;
 
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#else
-using MonoPInvokeCallbackAttribute = NIM.MonoPInvokeCallbackAttribute;
-#endif
-
 namespace NIMChatRoom
 {
     /// <summary>
@@ -138,7 +131,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomLoginCbFunc ParaseChatRoomLoginResult = OnLogin;
 
-        [MonoPInvokeCallback(typeof(NimChatroomLoginCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomLoginCbFunc))]
         private static void OnLogin(long roomId, int loginStep, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             if (LoginHandler != null)
@@ -162,7 +155,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomExitCbFunc ParseExitChatRoomResult = OnExit;
 
-        [MonoPInvokeCallback(typeof(NimChatroomExitCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomExitCbFunc))]
         private static void OnExit(long roomId, int errorCode, int exitType, string jsonExtension, IntPtr userData)
         {
             if (ExitHandler != null)
@@ -178,7 +171,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomSendmsgAckCbFunc SendMsgAckCallback = OnSendMsgCompleted;
 
-        [MonoPInvokeCallback(typeof(NimChatroomSendmsgAckCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomSendmsgAckCbFunc))]
         private static void OnSendMsgCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             if (SendMessageHandler != null)
@@ -195,7 +188,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomReceiveMsgCbFunc ReceiveMessageCallback = OnReceiveMessage;
 
-        [MonoPInvokeCallback(typeof(NimChatroomReceiveMsgCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomReceiveMsgCbFunc))]
         private static void OnReceiveMessage(long roomId, string result, string jsonExtension, IntPtr userData)
         {
             if (ReceiveMessageHandler != null)
@@ -212,7 +205,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomReceiveNotificationCbFunc OnReceiveChatRoomNotificationMsg = OnReceiveNotification;
 
-        [MonoPInvokeCallback(typeof(NimChatroomReceiveNotificationCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomReceiveNotificationCbFunc))]
         private static void OnReceiveNotification(long roomId, string result, string jsonExtension, IntPtr userData)
         {
             if (ReceiveNotificationHandler != null)
@@ -229,7 +222,7 @@ namespace NIMChatRoom
 
         private static readonly NimChatroomLinkConditionCbFunc LinkStateChangedCallback = OnLinkStateChanged;
 
-        [MonoPInvokeCallback(typeof(NimChatroomLinkConditionCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomLinkConditionCbFunc))]
         private static void OnLinkStateChanged(long roomId, int condition, string jsonExtension, IntPtr userData)
         {
             if (LinkStateChanged != null)
@@ -450,7 +443,7 @@ namespace NIMChatRoom
             ChatRoomNativeMethods.nim_chatroom_queue_offer_async(roomId, element_key, elemnet_value, json_extension, CallbackBridge.ChatroomQueueOfferCallback, ptr);
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// 查看麦序头元素
         /// </summary>

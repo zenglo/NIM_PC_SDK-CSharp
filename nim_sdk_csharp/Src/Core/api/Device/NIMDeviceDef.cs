@@ -73,7 +73,7 @@ namespace NIM
         /// </summary>
         kNIMDeviceStatusEnd = 0x10,
     };
-    #if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/// <summary>
 	/// NIMVideoSubType 视频格式类型
 	/// </summary>
@@ -171,7 +171,7 @@ namespace NIM
         }
     }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	public class NIMCustomVideoDataInfo : NimUtility.NimJsonObject<NIMCustomVideoDataInfo>
 	{
 		/// <summary>
@@ -186,7 +186,7 @@ namespace NIM
 	}
 #endif
 
-	public class NIMStartDeviceJsonEX : NimUtility.NimJsonObject<NIMStartDeviceJsonEX>
+    public class NIMStartDeviceJsonEX : NimUtility.NimJsonObject<NIMStartDeviceJsonEX>
 	{
 		/// <summary>
 		/// 视频画面宽
@@ -225,7 +225,7 @@ namespace NIM
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
     IntPtr user_data);
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nim_vchat_device_status_cb_func(NIMDeviceType type, uint status,
 	[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path,

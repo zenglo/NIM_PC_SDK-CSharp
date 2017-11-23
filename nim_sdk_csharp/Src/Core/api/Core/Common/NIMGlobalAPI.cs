@@ -8,10 +8,6 @@
 using System;
 using System.Runtime.InteropServices;
 using NimUtility;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM
 {
@@ -44,8 +40,10 @@ namespace NIM
 
         public static void SetSdkLogCallback(NimWriteLogDelegate cb)
         {
+#if !UNITY_ANDROID
             IntPtr ptr = DelegateConverter.ConvertToIntPtr(cb);
             NIMGlobalNativeMethods.nim_global_reg_sdk_log_cb(null, NimSdkLogCb, ptr);
+#endif
         }
 
         private static readonly NIMGlobalNativeMethods.nim_sdk_log_cb_func NimSdkLogCb = WriteSdkLog;
@@ -57,7 +55,7 @@ namespace NIM
         }
 
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         ///     设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串
         /// </summary>
@@ -93,6 +91,6 @@ namespace NIM
             NIMGlobalNativeMethods.nim_global_detect_proxy(type, host, port, user, password, ProxyDetectionCallback, ptr);
         }
 #endif
-       
+
     }
 }

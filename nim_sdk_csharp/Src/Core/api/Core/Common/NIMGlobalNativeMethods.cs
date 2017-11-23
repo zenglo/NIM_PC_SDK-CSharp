@@ -27,7 +27,7 @@ namespace NIM
             nim_sdk_log_cb_func cb, IntPtr data);
 
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void nim_global_detect_proxy_cb_func(bool network_connect, NIMProxyDetectStep step,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string json_params,

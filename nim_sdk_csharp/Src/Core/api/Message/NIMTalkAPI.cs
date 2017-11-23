@@ -8,10 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM
 {
@@ -315,7 +311,7 @@ namespace NIM
             NimUtility.DelegateConverter.Invoke<ReceiveBroadcastMsgsDelegate>(user_data, msgs);
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// 从消息的中获取附件（图片、语音、视频等）的本地路径
         /// </summary>

@@ -6,10 +6,6 @@
 */
 using System;
 using System.Runtime.InteropServices;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM
 {

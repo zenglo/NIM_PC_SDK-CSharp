@@ -8,10 +8,6 @@
 using System;
 using NimUtility;
 using Newtonsoft.Json;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM.Nos
 {
@@ -370,7 +366,7 @@ namespace NIM.Nos
             NosNativeMethods.nim_nos_reg_upload_cb(UploadCallbackEx, pair.ToIntPtr());
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
         /// <summary>
         /// 停止上传资源(只能用于调用了nim_nos_upload_ex接口的上传任务)
@@ -563,7 +559,7 @@ namespace NIM.Nos
     }
 
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
     /// <summary>
     /// HTTP上传转码文档参数
     /// </summary>

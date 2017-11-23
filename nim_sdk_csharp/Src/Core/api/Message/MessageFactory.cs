@@ -49,9 +49,11 @@ namespace NIM
                     msgJsonValue = token.ToString(Formatting.None);
                     message = NimUtility.Json.JsonParser.Deserialize<NIMTipMessage>(msgJsonValue);
                     break;
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
                 case NIMMessageType.kNIMMessageTypeRobot:
                     message = Robot.ResponseMessage.Deserialize(token);
                     break;
+#endif
                 default:
                     message = NimUtility.Json.JsonParser.Deserialize<NIMUnknownMessage>(msgJsonValue);
                     ((NIMUnknownMessage) message).RawMessage = token.ToString(Formatting.None);

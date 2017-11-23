@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NIM.DocTransition
 {
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void nim_doctrans_opt_cb_func(int code,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string jsonExt, 

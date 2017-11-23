@@ -11,10 +11,6 @@ using Newtonsoft.Json.Linq;
 using NimUtility;
 using NimUtility.Json;
 using NIM.User.Delegate;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM.User
 {

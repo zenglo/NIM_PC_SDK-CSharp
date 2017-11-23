@@ -4,7 +4,7 @@
   * @author gq
   * @date 2015/12/8
   */
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 using System;
 using Newtonsoft.Json;
 using NimUtility;
@@ -305,6 +305,15 @@ namespace NIM
             /// </summary>
             [JsonProperty("leave_type")]
             public NIMRtsMemberLeftType LeaveType { get; set; }
+        }
+
+        public class RtsSendDataInfo: NimJsonObject<RtsMemberChangeInfo>
+        {
+            /// <summary>
+            /// id信息 （指定发送某人，不填则群发）
+            /// </summary>
+            [JsonProperty("uid")]
+            public string RtsUid { get; set; }
         }
     }
 }

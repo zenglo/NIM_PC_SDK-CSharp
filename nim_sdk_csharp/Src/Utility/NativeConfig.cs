@@ -10,7 +10,7 @@ namespace NIM
     /// </summary>
     public class NativeConfig
     {
-#if UNITY
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
 #if DEBUGVERSION
 #if UNITY_IOS
             public const string NIMNativeDLL = "__Internal";
@@ -45,7 +45,7 @@ namespace NIM
             public const string NIMHttpNativeDLL = "__Internal";
             public const string ChatRoomNativeDll = "__Internal";
 #elif UNITY_ANDROID
-            public const string NIMNativeDLL = "nim";
+        public const string NIMNativeDLL = "nim";
             public const string NIMAudioNativeDLL = "nim_audio";
             public const string NIMHttpNativeDLL = "nim_tools_http";
             public const string ChatRoomNativeDll = "nim_chatroom";

@@ -1,4 +1,4 @@
-﻿#if !UNITY
+﻿#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

@@ -65,7 +65,7 @@ namespace NIM
         /// </summary>
         public onSessionSyncAckNotifyHandler onSessionSyncAckNotify;
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		/// <summary>
 		/// 音量状态通知
 		/// </summary>
@@ -89,22 +89,22 @@ namespace NIM
         /// </summary>
         public OnSessionAuRecordInfoNotifyHandler onSessionAuRecordInfoStateNotify;
 #endif
-	}
+    }
 
-	public class VChatAPI
+    public class VChatAPI
     {
        
         private static NIMVChatSessionStatus session_status;
 		private static nim_vchat_cb_func VChatStatusCb =VChatSessionStatusCallback;
 		private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompletedCallback;
 		private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreatedCallback;
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         private static nim_vchat_mp4_record_opt_cb_func  VChatMP4RecordOptCb = OnMP4RecordOpCompletedCallback;
 		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
 		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStopCb = OnAudioRecordStopCallback;
 #endif
 
-		private static void OnNormalOpCompletedCallback(bool ret, int code, string json_extension, IntPtr user_data)
+        private static void OnNormalOpCompletedCallback(bool ret, int code, string json_extension, IntPtr user_data)
 		{
 			NimUtility.DelegateConverter.Invoke<NIMVChatOptHandler>(user_data, ret, code, json_extension);
 		}
@@ -201,6 +201,13 @@ namespace NIM
                             info = NIMVChatSessionInfo.Deserialize(json_extension);
                             if (info != null)
                             {
+                                if(code== Convert.ToInt32(NIMVideoChatSessionStatus.kNIMVideoChatSessionStatusLeaved))
+                                {
+                                    if(info.Status == Convert.ToInt32(NIMVideoChatUserLeftType.kNIMVChatUserLeftTimeout))
+                                    {
+                                        code = Convert.ToInt32(NIMVideoChatSessionStatus.kNIMVideoChatSessionStatusTimeOutLeaved);
+                                    }
+                                }
                                 session_status.onSessionPeopleStatus.DynamicInvoke(channel_id, info.Uid, code);
                             }
                         }
@@ -246,7 +253,7 @@ namespace NIM
                         }
                     }
                     break;
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
                 case NIMVideoChatSessionType.kNIMVideoChatSessionTypeMp4Notify:
                     {
                         if(session_status.onSessionMp4InfoStateNotify!=null)
@@ -289,9 +296,9 @@ namespace NIM
 					}
 					break;
 #endif
-			}
+            }
         }
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		private static void OnMP4RecordOpCompletedCallback(bool ret, int code, string file, long time, string json_extension, IntPtr user_data)
 		{
 			NimUtility.DelegateConverter.Invoke<NIMVChatMp4RecordOptHandler>(user_data, ret, code, file, time, json_extension);
@@ -305,7 +312,7 @@ namespace NIM
 			NimUtility.DelegateConverter.Invoke<NIMVChatAudioRecordOptHandler>(user_data, ret, code, file, time, json_extension);
 		}
 #endif
-		private static void OnVchatRoomCreatedCallback(int code, long channel_id, string json_extension, IntPtr user_data)
+        private static void OnVchatRoomCreatedCallback(int code, long channel_id, string json_extension, IntPtr user_data)
 		{
 			NimUtility.DelegateConverter.Invoke<NIMVChatOpt2Handler>(user_data, code, channel_id, json_extension);
 		}
@@ -318,7 +325,7 @@ namespace NIM
 		/// <returns>初始化结果，如果是false则以下所有接口调用无效</returns>
 		public static bool Init(string path)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             string info = "";
 			if(!String.IsNullOrEmpty(path))
 			{
@@ -338,20 +345,20 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void Cleanup()
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             VChatNativeMethods.nim_vchat_cleanup("");
 #else
 #endif
         }
 
-		/// <summary>
-		/// 设置统一的通话回调或者服务器通知
-		/// </summary>
-		/// <param name="session">回调通知对象</param>
-		/// <returns>无返回值</returns>
-		public static void SetSessionStatusCb(NIMVChatSessionStatus session)
+        /// <summary>
+        /// 设置统一的通话回调或者服务器通知
+        /// </summary>
+        /// <param name="session">回调通知对象</param>
+        /// <returns>无返回值</returns>
+        public static void SetSessionStatusCb(NIMVChatSessionStatus session)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             session_status = session;
 			VChatNativeMethods.nim_vchat_set_cb_func(VChatStatusCb, IntPtr.Zero);
 #else
@@ -368,7 +375,7 @@ namespace NIM
         /// <returns> bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
         public static bool Start(NIMVideoChatMode mode,string apns_text,NIMVChatInfo info,string customInfo = null)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             if (info == null)
 				info = new NIMVChatInfo();
 			string json_extension = info.Serialize();
@@ -386,7 +393,7 @@ namespace NIM
 		/// 
 		public static bool SetMode(NIMVideoChatMode mode)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             return VChatNativeMethods.nim_vchat_set_talking_mode(mode, "");
 #else
             return false;
@@ -402,7 +409,7 @@ namespace NIM
 		/// <returns>bool true 调用成功，false 调用失败（可能channel_id无匹配，如要接起另一路通话前先结束当前通话）</returns>
 		public static bool CalleeAck(long channel_id, bool accept, NIMVChatInfo info)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             if (info == null)
 				info = new NIMVChatInfo();
             string json_extension = info.Serialize();
@@ -420,7 +427,7 @@ namespace NIM
 		/// <returns>bool true 调用成功，false 调用失败</returns>
 		public static bool ChatControl(long channel_id, NIMVChatControlType type)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             return VChatNativeMethods.nim_vchat_control(channel_id, type, "", IntPtr.Zero);
 #else
             return false;
@@ -434,32 +441,32 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void End(string jsonExtension="")
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             VChatNativeMethods.nim_vchat_end(jsonExtension);
 #else
 #endif
         }
 
-		/// <summary>
-		/// 设置观众模式（多人模式下），全局有效（重新发起时也生效）
-		/// </summary>
-		/// <param name="viewer">是否观众模式</param>
-		/// <returns>无返回值</returns>
-		public static void SetViewerMode(bool viewer)
+        /// <summary>
+        /// 设置观众模式（多人模式下），全局有效（重新发起时也生效）
+        /// </summary>
+        /// <param name="viewer">是否观众模式</param>
+        /// <returns>无返回值</returns>
+        public static void SetViewerMode(bool viewer)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             VChatNativeMethods.nim_vchat_set_viewer_mode(viewer);
 #else
 #endif
         }
 
-		/// <summary>
-		/// 获取当前是否是观众模式
-		/// </summary>
-		/// <returns>bool true 观众模式，false 非观众模式</returns>
-		public static bool GetViewerMode()
+        /// <summary>
+        /// 获取当前是否是观众模式
+        /// </summary>
+        /// <returns>bool true 观众模式，false 非观众模式</returns>
+        public static bool GetViewerMode()
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             return VChatNativeMethods.nim_vchat_get_viewer_mode();
 #else
             return false;
@@ -473,20 +480,20 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void SetAudioMute(bool muted)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             VChatNativeMethods.nim_vchat_set_audio_mute(muted);
 #else
-            
+
 #endif
         }
 
-		/// <summary>
-		/// 获取音频静音状态
-		/// </summary>
-		/// <returns>bool true 静音，false 不静音</returns>
-		public static bool GetAudioMuteEnabled()
+        /// <summary>
+        /// 获取音频静音状态
+        /// </summary>
+        /// <returns>bool true 静音，false 不静音</returns>
+        public static bool GetAudioMuteEnabled()
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             return VChatNativeMethods.nim_vchat_audio_mute_enabled();
 #else
             return false;
@@ -506,7 +513,7 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void SetMemberInBlackList(string uid, bool add, bool audio, string json_extension, NIMVChatOptHandler cb)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_member_in_blacklist(uid, add, audio, json_extension, VChatNormalOptCb, ptr);
 #else
@@ -514,17 +521,17 @@ namespace NIM
         }
 
 
-		/// <summary>
-		///创建一个多人房间（后续需要主动调用加入接口进入房间） 
-		/// </summary>
-		/// <param name="room_name">房间名</param>
-		/// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
-		/// <param name="createRoomInfo">json封装类，见NIMCreateRoomJsonEx</param>
-		/// <param name="cb">结果回调</param>
-		/// <returns>无返回值</returns>
-		public static void CreateRoom(string room_name, string custom_info, NIMCreateRoomJsonEx createRoomInfo, NIMVChatOpt2Handler cb)
+        /// <summary>
+        ///创建一个多人房间（后续需要主动调用加入接口进入房间） 
+        /// </summary>
+        /// <param name="room_name">房间名</param>
+        /// <param name="custom_info">自定义的房间信息（加入房间的时候会返回）</param>
+        /// <param name="createRoomInfo">json封装类，见NIMCreateRoomJsonEx</param>
+        /// <param name="cb">结果回调</param>
+        /// <returns>无返回值</returns>
+        public static void CreateRoom(string room_name, string custom_info, NIMCreateRoomJsonEx createRoomInfo, NIMVChatOpt2Handler cb)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             string json_extension = null;
 			if(createRoomInfo!=null)
 			{
@@ -536,17 +543,17 @@ namespace NIM
 #endif
         }
 
-		/// <summary>
-		/// 加入一个多人房间（进入房间后成员变化等，等同点对点NIMVChatHander）
-		/// </summary>
-		/// <param name="mode">音视频通话类型</param>
-		/// <param name="room_name">房间名</param>
-		/// <param name="joinRoomInfo">json封装类，见NIMJoinRoomJsonEx</param>
-		/// <param name="cb">cb 结果回调,返回的json_extension扩展字段中包含 "custom_info","session_id"</param>
-		/// <returns>bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
-		public static bool JoinRoom(NIMVideoChatMode mode, string room_name, NIMJoinRoomJsonEx joinRoomInfo, NIMVChatOpt2Handler cb)
+        /// <summary>
+        /// 加入一个多人房间（进入房间后成员变化等，等同点对点NIMVChatHander）
+        /// </summary>
+        /// <param name="mode">音视频通话类型</param>
+        /// <param name="room_name">房间名</param>
+        /// <param name="joinRoomInfo">json封装类，见NIMJoinRoomJsonEx</param>
+        /// <param name="cb">cb 结果回调,返回的json_extension扩展字段中包含 "custom_info","session_id"</param>
+        /// <returns>bool true 调用成功，false 调用失败可能有正在进行的通话</returns>
+        public static bool JoinRoom(NIMVideoChatMode mode, string room_name, NIMJoinRoomJsonEx joinRoomInfo, NIMVChatOpt2Handler cb)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             if (joinRoomInfo == null)
 				joinRoomInfo = new NIMJoinRoomJsonEx();
 			string	json_extension = joinRoomInfo.Serialize();
@@ -567,19 +574,19 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void SetCustomData(bool custom_audio, bool custom_video, string json_extension, NIMVChatOptHandler cb)
         {
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_custom_data(custom_audio, custom_video, json_extension, VChatNormalOptCb, ptr);
 #else
 #endif
         }
-#if !UNITY
-		/// <summary>
-		/// 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）
-		/// </summary>
-		/// <param name="rotate"> true 自动旋转，false 不旋转</param>
-		/// <returns>无返回值</returns>
-		public static void SetRotateRemoteVideo(bool rotate)
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）
+        /// </summary>
+        /// <param name="rotate"> true 自动旋转，false 不旋转</param>
+        /// <returns>无返回值</returns>
+        public static void SetRotateRemoteVideo(bool rotate)
         {
             VChatNativeMethods.nim_vchat_set_rotate_remote_video(rotate);
         }
@@ -745,5 +752,5 @@ namespace NIM
 		}
 
 #endif
-	}
+    }
 }

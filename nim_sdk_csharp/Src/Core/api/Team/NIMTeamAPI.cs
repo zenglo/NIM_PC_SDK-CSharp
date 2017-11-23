@@ -9,10 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NIM.Team.Delegate;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM.Team
 {
@@ -538,7 +534,7 @@ namespace NIM.Team
             NimUtility.DelegateConverter.InvokeOnce<QueryTeamMutedListDelegate>(user_data, (ResponseCode)res_code, member_count, tid, members);
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
         private static nim_team_query_my_all_member_infos_cb_func QueryMyAllMemberInfoCallback = OnQueryMyAllMemberInfoCompleted;
 

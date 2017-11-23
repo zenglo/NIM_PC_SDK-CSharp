@@ -65,7 +65,7 @@ namespace NIM
 		/// 通话接听挂断同步通知
 		/// </summary>
 		kNIMVideoChatSessionTypeSyncAckNotify = 12,
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		/// <summary>
 		/// 通知MP4录制状态，包括开始录制和结束录制
 		/// </summary>
@@ -87,7 +87,7 @@ namespace NIM
 		/// </summary>
 		kNIMVideoChatSessionTypeLiveState = 17,
 #endif
-	};
+    };
 
 	/// <summary>
 	/// 音视频通话控制类型
@@ -177,10 +177,14 @@ namespace NIM
 		/// </summary>
 		kNIMVideoChatSessionStatusJoined = 0,
 		/// <summary>
-		/// 成员退出
+		/// 成员离开
 		/// </summary>
 		kNIMVideoChatSessionStatusLeaved = 1,
-	};
+        /// <summary>
+        /// 成员超时掉线
+        /// </summary>
+        kNIMVideoChatSessionStatusTimeOutLeaved = 2,
+    };
 
 	/// <summary>
 	/// 音视频通话网络变化类型
@@ -208,7 +212,7 @@ namespace NIM
 		/// </summary>
 		kNIMVideoChatSessionNetStatVeryBad = 3,
 	};
-	#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/// <summary>
 	/// 视频通话分辨率，最终长宽比不保证
 	/// </summary>
@@ -594,6 +598,56 @@ namespace NIM
         kNIMNetDetectTypeVideo = 1,     
     };
 
+    /// <summary>
+    /** NIMNetDetectVideoQuality 视频探测类型  */
+    /// </summary>
+    public enum NIMNetDetectVideoQuality
+    {
+        /// <summary>
+        /// 480p
+        /// </summary>
+        kNIMNDVideoQualityDefault = 0,
+        /// <summary>
+        /// 176*144
+        /// </summary>
+        kNIMNDVideoQualityLow = 1,
+        /// <summary>
+        /// 352*288
+        /// </summary>
+        kNIMNDVideoQualityMedium = 2,
+        /// <summary>
+        /// 480*320
+        /// </summary>
+        kNIMNDVideoQualityHigh = 3,
+        /// <summary>
+        /// 640*480
+        /// </summary>
+        kNIMNDVideoQuality480p = 4,
+        /// <summary>
+        /// 1280*720
+        /// </summary>
+        kNIMNDVideoQuality720p = 5,
+        /// <summary>
+        /// 960*540
+        /// </summary>
+        kNIMNDVideoQuality540p = 6,   
+    };
+
+    /// <summary>
+    /** NIMVideoChatUserLeftType 成员退出类型 */
+    /// 
+    /// </summary>
+    public enum NIMVideoChatUserLeftType
+    {
+        /// <summary>
+        /// 成员超时掉线
+        /// </summary>
+        kNIMVChatUserLeftTimeout = -1,
+        /// <summary>
+        ///  成员离开
+        /// </summary>
+        kNIMVChatUserLeftNormal = 0,     
+    };
 
     /// <summary>
     /// 发起和接受通话时的参数
@@ -819,7 +873,9 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_info", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public String CustomInfo { get; set; }
 
-		public NIMVChatSessionInfo()
+
+
+        public NIMVChatSessionInfo()
 		{
 			Uid = null;
 			Status = 0;
@@ -831,7 +887,8 @@ namespace NIM
 			Accept = 0;
 			Client = 0;
 			CustomInfo = null;
-		}
+
+        }
 	}
 
 	/// <summary>
@@ -936,7 +993,7 @@ namespace NIM
 		public StateInfo Info { get; set; }
 	}
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/// <summary>
 	/// 直播状态
 	/// </summary>
@@ -982,10 +1039,10 @@ namespace NIM
 		}
 	}
 #endif
-	/// <summary>
-	/// 创建聊天室的json扩展封装类
-	/// </summary>
-	public class NIMCreateRoomJsonEx: NimUtility.NimJsonObject<NIMCreateRoomJsonEx>
+    /// <summary>
+    /// 创建聊天室的json扩展封装类
+    /// </summary>
+    public class NIMCreateRoomJsonEx: NimUtility.NimJsonObject<NIMCreateRoomJsonEx>
 	{
 
 		/// <summary>
@@ -1091,7 +1148,7 @@ namespace NIM
 		}
 	}
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	public class NIMVChatCustomVideoJsonEx: NimUtility.NimJsonObject<NIMVChatCustomVideoJsonEx>
 	{
 		/// <summary>
@@ -1121,15 +1178,22 @@ namespace NIM
         public Int32 DetectTime { get; set; }
 
         /// <summary>
-        /// 探测类型NIM
+        /// 探测类型NIM NIMNetDetectType
         /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Int32 DetectType { get; set; }
+
+        /// <summary>
+        /// kNIMNetDetectTypeVideo时有效，默认为0，视频探测类型NIMNetDetectVideoQuality
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "quality_type", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Int32 VideoDetectQualityType { get; set; }
 
         public NIMVChatNetDetectJsonEx()
         {
             DetectTime = 0;
             DetectType = Convert.ToInt32(NIMNetDetectType.kNIMNetDetectTypeAudio);
+            VideoDetectQualityType = 0;
         }
 
     }
@@ -1251,7 +1315,7 @@ namespace NIM
     /// </summary>
     /// <param name="channel_id">频道id</param>
     /// <param name="uid">对方uid</param>
-    /// <param name="status">状态</param>
+    /// <param name="status">状态 NIMVideoChatSessionStatus</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void onSessionPeopleStatusHandler(long channel_id,
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string uid, int status);
@@ -1294,7 +1358,7 @@ namespace NIM
     /// <param name="channel_id">channel_id 通道id</param>
     /// <param name="json_extension">son_extension Json string 扩展字段kNIMVChatSessionId，加入多人的返回中带有kNIMVChatCustomInfo</param>
     public delegate void NIMVChatOpt2Handler(int code, long channel_id, string json_extension);
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/// <summary>
 	/// 音量状态通知
 	/// </summary>
@@ -1335,7 +1399,7 @@ namespace NIM
     /// <param name="record_info">音频录制状态信息</param>
     public delegate void OnSessionAuRecordInfoNotifyHandler(long channel_id,int code, NIMVChatAuRecordState record_info);
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
     /// <summary>
     /// MP4操作回调，实际的开始录制和结束都会在NIMVChatSessionStatus.onSessionMp4InfoStateNotify中返回
     /// </summary>

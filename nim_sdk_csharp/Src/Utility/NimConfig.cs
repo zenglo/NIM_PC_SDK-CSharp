@@ -65,6 +65,19 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("private_server_setting")]
         public bool UsePriviteServer { get; set; }
+
+        /// <summary>
+        /// 登录超时，单位秒，默认30
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("custom_timeout")]
+        public int CustomTimeout { get; set; }
+
+        /// <summary>
+        /// 登录重试最大次数，如需设置建议设置大于3次
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("login_retry_max_times")]
+        public int MaxLoginRetry { get; set; }
+
 #if UNITY_IPHONE || UNITY_IOS
 		/// <summary>
 		/// iOS 推送证书名配置
@@ -93,18 +106,6 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("sync_session_ack")]
         public bool SyncSessionAck { get; set; }
-
-        /// <summary>
-        /// 登录超时，单位秒，默认30
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("custom_timeout")]
-        public int CustomTimeout { get; set; }
-
-        /// <summary>
-        /// 登录重试最大次数，如需设置建议设置大于3次
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("login_retry_max_times")]
-        public int MaxLoginRetry { get; set; }
 
         /// <summary>
         /// 是否启用HTTPS协议，默认为false

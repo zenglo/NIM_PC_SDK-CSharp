@@ -12,7 +12,7 @@ namespace NIM
         //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
         #region NIM C SDK native methods
 
-#if !UNITY ||UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_start_device", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_start_device(NIMDeviceType type,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string device_path, uint fps,
@@ -41,8 +41,8 @@ namespace NIM
             nim_vchat_enum_device_devpath_sync_cb_func cb, IntPtr user_data);
 #endif
 
-#if !UNITY
-		 [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_audio_volumn(byte volumn, bool capture);
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_audio_volumn", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -93,8 +93,12 @@ namespace NIM
 		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_data_cb_ex", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void nim_vchat_set_audio_data_cb_ex(int type,
 			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_audio_data_cb_func_ex cb, IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_howling_suppression", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_set_audio_howling_suppression(bool work);
+
 #endif
 
-#endregion
+        #endregion
     }
 }

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using NimUtility;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#endif
 
 namespace NIM.Plugin
 {

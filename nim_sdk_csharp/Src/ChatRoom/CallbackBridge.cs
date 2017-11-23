@@ -1,11 +1,4 @@
 ﻿using System;
-#if UNITY
-using UnityEngine;
-using MonoPInvokeCallbackAttribute = AOT.MonoPInvokeCallbackAttribute;
-#else
-using MonoPInvokeCallbackAttribute = NIM.MonoPInvokeCallbackAttribute;
-#endif
-
 
 namespace NIMChatRoom
 {
@@ -46,7 +39,7 @@ namespace NIMChatRoom
     {
         public static readonly NimChatroomGetMembersCbFunc QueryMembersCallback = OnQueryMembersCompleted;
 
-        [MonoPInvokeCallback(typeof(NimChatroomGetMembersCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomGetMembersCbFunc))]
         private static void OnQueryMembersCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             MemberInfo[] members = null;
@@ -59,7 +52,7 @@ namespace NIMChatRoom
 
         public static readonly NimChatroomGetMsgCbFunc QueryMessageLogCallback = OnQueryMessageLogCompleted;
 
-        [MonoPInvokeCallback(typeof(NimChatroomGetMsgCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomGetMsgCbFunc))]
         private static void OnQueryMessageLogCompleted(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             Message[] messages = null;
@@ -73,7 +66,7 @@ namespace NIMChatRoom
 
         public static readonly NimChatroomSetMemberAttributeCbFunc SetMemberPropertyCallback = OnSetMemberProperty;
 
-        [MonoPInvokeCallback(typeof(NimChatroomSetMemberAttributeCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomSetMemberAttributeCbFunc))]
         private static void OnSetMemberProperty(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             MemberInfo mi = null;
@@ -85,7 +78,7 @@ namespace NIMChatRoom
 
         public static readonly NimChatroomCloseCbFunc RoomClosedCallback = OnChatRoomClosed;
 
-        [MonoPInvokeCallback(typeof(NimChatroomCloseCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomCloseCbFunc))]
         private static void OnChatRoomClosed(long roomId, int errorCode, string jsonExtension, IntPtr userData)
         {
             NimUtility.DelegateConverter.InvokeOnce<CloseRoomDelegate>(userData, roomId, (NIM.ResponseCode)errorCode);
@@ -93,7 +86,7 @@ namespace NIMChatRoom
 
         public static readonly NimChatroomGetInfoCbFunc GetRoomInfoCallback = OnGetRoomInfo;
 
-        [MonoPInvokeCallback(typeof(NimChatroomGetInfoCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomGetInfoCbFunc))]
         private static void OnGetRoomInfo(long roomId, int errorCode, string result, string jsonExtension, IntPtr userData)
         {
             ChatRoomInfo roomInfo = null;
@@ -105,7 +98,7 @@ namespace NIMChatRoom
 
         public static readonly NimChatroomKickMemberCbFunc KickoutMemberCallback = OnKickoutOthers;
 
-        [MonoPInvokeCallback(typeof(NimChatroomKickMemberCbFunc))]
+        [NIM.MonoPInvokeCallback(typeof(NimChatroomKickMemberCbFunc))]
         private static void OnKickoutOthers(long roomId, int errorCode, string jsonExtension, IntPtr userData)
         {
             NimUtility.DelegateConverter.InvokeOnce<RemoveMemberDelegate>(userData, roomId, (NIM.ResponseCode)errorCode);
@@ -113,7 +106,7 @@ namespace NIMChatRoom
 
         public static readonly nim_chatroom_temp_mute_member_cb_func TempMuteMemberCallback = OnTemporaryMuteMember;
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_temp_mute_member_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_temp_mute_member_cb_func))]
         private static void OnTemporaryMuteMember(long roomId, int resCode, string result, string jsonExt, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -125,7 +118,7 @@ namespace NIMChatRoom
         }
 
         public static readonly nim_chatroom_update_room_info_cb_func UpdateRoomInfoCallback = OnUpdateRoomInfoResult;
-        [MonoPInvokeCallback(typeof(nim_chatroom_update_room_info_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_update_room_info_cb_func))]
         private static void OnUpdateRoomInfoResult(long roomId, int resCode,string jsonExt, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -134,7 +127,7 @@ namespace NIMChatRoom
             }
         }
         public static readonly nim_chatroom_update_my_role_cb_func UpdateMyRoleCallback = OnUpdateMyRoleResult;
-        [MonoPInvokeCallback(typeof(nim_chatroom_update_my_role_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_update_my_role_cb_func))]
         private static void OnUpdateMyRoleResult(long roomId, int resCode, string jsonExt, IntPtr userData)
         {
             if (userData != IntPtr.Zero)
@@ -144,7 +137,7 @@ namespace NIMChatRoom
         }
         public static readonly nim_chatroom_queue_list_cb_func ChatroomQueueListCallback = OnQueryMICList;
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_queue_list_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_queue_list_cb_func))]
         private static void OnQueryMICList(long room_id, NIM.ResponseCode error_code, string result, string json_extension, IntPtr user_data)
         {
             if (user_data != IntPtr.Zero)
@@ -155,7 +148,7 @@ namespace NIMChatRoom
 
         public static readonly nim_chatroom_queue_drop_cb_func ChatroomQueueDropCallback = OnDropMICQueue;
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_queue_drop_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_queue_drop_cb_func))]
         private static void OnDropMICQueue(long room_id, NIM.ResponseCode error_code, string json_extension, IntPtr user_data)
         {
             if (user_data != IntPtr.Zero)
@@ -167,7 +160,7 @@ namespace NIMChatRoom
         public static readonly nim_chatroom_queue_poll_cb_func ChatroomQueuePollCallback = OnPopMICQueue;
 
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_queue_poll_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_queue_poll_cb_func))]
         private static void OnPopMICQueue(long room_id, NIM.ResponseCode error_code, string result, string json_extension, IntPtr user_data)
         {
             if (user_data != IntPtr.Zero)
@@ -178,7 +171,7 @@ namespace NIMChatRoom
 
         public static readonly nim_chatroom_queue_offer_cb_func ChatroomQueueOfferCallback = OnQueueOffer;
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_queue_offer_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_queue_offer_cb_func))]
         private static void OnQueueOffer(long room_id, NIM.ResponseCode error_code, string json_extension, IntPtr user_data)
         {
             if (user_data != IntPtr.Zero)
@@ -189,7 +182,7 @@ namespace NIMChatRoom
 
         public static readonly nim_chatroom_queue_header_cb_func ChatroomQueueHeaderCallback = OnQueueHeader;
 
-        [MonoPInvokeCallback(typeof(nim_chatroom_queue_header_cb_func))]
+        [NIM.MonoPInvokeCallback(typeof(nim_chatroom_queue_header_cb_func))]
         private static void OnQueueHeader(long room_id, int error_code, string result, string json_extension, IntPtr user_data)
         {
             NimUtility.DelegateConverter.InvokeOnce<ChatRoomQueueHeaderDelegate>(user_data, room_id, (NIM.ResponseCode)error_code, result);

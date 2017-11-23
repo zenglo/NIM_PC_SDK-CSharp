@@ -33,7 +33,7 @@ namespace NimUtility
         }
     }
 
-#if UNITY
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID
 
     public class AotTypes : UnityEngine.MonoBehaviour
     {

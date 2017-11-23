@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NIM.DocTransition
 {
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/// <summary>
 	/// nim callback function for doc trans result
 	/// </summary>

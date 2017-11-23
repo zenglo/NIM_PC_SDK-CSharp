@@ -67,13 +67,13 @@ namespace NIM
 		private static readonly nim_vchat_start_device_cb_func StartExtendCameraCb = StartExtendCamerCallback;
 		private static readonly nim_vchat_audio_data_cb_func AudioDataCb = AudioDataCallback;
         private static readonly nim_vchat_enum_device_devpath_sync_cb_func GetDeviceListCb = GetDeviceListCallback;
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		
 		private static readonly nim_vchat_device_status_cb_func DeviceStatusCb = DeviceStatusCallback;
 		private static readonly nim_vchat_video_data_cb_func VideoDataCb = VideoDataCallback;
 		private static readonly nim_vchat_audio_data_cb_func_ex AudioDataExCb = AudioDataExCallback;
 #endif
-		private static NIMDeviceInfoList _deviceList = null;
+        private static NIMDeviceInfoList _deviceList = null;
 
 #region callback
 		private static void GetDeviceListCallback(bool ret, NIMDeviceType type, string jsonExtension, IntPtr userData)
@@ -169,7 +169,7 @@ namespace NIM
 		/// <returns>无返回值</returns>
 		public static void StartDevice(NIMDeviceType type, string devicePath, uint fps, NIMStartDeviceJsonEX StartDeviceInfo,StartDeviceResultHandler handler)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             if (StartDeviceInfo==null)
 			{
 				StartDeviceInfo = new NIMStartDeviceJsonEX();
@@ -181,28 +181,28 @@ namespace NIM
 #endif
         }
 
-		/// <summary>
-		/// 结束设备
-		/// </summary>
-		/// <param name="type">设备类型</param>
-		/// <returns>无返回值</returns>
-		public static void EndDevice(NIMDeviceType type)
+        /// <summary>
+        /// 结束设备
+        /// </summary>
+        /// <param name="type">设备类型</param>
+        /// <returns>无返回值</returns>
+        public static void EndDevice(NIMDeviceType type)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             DeviceNativeMethods.nim_vchat_end_device(type, "");
 #else
 #endif
         }
 
-		/// <summary>
-		/// 监听采集音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut由底层播放）
-		/// </summary>
-		/// <param name="handler">回调</param>
-		/// <param name="audioJsonEx">json封装类，SampleRate有效,(要求返回的音频数据为指定的采样频，缺省为0使用默认采样频</param>
-		/// <returns>无返回值</returns>
-		public static void SetAudioCaptureDataCb(AudioDataHandler handler, NIMVChatCustomAudioJsonEx audioJsonEx)
+        /// <summary>
+        /// 监听采集音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut由底层播放）
+        /// </summary>
+        /// <param name="handler">回调</param>
+        /// <param name="audioJsonEx">json封装类，SampleRate有效,(要求返回的音频数据为指定的采样频，缺省为0使用默认采样频</param>
+        /// <returns>无返回值</returns>
+        public static void SetAudioCaptureDataCb(AudioDataHandler handler, NIMVChatCustomAudioJsonEx audioJsonEx)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             string audioInfo = "";
 			if(audioJsonEx!=null)
 				audioInfo = audioJsonEx.Serialize();
@@ -212,14 +212,14 @@ namespace NIM
 #endif
         }
 
-		/// <summary>
-		/// 监听接收音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOutChat由底层播放）
-		/// </summary>
-		/// <param name="handler">回调</param>
-		/// <returns>无返回值</returns>
-		public static void SetAudioReceiveDataCb(AudioDataHandler handler,NIMVChatCustomAudioJsonEx audioJsonEx)
+        /// <summary>
+        /// 监听接收音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOutChat由底层播放）
+        /// </summary>
+        /// <param name="handler">回调</param>
+        /// <returns>无返回值</returns>
+        public static void SetAudioReceiveDataCb(AudioDataHandler handler,NIMVChatCustomAudioJsonEx audioJsonEx)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             string audioInfo = "";
 			if(audioJsonEx!=null)
 			{
@@ -231,17 +231,17 @@ namespace NIM
 #endif
         }
 
-		/// <summary>
-		/// 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
-		/// </summary>
-		/// <param name="time">时间毫秒级</param>
-		/// <param name="data">音频数据pcm格式</param>
-		/// <param name="size">data的数据长度 sizeof(char)</param>
-		/// <param name="info">拓展json封装类</param>
-		/// <returns>bool true 调用成功，false 调用失败</returns>
-		public static bool CustomAudioData(ulong time, IntPtr data, uint size, NIMCustomAudioDataInfo info)
+        /// <summary>
+        /// 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
+        /// </summary>
+        /// <param name="time">时间毫秒级</param>
+        /// <param name="data">音频数据pcm格式</param>
+        /// <param name="size">data的数据长度 sizeof(char)</param>
+        /// <param name="info">拓展json封装类</param>
+        /// <returns>bool true 调用成功，false 调用失败</returns>
+        public static bool CustomAudioData(ulong time, IntPtr data, uint size, NIMCustomAudioDataInfo info)
 		{
-#if !UNITY || UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             string jsonExtension = "";
 			if (info != null)
 				jsonExtension = info.Serialize();
@@ -258,7 +258,7 @@ namespace NIM
         /// <returns>NIMDeviceInfoList 设备属性列表</returns>
         public static NIMDeviceInfoList GetDeviceList(NIMDeviceType type)
         {
-#if !UNITY ||UNITY_STANDALONE_WIN
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY||UNITY_STANDALONE_WIN
             DeviceNativeMethods.nim_vchat_enum_device_devpath(type, "", GetDeviceListCb, IntPtr.Zero);
             return _deviceList;
 #else
@@ -266,7 +266,7 @@ namespace NIM
 #endif
         }
 
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		/// <summary>
 		/// 启动辅助的摄像头，摄像头数据通过SetVideoCaptureDataCb设置采集回调返回，不直接通过视频通话发送给对方，并且不参与设备监听检测
 		/// </summary>
@@ -414,6 +414,15 @@ namespace NIM
             int audio_data_type = Convert.ToInt32(type);
 			DeviceNativeMethods.nim_vchat_set_audio_data_cb_ex(audio_data_type, json_extension, AudioDataExCallback, ptr);
 		}
+
+        /// <summary>
+        /// 设置底层针对麦克风采集数据处理开关接口，默认关闭啸叫检测（此接口是全局接口，在sdk初始化后设置一直有效）
+        /// </summary>
+        /// <param name="work">true 标识打开啸叫检测功能，false 标识关闭</param>
+        public static void SetAudioHowlingSuppression(bool work)
+        {
+            DeviceNativeMethods.nim_vchat_set_audio_howling_suppression(work);
+        }
 #endif
 
     }

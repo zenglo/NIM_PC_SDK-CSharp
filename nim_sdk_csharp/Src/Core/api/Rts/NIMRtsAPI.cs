@@ -4,7 +4,7 @@
   * @author gq
   * @date 2015/12/8
   */
-#if !UNITY
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 using System;
 using NimUtility;
 using NIM.NIMRts;
@@ -110,9 +110,15 @@ namespace NIM
         /// <param name="channelType">通道类型</param>
         /// <param name="data">发送数据</param>
         /// <param name="size">data的数据长度</param>
-        public static void SendData(string sessionId, NIMRtsChannelType channelType, IntPtr data, int size)
+        /// <param name="info">RtsSendDataInfo 发送数据时的json封装类,默认为空</param>
+        public static void SendData(string sessionId, NIMRtsChannelType channelType, IntPtr data, int size,RtsSendDataInfo info=null)
         {
-            RtsNativeMethods.nim_rts_send_data(sessionId, (int) channelType, data, size, "");
+            string json_extension = "";
+            if(info!=null)
+            {
+                json_extension = info.Serialize();
+            }
+            RtsNativeMethods.nim_rts_send_data(sessionId, (int) channelType, data, size, json_extension);
         }
 
         /// <summary>
@@ -153,7 +159,7 @@ namespace NIM
             DelegateConverter.InvokeOnce<NimRtsJoinCbFunc>(user_data, code, session_id, json_extension, IntPtr.Zero);
         }
 
-        #region 设置rts的通知回调
+#region 设置rts的通知回调
 
         public static void SetStartNotifyCallback(OnStartNotify cb)
         {
@@ -255,7 +261,7 @@ namespace NIM
             userData.Invoke<OnRecData>(sessionId, type, uid, data, size);
         }
 
-        #endregion
+#endregion
     }
 }
 #endif
