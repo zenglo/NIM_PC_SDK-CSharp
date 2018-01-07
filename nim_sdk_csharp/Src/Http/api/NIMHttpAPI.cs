@@ -42,8 +42,8 @@ namespace NIMHttp
 
         [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_create_request", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_http_create_request([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]string url,
-			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string post_body, 
-			int post_body_size, NimHttpDef.ResponseCb response_cb, IntPtr user_data);
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string post_body, 
+            int post_body_size, NimHttpDef.ResponseCb response_cb, IntPtr user_data);
         
         [DllImport(NIM.NativeConfig.NIMHttpNativeDLL, EntryPoint = "nim_http_add_request_header", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_http_add_request_header(IntPtr request_handle,
