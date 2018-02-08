@@ -97,6 +97,11 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_audio_howling_suppression", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_audio_howling_suppression(bool work);
 
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_accompanying_sound", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool nim_vchat_accompanying_sound( Byte id,UInt64 time,IntPtr data,UInt32 size,UInt32 rate,UInt32 channels, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension);
+
+        
 #endif
 
         #endregion

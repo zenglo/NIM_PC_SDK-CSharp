@@ -76,7 +76,7 @@ namespace NIMChatRoom
                 return;
             try
             {
-                ChatRoomNativeMethods.nim_chatroom_init(null);
+                ChatRoomNativeMethods.nim_chatroom_init("");
                 RegisterLoginCallback();
                 RegisterExitChatRoomCallback();
                 RegisterLinkStateChangedCallback();

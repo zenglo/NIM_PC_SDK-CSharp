@@ -112,5 +112,10 @@ namespace NIM.User
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_update_my_user_name_card", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_user_update_my_user_name_card([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string info_json, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Utf8StringMarshaler))] string json_extension, UpdateUserNameCardDelegate cb, IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_user_update_push_token", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void nim_user_update_push_token([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string cer_name,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))]string token, 
+            int type);
     }
 }

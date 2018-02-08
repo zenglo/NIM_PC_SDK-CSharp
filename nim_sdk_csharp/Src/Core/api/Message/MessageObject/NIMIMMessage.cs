@@ -193,6 +193,12 @@ namespace NIM
         [JsonProperty(PropertyName = "anti_spam_business_id")]
         public string AntiSpamBizID { get; set; }
 
+        /// <summary>
+        /// (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则
+        /// </summary>
+        [JsonProperty(PropertyName = "anti_spam_using_yidun")]
+        public int AntiSpamUsingYiDun { get; set; }
+
         #endregion
 
         #region 客户端定义字段

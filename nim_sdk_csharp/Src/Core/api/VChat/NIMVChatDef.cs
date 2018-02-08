@@ -588,6 +588,10 @@ namespace NIM
         /// 清晰优先
         /// </summary>
         kNIMVChatVEModeQuality = 2,
+        /// <summary>
+        /// 录屏模式,sdk不会根据网络调整分辨率
+        /// </summary>
+        kNIMVChatVEModeScreen = 3
     };
 
 
@@ -780,11 +784,12 @@ namespace NIM
         [Newtonsoft.Json.JsonProperty("custom_layout")]
 		public string CustomLayout { get; set; }
 
-		/// <summary>
-		/// 是否支持webrtc互通,1表示是，0表示否。默认否
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("webrtc")]
-		public int Webrtc { get; set; }
+        /// <summary>
+        /// 无效已经默认支持
+        /// 是否支持webrtc互通,1表示是，0表示否。默认否
+        /// </summary>
+        // [Newtonsoft.Json.JsonProperty("webrtc")]
+        // public int Webrtc { get; set; }
 
         /// <summary>
         /// 使用的视频编码策略NIMVChatVideoEncodeMode， 默认kNIMVChatVEModeNormal
@@ -813,7 +818,7 @@ namespace NIM
 			KeepCalling = 1;
 			Uids = new List<string>();
 			CustomLayout = "";
-			Webrtc = 0;
+			//Webrtc = 0;
             VEncodeMode = 0;
 
         }
@@ -1054,28 +1059,114 @@ namespace NIM
 	{
 
 		/// <summary>
+        /// 无效,已经默认支持
 		/// 是否支持webrtc互通,1表示是，0表示否。默认否
 		/// </summary>
-		[Newtonsoft.Json.JsonProperty(PropertyName = "webrtc", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-		public int webrtc { get; set; }
+        //[Newtonsoft.Json.JsonProperty(PropertyName = "webrtc", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        //public int webrtc { get; set; }
 
 		public NIMCreateRoomJsonEx()
 		{
-			webrtc = 0;
+			//webrtc = 0;
 		}
 	}
 
+    public class HostArea : NimUtility.NimJsonObject<HostArea>
+    {
+        [Newtonsoft.Json.JsonProperty(PropertyName = "adaption", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Adaption { get; set; }
 
-	/// <summary>
-	/// 加入聊天室的josn拓展封装类
-	/// </summary>
-	public class NIMJoinRoomJsonEx:NimUtility.NimJsonObject<NIMJoinRoomJsonEx>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "height_rate", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int HeightRate { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "position_x", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PositionX { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "position_y", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PositionY { get; set; }
+        [Newtonsoft.Json.JsonProperty(PropertyName = "width_rate", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int WidthRate { get; set; }
+        public HostArea()
+        {
+            Adaption = 1;
+            HeightRate = 8000;
+            PositionX = 1000;
+            PositionY = 1000;
+            WidthRate = 8000;
+        }
+    }
+
+    public class BackGround : NimUtility.NimJsonObject<BackGround>
+    {
+        [Newtonsoft.Json.JsonProperty(PropertyName = "rgb_b", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Rgb_B { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "rgb_g", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Rgb_G { get; set; }
+        [Newtonsoft.Json.JsonProperty(PropertyName = "rgb_r", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Rgb_R { get; set; }
+        public BackGround()
+        {
+            Rgb_B = 128;
+            Rgb_G = 128;
+            Rgb_R = 128;
+        }
+
+    }
+    public class CustomLayout : NimUtility.NimJsonObject<CustomLayout>
+    {
+    
+        [Newtonsoft.Json.JsonProperty(PropertyName = "background", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public BackGround Background { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "host_area", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HostArea Hostarea { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "n_host_area_0", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HostArea NHostArea0 { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "main_height", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int MainHeight { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "main_width", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int MainWidth { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "n_host_area_number", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NHostAreaNumber { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "set_host_as_main", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool SetHostAsMain { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "special_show_mode", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool SpecialShowMode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(PropertyName = "version", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int version { get; set; }
+
+        public CustomLayout()
+        {
+            MainHeight = 720;
+            MainWidth = 1280;
+            NHostAreaNumber = 1;
+            SetHostAsMain = false;
+            SpecialShowMode = true;
+            version = 0;
+           
+
+        }
+    }
+
+    /// <summary>
+    /// 加入聊天室的josn拓展封装类
+    /// </summary>
+    public class NIMJoinRoomJsonEx:NimUtility.NimJsonObject<NIMJoinRoomJsonEx>
 	{
-		//{"custom_video":0, "custom_audio":0, "video_quality":0, "session_id":"1231sda", "rtmp_url":"", "bypass_rtmp":0}
-		/// <summary>
-		/// 是否用自主的视频数据 >0表示是
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty(PropertyName = "custom_video", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+       
+        //{"custom_video":0, "custom_audio":0, "video_quality":0, "session_id":"1231sda", "rtmp_url":"", "bypass_rtmp":0}
+        /// <summary>
+        /// 是否用自主的视频数据 >0表示是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "custom_video", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public int CustomVideo { get; set; }
 
 		/// <summary>
@@ -1108,9 +1199,17 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty(PropertyName = "bypass_rtmp", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public int BypassRtmp { get; set; }
 
-		public NIMJoinRoomJsonEx()
+        /// <summary>
+        /// 自定义布局
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "customLayout", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CustomLayout Layout { get; set; }
+
+
+        public NIMJoinRoomJsonEx()
 		{
-			CustomVideo = 0;
+            //Layout.MainHeight = 0;
+            CustomVideo = 0;
 			CustomAudio = 0;
 			VideoQuality = 0;
 			SessionId = "";

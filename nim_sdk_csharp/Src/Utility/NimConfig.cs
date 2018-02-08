@@ -85,23 +85,30 @@ namespace NimUtility
 		[Newtonsoft.Json.JsonProperty("push_cer_name")]
 		public string PushCerName { get; set;}
 #endif
-		/// <summary>
-		/// 预下载图片质量,选填,范围0-100
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("preload_image_quality")]
-		public int PreloadImageQuality { get; set; }
+        /// <summary>
+        /// 预下载图片质量,选填,范围0-100
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("preload_image_quality")]
+        public int PreloadImageQuality { get; set; }
 
-		/// <summary>
-		/// 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x 
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("preload_image_resize")]
-		public string PreloadImageResize { get; set; }
+        /// <summary>
+        /// 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x 
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("preload_image_resize")]
+        public string PreloadImageResize { get; set; }
 
-		/// <summary>
-		/// 设置是否已读未读状态多端同步，默认true
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("sync_session_ack")]
-		public bool SyncSessionAck { get; set; }
+        /// <summary>
+        /// 设置是否已读未读状态多端同步，默认true
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("sync_session_ack")]
+        public bool SyncSessionAck { get; set; }
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 设置是否不保存自定义(kNIMMessageTypeCustom)消息（对PC版本SDK不支持，仅对Unity、cocos版本有效），默认为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("not_need_save_custom_msg")]
+        public bool NotNeedSaveCustomMsg { get; set; }
+#endif
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
@@ -116,8 +123,42 @@ namespace NimUtility
         [Newtonsoft.Json.JsonProperty("team_notification_unread_count")]
         public bool CountingTeamNotification { get; set; }
 
-
+        /// <summary>
+        /// 开启对动图缩略图的支持
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("animated_image_thumbnail_enabled")]
+        public bool AnimatedImageEnabled { get; set; }
 #endif
+
+        /// <summary>
+        /// nos 下载地址拼接模板，用于拼接最终得到的下载地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("download_address_template")]
+        public string[] DownloadAddrTemplate { get; set; }
+
+        /// <summary>
+        /// 需要被加速的主机名
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("accelerate_host")]
+        public string[] AccelerateHost { get; set; }
+
+        /// <summary>
+        /// nos 加速地址拼接模板，用于获得加速后的下载地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("accelerate_address_template")]
+        public string[] AccelerateAddrTemplate { get; set; }
+
+        /// <summary>
+        /// 部分 IM 错误信息统计上报地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("ntserver_address")]
+        public string[] ErrorReportAddr { get; set; }
+
+        /// <summary>
+        /// 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("is_upload_statistics_data")]
+        public bool IsUploadstatisticsData { get; set; }
 
         public SdkCommonSetting()
         {
@@ -126,11 +167,15 @@ namespace NimUtility
             LogLevel = SdkLogLevel.Pro;
 			PreloadImageQuality = -1;
 			SyncSessionAck = true;
-
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+			NotNeedSaveCustomMsg = true;
+#endif
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY            
             CustomTimeout = 30;
-            UseHttps = false;    
+            UseHttps = false;
+            AnimatedImageEnabled = false;
 #endif
+            IsUploadstatisticsData = false;
         }
     }
 

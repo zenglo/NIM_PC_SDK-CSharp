@@ -423,6 +423,22 @@ namespace NIM
         {
             DeviceNativeMethods.nim_vchat_set_audio_howling_suppression(work);
         }
+
+        /// <summary>
+        /// 自定义音频伴音数据接口，不需要打开自定义数据开关, 采样时间必须为10ms的整数倍, 采样位深只支持16
+        /// </summary>
+        /// <param name="id">伴音数据id</param>
+        /// <param name="time">time 时间毫秒级</param>
+        /// <param name="data">音频数据pcm格式</param>
+        /// <param name="size">data的数据长度</param>
+        /// <param name="rate">音频采样频</param>
+        /// <param name="channels">声道数</param>
+        /// <param name="json_extension">json_extension 扩展</param>
+        /// <returns>bool true 调用成功，false 调用失败</returns>
+        public static bool NimVchatAccompanyingSound(Byte id, UInt64 time, IntPtr data, UInt32 size, UInt32 rate, UInt32 channels,string json_extension)
+        {
+            return DeviceNativeMethods.nim_vchat_accompanying_sound(id, time, data, size, rate, channels, json_extension);
+        }
 #endif
 
     }

@@ -245,6 +245,10 @@ namespace NIM
 
 		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_video_frame_scale_type", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int nim_vchat_get_video_frame_scale_type();
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_select_video_adaptive_strategy", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_select_video_adaptive_strategy(NIMVChatVideoEncodeMode mode, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data);
 #endif
 
         #endregion

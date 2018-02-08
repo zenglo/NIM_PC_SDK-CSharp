@@ -98,6 +98,7 @@ namespace NIM
 		private static nim_vchat_cb_func VChatStatusCb =VChatSessionStatusCallback;
 		private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompletedCallback;
 		private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreatedCallback;
+
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         private static nim_vchat_mp4_record_opt_cb_func  VChatMP4RecordOptCb = OnMP4RecordOpCompletedCallback;
 		private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
@@ -318,12 +319,12 @@ namespace NIM
 		}
 
 
-		/// <summary>
-		/// VCHAT初始化，需要在SDK的Client.Init成功之后
-		/// </summary>
+        /// <summary>
+        /// VCHAT初始化，需要在SDK的Client.Init成功之后
+        /// </summary>
         /// <param name="path">nrtc等资源库路径，Unity下有效</param>
-		/// <returns>初始化结果，如果是false则以下所有接口调用无效</returns>
-		public static bool Init(string path)
+        /// <returns>初始化结果，如果是false则以下所有接口调用无效</returns>
+        public static bool Init(string path)
 		{
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             string info = "";
@@ -555,8 +556,14 @@ namespace NIM
         {
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             if (joinRoomInfo == null)
-				joinRoomInfo = new NIMJoinRoomJsonEx();
-			string	json_extension = joinRoomInfo.Serialize();
+            {
+                joinRoomInfo = new NIMJoinRoomJsonEx();
+                joinRoomInfo.Layout = new CustomLayout();
+                joinRoomInfo.Layout.Hostarea = new HostArea();
+                joinRoomInfo.Layout.Background = new BackGround();
+
+            }
+            string	json_extension = joinRoomInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, VChatOpt2Cb, ptr);
 #else
@@ -750,6 +757,18 @@ namespace NIM
 			int ret = VChatNativeMethods.nim_vchat_get_video_frame_scale_type();
 			return (NIMVChatVideoFrameScaleType)Enum.ToObject(typeof(NIMVChatVideoFrameScaleType), ret);
 		}
+
+        /// <summary>
+        /// 通话中修改视频编码模式
+        /// </summary>
+        /// <param name="mode">选用的策略模式</param>
+        /// <param name="json_extension">无效扩展字段</param>
+        /// <param name="cb">回调函数</param>
+        public static void NIMVChatSelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, string json_extension, NIMVChatOptHandler cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_select_video_adaptive_strategy(mode, json_extension, VChatNormalOptCb, ptr);
+        }
 
 #endif
     }
