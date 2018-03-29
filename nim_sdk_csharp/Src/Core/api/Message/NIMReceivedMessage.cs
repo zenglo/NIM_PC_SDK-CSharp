@@ -99,7 +99,6 @@ namespace NIM
         [JsonProperty("rescode")]
         public ResponseCode Response { get; set; }
 
-#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         ///     客户端反垃圾
         /// </summary>
@@ -111,8 +110,6 @@ namespace NIM
         {
             get { return _clientAntiSpam > 0; }
         }
-#endif
-
 
     }
 

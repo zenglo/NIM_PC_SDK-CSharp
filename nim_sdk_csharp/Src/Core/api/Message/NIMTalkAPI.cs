@@ -122,7 +122,7 @@ namespace NIM
                 data.ProgressAction = action;
                 ptr = NimUtility.DelegateConverter.ConvertToIntPtr(data);
             }
-            TalkNativeMethods.nim_talk_stop_send_msg(msg, null, _uploadFileProgressChanged, ptr);
+            TalkNativeMethods.nim_talk_stop_send_msg(msg, null);
         }
 
         /// <summary>

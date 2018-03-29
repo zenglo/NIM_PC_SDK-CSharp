@@ -69,7 +69,7 @@ namespace NIM
         /// 服务器端消息id
         /// </summary>
         [JsonProperty("server_msg_id")]
-        public string ServerMsgId { get; private set; }
+        public long ServerMsgId { get; private set; }
 
         /// <summary>
         /// 消息重发标记位,第一次发送0,重发1
@@ -186,7 +186,7 @@ namespace NIM
                     _clientAntiSpamHitting = null;
             }
         }
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// (可选)用户配置的对某些单条消息另外的反垃圾的业务ID
         /// </summary>
@@ -199,9 +199,31 @@ namespace NIM
         [JsonProperty(PropertyName = "anti_spam_using_yidun")]
         public int AntiSpamUsingYiDun { get; set; }
 
+        /// <summary>
+        /// 群消息是否需要已读业务，0：不需要，1：需要
+        /// </summary>
+        [JsonProperty("team_msg_ack")]
+        public int NeedTeamAck { get; set; }
+
+#endif
         #endregion
 
         #region 客户端定义字段
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 是否已经发送群消息已读回执
+        /// </summary>
+        [JsonProperty("team_msg_ack_sent")]
+        public bool TeamMsgAckSent { get; set; }
+
+        /// <summary>
+        /// 群消息未读数
+        /// </summary>
+        [JsonProperty("team_msg_unread_count")]
+        public int TeamMsgUnreadCount { get; set; }
+#endif
+
         /// <summary>
         /// 多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填
         /// </summary>
@@ -418,6 +440,7 @@ namespace NIM
         /// </summary>
         [JsonProperty(PropertyName = "anti_spam_content")]
         public string AntiSpamContent { get; set; }
+
         public NIMMessageSetting()
         {
             ServerSaveHistory = true;

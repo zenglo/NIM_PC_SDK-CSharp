@@ -108,29 +108,13 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("not_need_save_custom_msg")]
         public bool NotNeedSaveCustomMsg { get; set; }
-#endif
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
-        /// 是否启用HTTPS协议，默认为false
+        /// 选填，消息重发队列容量限制,仅对Unity版本有效
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("use_https")]
-        public bool UseHttps { get; set; }
+        public int ResendListCapacity { get; set; }
 
-        /// <summary>
-        /// 群通知是否计入未读数，默认为false
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("team_notification_unread_count")]
-        public bool CountingTeamNotification { get; set; }
-
-        /// <summary>
-        /// 开启对动图缩略图的支持
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("animated_image_thumbnail_enabled")]
-        public bool AnimatedImageEnabled { get; set; }
-#endif
-
-        /// <summary>
+         /// <summary>
         /// nos 下载地址拼接模板，用于拼接最终得到的下载地址
         /// </summary>
         [Newtonsoft.Json.JsonProperty("download_address_template")]
@@ -147,40 +131,136 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("accelerate_address_template")]
         public string[] AccelerateAddrTemplate { get; set; }
+#endif
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 是否启用HTTPS协议，默认为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("https_enabled")]
+        public bool UseHttps { get; set; }
 
         /// <summary>
-        /// 部分 IM 错误信息统计上报地址
+        /// 群通知是否计入未读数，默认为false
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("ntserver_address")]
-        public string[] ErrorReportAddr { get; set; }
+        [Newtonsoft.Json.JsonProperty("team_notification_unread_count")]
+        public bool CountingTeamNotification { get; set; }
 
         /// <summary>
-        /// 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
+        /// 开启对动图缩略图的支持
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("is_upload_statistics_data")]
-        public bool IsUploadstatisticsData { get; set; }
+        [Newtonsoft.Json.JsonProperty("animated_image_thumbnail_enabled")]
+        public bool AnimatedImageEnabled { get; set; }
+
+        /// <summary>
+        /// 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("client_antispam")]
+        public bool ClientAntiSpam { get; set; }
+
+        /// <summary>
+        /// 群消息已读功能开关，默认为false，如需开启请提前咨询技术支持或销售
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("team_msg_ack")]
+        public bool TeamMsgAckEnabled { get; set; }
+#endif
+
+
 
         public SdkCommonSetting()
         {
             PredownloadAttachmentThumbnail = true;
             UsePriviteServer = false;
-            LogLevel = SdkLogLevel.Pro;
-			PreloadImageQuality = -1;
-			SyncSessionAck = true;
+            LogLevel = SdkLogLevel.App;
+            PreloadImageQuality = -1;
+            SyncSessionAck = true;
 #if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
-			NotNeedSaveCustomMsg = true;
+			NotNeedSaveCustomMsg = false;
 #endif
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY            
             CustomTimeout = 30;
             UseHttps = false;
             AnimatedImageEnabled = false;
 #endif
-            IsUploadstatisticsData = false;
         }
     }
 
     public class SdkPrivateServerSetting
     {
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY 
+        /// <summary>
+        /// lbs地址，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("lbs")]
+        public string LbsAddress { get; set; }
+
+        /// <summary>
+        /// nos lbs地址，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_lbs")]
+        public string NOSLbsAddress { get; set; }
+
+        /// <summary>
+        /// 默认link服务器地址，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("link")]
+        public string LinkServer { get; set; }
+
+        /// <summary>
+        /// 默认nos 上传服务器地址，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_uploader")]
+        public string NosUploadServer { get; set; }
+
+        /// <summary>
+        /// （默认nos 上传服务器主机地址，仅 kNIMUseHttps设置为true 时有效，用作 https 上传时的域名校验及 http header host 字段填充）
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_uploader_host")]
+        public string NosUploadHost { get; set; }
+
+        /// <summary>
+        /// RSA public key，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("module")]
+        public string RSAPublicKey { get; set; }
+
+        /// <summary>
+        /// RSA version，如果选择使用私有服务器，则必填
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("version")]
+        public int RsaVersion { get; set; }
+
+        /// <summary>
+        /// 下载地址拼接模板，用于拼接最终得到的下载地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_downloader")]
+        public string DownloadAddrTemplate { get; set; }
+
+        /// <summary>
+        /// 需要被加速主机名
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_accelerate_host")]
+        public string AccelerateHost { get; set; }
+
+        /// <summary>
+        /// 加速地址拼接模板，用于获得加速后的下载地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nos_accelerate")]
+        public string AccelerateTemplate { get; set; }
+
+        /// <summary>
+        /// 部分 IM 错误信息统计上报地址
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("nt_server")]
+        public string ErrorReportServer { get; set; }
+
+        /// <summary>
+        /// 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("is_upload_statistics_data")]
+        public bool UploadStatisticsData { get; set; }
+
+#else
         /// <summary>
         /// lbs地址，如果选择使用私有服务器，则必填
         /// </summary>
@@ -227,9 +307,8 @@ namespace NimUtility
         /// RSA version，如果选择使用私有服务器，则必填
         /// </summary>
         [Newtonsoft.Json.JsonProperty("rsa_version")]
-        [Newtonsoft.Json.JsonIgnore()]
         public int RsaVersion { get; set; }
-
+#endif
         public SdkPrivateServerSetting()
         {
             RsaVersion = 0;
@@ -252,6 +331,14 @@ namespace NimUtility
         /// </summary>
         [Newtonsoft.Json.JsonProperty("app_key")]
         public string AppKey { get; set; }
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的nim_server.conf
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("server_conf_file_path")]
+        public string ServerConfFilePath { get; set; }
+#endif
 
         public bool IsValiad()
         {

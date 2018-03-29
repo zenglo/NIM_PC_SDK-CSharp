@@ -763,11 +763,23 @@ namespace NIM
         /// </summary>
         /// <param name="mode">选用的策略模式</param>
         /// <param name="json_extension">无效扩展字段</param>
-        /// <param name="cb">回调函数</param>
+        /// <param name="cb">回调函数,code 见</param>
         public static void NIMVChatSelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, string json_extension, NIMVChatOptHandler cb)
         {
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_select_video_adaptive_strategy(mode, json_extension, VChatNormalOptCb, ptr);
+        }
+
+        /// <summary>
+        ///  互动直播设置uid为房间主画面
+        /// </summary>
+        /// <param name="uid">用户uid</param>
+        /// <param name="json_extension">无效扩展字段</param>
+        /// <param name="cb">回调函数</param>
+        public static void NIMVChatSetUidPictureAsMain(string uid,string json_extension,NIMVChatOptHandler cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_uid_picture_as_main(uid, json_extension, VChatNormalOptCb, ptr);
         }
 
 #endif

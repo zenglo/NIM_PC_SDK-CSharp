@@ -18,6 +18,10 @@ namespace NIM
 
     public delegate void NimProxyDetectionDelegate(bool connection, NIMProxyDetectStep step);
 
+    public delegate void DeleteCacheFileDelegate(ResponseCode code);
+
+    public delegate void GetCacheFileInfoDelegate(CacheFileInfo info);
+
     public class GlobalAPI
     {
         /// <summary>
@@ -85,7 +89,7 @@ namespace NIM
         /// <param name="user">代理用户名</param>
         /// <param name="password">代理密码</param>
         /// <param name="cb"></param>
-        public static void DetectProxy(NIMProxyType type,string host,int port,string user,string password, NimProxyDetectionDelegate cb)
+        public static void DetectProxy(NIMProxyType type, string host, int port, string user, string password, NimProxyDetectionDelegate cb)
         {
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             NIMGlobalNativeMethods.nim_global_detect_proxy(type, host, port, user, password, ProxyDetectionCallback, ptr);
@@ -108,6 +112,73 @@ namespace NIM
             var ptr = DelegateConverter.ConvertToIntPtr(cb);
             NIMGlobalNativeMethods.nim_global_reg_exception_report_cb(null, ExceptionReportCb, ptr);
         }
+
+        static nim_sdk_del_cache_file_cb_func DeleteCacheFileCb = OnDeleteCacheCompleted;
+
+        [MonoPInvokeCallback(typeof(nim_sdk_del_cache_file_cb_func))]
+        private static void OnDeleteCacheCompleted(ResponseCode rescode, IntPtr user_data)
+        {
+            DelegateConverter.InvokeOnce<DeleteCacheFileDelegate>(user_data, rescode); 
+        }
+
+        /// <summary>
+        /// 删除sdk缓存文件
+        /// </summary>
+        /// <param name="accountID">查询的账号ID</param>
+        /// <param name="fileType">文件类型</param>
+        /// <param name="endtime">查询时间截止点（查询全部填0）</param>
+        /// <param name="cb"></param>
+        public static void DeleteCacheFile(string accountID,CacheFileType fileType,long endtime, DeleteCacheFileDelegate cb)
+        {
+            string fileTypeStr = GetCacheFileTypeDesc(fileType);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            NIMGlobalNativeMethods.nim_global_del_sdk_cache_file_async(accountID, fileTypeStr, endtime, null, DeleteCacheFileCb, ptr);
+        }
+
+        static nim_sdk_get_cache_file_info_cb_func GetCacheFileInfoCb = OnGetCacheFileInfoCompleted;
+
+        [MonoPInvokeCallback(typeof(nim_sdk_get_cache_file_info_cb_func))]
+        private static void OnGetCacheFileInfoCompleted(string info, IntPtr user_data)
+        {
+           var cacheInfo = CacheFileInfo.Deserialize(info);
+            DelegateConverter.InvokeOnce<GetCacheFileInfoDelegate>(user_data, cacheInfo);
+        }
+
+        /// <summary>
+        /// 获取sdk缓存文件信息
+        /// </summary>
+        /// <param name="accountID">查询的账号ID</param>
+        /// <param name="fileType">文件类型</param>
+        /// <param name="endtime">查询时间截止点（查询全部填0)</param>
+        /// <param name="cb"></param>
+        public static void GetCacheFileInfo(string accountID,CacheFileType fileType,long endtime, GetCacheFileInfoDelegate cb)
+        {
+            string fileTypeStr = GetCacheFileTypeDesc(fileType);
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            NIMGlobalNativeMethods.nim_global_get_sdk_cache_file_info_async(accountID, fileTypeStr, endtime, null, GetCacheFileInfoCb, ptr);
+        }
+
+        private static string GetCacheFileTypeDesc(CacheFileType fileType)
+        {
+            string fileTypeStr = string.Empty;
+            switch (fileType)
+            {
+                case CacheFileType.Audio:
+                    fileTypeStr = "audio";
+                    break;
+                case CacheFileType.Image:
+                    fileTypeStr = "image";
+                    break;
+                case CacheFileType.Misc:
+                    fileTypeStr = "res";
+                    break;
+                case CacheFileType.Video:
+                    fileTypeStr = "video";
+                    break;
+            }
+            return fileTypeStr;
+        }
+        
 #endif
 
     }

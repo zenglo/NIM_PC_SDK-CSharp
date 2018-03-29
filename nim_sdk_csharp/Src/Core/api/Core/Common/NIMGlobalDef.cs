@@ -141,4 +141,51 @@ namespace NIM
         [JsonProperty("detailinfo")]
         public string Info { get; set; }
     }
+
+    /// <summary>
+    /// sdk缓存文件类型
+    /// </summary>
+    public enum CacheFileType
+    {
+        /// <summary>
+        /// 杂项文件
+        /// </summary>
+        Misc,
+        /// <summary>
+        /// 图片
+        /// </summary>
+        Image,
+        /// <summary>
+        /// 语音
+        /// </summary>
+        Audio,
+        /// <summary>
+        /// 视频
+        /// </summary>
+        Video
+    }
+
+    public class CacheFileInfo:NimUtility.NimJsonObject<CacheFileInfo>
+    {
+        [JsonProperty("file_type")]
+        public string FileType { get; set; }
+
+        /// <summary>
+        /// 文件夹路径
+        /// </summary>
+        [JsonProperty("file_path")]
+        public string Path { get; set; }
+
+        /// <summary>
+        /// 缓存目录总大小(KB)
+        /// </summary>
+        [JsonProperty("total_size")]
+        public long TotalSize { get; set; }
+
+        /// <summary>
+        /// 文件数量
+        /// </summary>
+        [JsonProperty("file_count")]
+        public int FilesCount { get; set; }
+    }
 }

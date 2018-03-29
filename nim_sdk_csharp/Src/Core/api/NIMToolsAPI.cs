@@ -168,14 +168,14 @@ namespace NIM
             NimUtility.DelegateConverter.FreeMem(user_data);
         }
 
-#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
         /// <summary>
         /// 替换在词库中匹配的字符串
         /// </summary>
         /// <param name="text">目标文本</param>
         /// <param name="replace">替换字符串</param>
         /// <param name="libName">词库名称</param>
-        /// <returns>替换后的字符串</returns>
+        /// <returns>替换后的字符串(WIN32平台 返回字符串为"2"时表明含有敏感词不允许发送；"3"表明需要将内容设置在消息结构的反垃圾字段里，由服务器过滤；其他内容可以作为消息正常发送)</returns>
         public static string ReplaceTextMatchedKeywords(string text,string replace,string libName)
         {
             var ptr = nim_tool_replace_text_matched_keywords(text, replace, libName);
@@ -184,7 +184,7 @@ namespace NIM
             GlobalAPI.FreeBuffer(ptr);
             return result;
         }
-
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// 字符串是否匹配词库中的模式
         /// </summary>
@@ -198,7 +198,7 @@ namespace NIM
         }
 #endif
 
-#region NIM C SDK native methods
+        #region NIM C SDK native methods
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_user_appdata_dir", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_get_user_appdata_dir(string app_account);
@@ -224,18 +224,18 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_audio_text_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_tool_get_audio_text_async(string json_audio_info, string json_extension, NIMTools.GetAudioTextCb cb, IntPtr user_data);
 
-#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
         [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_replace_text_matched_keywords([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string replace_str,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string lib_name);
-
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
         [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern int nim_tool_is_text_matched_keywords([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string lib_name);
 
 #endif
 
-#endregion
+        #endregion
     }
 }

@@ -661,6 +661,46 @@ namespace NIM
         kNIMVChatUserLeftNormal = 0,     
     };
 
+
+    /// <summary>
+    /// NIMMainPictureOptCode 房间主画面设置返回码
+    /// </summary>
+    public enum NIMMainPictureOptCode
+    {
+        /// <summary>
+        /// 操作成功
+        /// </summary>
+        kNIMMainPictureOptSucess = 200,
+        /// <summary>
+        /// 认证错误
+        /// </summary>
+        kNIMMainPictureOptAuthError = 401,
+        /// <summary>
+        /// 房间不存在
+        /// </summary>
+        kNIMMainPictureOptRoomNotExist = 404,
+        /// <summary>
+        /// 房间下的uid不存在
+        /// </summary>
+        kNIMMainPictureOptUidNotExist = 405,
+        /// <summary>
+        /// 请求数据不对
+        /// </summary>
+        kNIMMainPictureOptDataError = 417,
+        /// <summary>
+        /// 内部错误
+        /// </summary>
+        kNIMMainPictureOptError = 500,
+        /// <summary>
+        /// 服务器内部错误
+        /// </summary>
+        kNIMMainPictureOptServerError = 600,
+        /// <summary>
+        /// 无效的操作
+        /// </summary>
+        kNIMMainPictureOptInvilid = 11403,
+    };
+
     /// <summary>
     /// 发起和接受通话时的参数
     /// </summary>
@@ -1040,12 +1080,28 @@ namespace NIM
 		/// kNIMVChatMp4AudioType mp4录制时音频情况，0标识只录制当前成员，1标识录制通话全部混音（等同音频文件录制的声音）
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty(PropertyName = "mp4_audio", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-		public int RecordPeopleType
-		{
-			get;
-			set;
-		}
-		public NIMVChatMP4RecordJsonEx()
+		public int RecordPeopleType{get;set;}
+
+        /// <summary>
+        /// RecordRecode mp4录制重编码开关
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "mp4_recode", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool RecordRecode { get; set; }
+
+        /// <summary>
+        /// RecordMp4Width mp4录制文件的宽,不填或者数据无效[16-1280有效]时以收到的第一帧画面宽为默认
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "mp4_width", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int RecordMp4Width { get; set; }
+
+        /// <summary>
+        ///  RecordMp4Height mp4录制文件的高,不填或者数据无效[16-1280有效]时以收到的第一帧画面高为默认
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "mp4_height", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int RecordMp4Height { get; set; }
+
+
+        public NIMVChatMP4RecordJsonEx()
 		{
 			RecordUid = "";
 			RecordPeopleType = 0;

@@ -140,6 +140,21 @@ namespace NIM.Team
         kNIMNotificationIdLocalMuteMember = 2008,
 
         /// <summary>
+        /// 本地操作对群禁言 {}
+        /// </summary>
+        kNIMNotificationIdLocalMute = 2009,
+
+        /// <summary>
+        ///获取群消息未读数 {[{"client_msg_id":"", "count":int, "read_accid":"当前已读成员的accid"},...]} 
+        /// </summary>
+        kNIMNotificationIdLocalGetTeamMsgUnreadCount = 2010,
+
+        /// <summary>
+        ///获取群消息未读列表 {"client_msg_id":"", "read":["id1",...], "unread":["id2",...]}* 
+        /// </summary>
+        kNIMNotificationIdLocalGetTeamMsgUnreadList = 2011,
+
+        /// <summary>
         ///     拒绝电话,{"calltype":1,"channel":6146078138783760761,"from":"id1","ids":["id1","id2"],"time":1430995380471}
         /// </summary>
         kNIMNotificationIdLocalNetcallReject = 3103,

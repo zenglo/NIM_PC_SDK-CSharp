@@ -48,8 +48,7 @@ namespace NIM
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
             string jsonMsg,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))]
-            string jsonExtension,
-            UploadFileCallback cb, IntPtr userData);
+            string jsonExtension);
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_talk_reg_ack_cb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern void nim_talk_reg_ack_cb(

@@ -87,7 +87,11 @@ namespace NIM.Messagelog
             var ptr = DelegateConverter.ConvertToIntPtr(action);
             MsglogNativeMethods.nim_msglog_query_msg_async(accountId, sType, limit, msgAnchorTimetag, null, QueryLogCompleted, ptr);
         }
-
+        /// <summary>
+        /// 包含起止时间的历史消息查询
+        /// </summary>
+        /// <param name="args">查询参数</param>
+        /// <param name="action">查询结果回调通知</param>
         public static void QueryMsglogLocally(QueryMsglogParams args, QueryMsglogResultDelegate action)
         {
             var x = new { direction = args.Direction, reverse = args.Reverse, endtime = args.EndTimetag };
@@ -125,7 +129,7 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_query_msg_online_async(id, sType, limit, sTimetag, eTimetag, endMsgId, reverse, saveLocal, null, QueryLogCompleted, ptr);
         }
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+//#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         ///     在线查询消息
         /// </summary>
@@ -149,7 +153,7 @@ namespace NIM.Messagelog
             MsglogNativeMethods.nim_msglog_query_msg_online_async(id, sType, limit, sTimetag, eTimetag, endMsgId, reverse, saveLocal, jsonExt, QueryLogCompleted, ptr);
         }
 
-#endif
+//#endif
         /// <summary>
         ///     根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs?doc=pc&#历史记录
         /// </summary>
