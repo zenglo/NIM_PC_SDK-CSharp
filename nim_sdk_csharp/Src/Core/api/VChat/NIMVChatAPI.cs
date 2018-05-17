@@ -2,6 +2,7 @@
   * @brief NIM VChat提供的音视频相关接口，相关功能调用前需要先Init()
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author gq
+  * @modify lee
   * @date 2015/12/8
   */
 
@@ -558,9 +559,10 @@ namespace NIM
             if (joinRoomInfo == null)
             {
                 joinRoomInfo = new NIMJoinRoomJsonEx();
-                joinRoomInfo.Layout = new CustomLayout();
-                joinRoomInfo.Layout.Hostarea = new HostArea();
-                joinRoomInfo.Layout.Background = new BackGround();
+                CustomLayout layout=new CustomLayout();
+                layout.Hostarea = new HostArea();
+                layout.Background = new BackGround();
+                joinRoomInfo.Layout = layout.Serialize();
 
             }
             string	json_extension = joinRoomInfo.Serialize();
@@ -781,6 +783,17 @@ namespace NIM
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             VChatNativeMethods.nim_vchat_set_uid_picture_as_main(uid, json_extension, VChatNormalOptCb, ptr);
         }
+
+        /// <summary>
+        /// 音视频通话重新连接，用于底层链接在上层认为异常时尝试重连
+        /// </summary>
+        /// <param name="json_extension">可扩展添加kNIMVChatSessionId，用于指定对应的通话</param>
+        /// <param name="cb">操作结果的回调函数，当通话通话不存在或通话</param>
+        //public static void NIMVChatRelogin(string json_extension,NIMVChatOptHandler cb)
+        //{
+        //    var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+        //    VChatNativeMethods.nim_vchat_relogin(json_extension, VChatNormalOptCb, ptr);
+        //}
 
 #endif
     }

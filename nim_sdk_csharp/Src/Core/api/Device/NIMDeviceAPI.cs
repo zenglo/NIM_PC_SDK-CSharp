@@ -318,6 +318,7 @@ namespace NIM
 		/// 监听采集的视频数据
 		/// </summary>
 		/// <param name="handler">回调</param>
+        /// <param name="videoJsonEx">json 参数封装类</param>
 		/// <returns>无返回值</returns>
 		public static void SetVideoCaptureDataCb(VideoDataHandler handler, NIMVChatCustomVideoJsonEx videoJsonEx)
 		{
@@ -336,10 +337,18 @@ namespace NIM
 		/// 监听接收的视频数据
 		/// </summary>
 		/// <param name="handler">回调</param>
+        /// <param name="videoJsonEx">json参数封装类</param>
 		/// <returns>无返回值</returns>
-		public static void SetVideoReceiveDataCb(VideoDataHandler handler, string json_extension = "")
+		public static void SetVideoReceiveDataCb(VideoDataHandler handler, NIMVChatCustomVideoJsonEx videoJsonEx)
 		{
-			var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
+            string json_extension = "";
+            if (videoJsonEx == null)
+            {
+                videoJsonEx = new NIMVChatCustomVideoJsonEx();
+                videoJsonEx.VideoSubType = Convert.ToInt32(NIMVideoSubType.kNIMVideoSubTypeARGB);
+            }
+            json_extension = videoJsonEx.Serialize();
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(handler);
 			DeviceNativeMethods.nim_vchat_set_video_data_cb(false, json_extension, VideoDataCb, ptr);
 		}
 

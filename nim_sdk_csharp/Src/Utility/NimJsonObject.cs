@@ -42,5 +42,8 @@ namespace NimUtility
 
         [JsonIgnore]
         protected virtual bool IgnoreDefauleValue { get; set; }
+
+        [JsonIgnore]
+        public string JSON { get; set; }
     }
 }

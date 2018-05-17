@@ -69,16 +69,21 @@ namespace NIM.Team
 
         private static NIMTeamEventData ParseTeamEventData(int resCode, int nid, string tid, string result)
         {
-            NIMTeamEventData eventData = new NIMTeamEventData();
+            NIMTeamEventData eventData = null;
             if (!string.IsNullOrEmpty(result))
             {
                 eventData = NIMTeamEventData.Deserialize(result);
             }
+            if (eventData == null)
+            {
+                eventData = new NIMTeamEventData();
+                eventData.JSON = result;
+            }
+            eventData.NotificationId = (NIMNotificationType)nid;
             if (eventData.TeamEvent == null)
             {
                 eventData.TeamEvent = new NIMTeamEvent();
             }
-            eventData.NotificationId = (NIMNotificationType)nid;
             eventData.TeamEvent.TeamId = tid;
             eventData.TeamEvent.ResponseCode = (ResponseCode)Enum.Parse(typeof(ResponseCode), resCode.ToString());
             eventData.TeamEvent.NotificationType = (NIMNotificationType)Enum.Parse(typeof(NIMNotificationType), nid.ToString());
@@ -334,7 +339,6 @@ namespace NIM.Team
         /// <summary>
         /// 查询所有群信息，包含无效的群
         /// </summary>
-        /// <param name="includeInvalid"></param>
         /// <param name="action"></param>
         public static void QueryAllMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
         {

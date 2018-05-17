@@ -255,6 +255,9 @@ namespace NIM
           [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data);
 
 
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_relogin", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_relogin([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,nim_vchat_opt_cb_func cb, IntPtr user_data);
+
 #endif
 
         #endregion

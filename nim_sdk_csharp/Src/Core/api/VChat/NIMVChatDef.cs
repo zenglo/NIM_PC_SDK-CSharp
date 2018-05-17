@@ -702,6 +702,29 @@ namespace NIM
     };
 
     /// <summary>
+    /// NIMVChatAudioMode 音频模式 
+    /// </summary>
+    public enum NIMVChatAudioMode
+    {
+        /// <summary>
+        /// 默认值，此时参考kNIMVChatAudioHighRate
+        /// </summary>
+        kNIMVChatAdModeDefault = 0,
+        /// <summary>
+        /// 窄带，kNIMVChatAudioHighRate无效
+        /// </summary>
+        kNIMVChatAdModeNormal = 1,
+        /// <summary>
+        /// 高清语音，kNIMVChatAudioHighRate无效
+        /// </summary>
+        kNIMVChatAdModeHighVoip = 2,
+        /// <summary>
+        /// 高清音乐，kNIMVChatAudioHighRate无效
+        /// </summary>
+        kNIMVChatAdModeHighMusic = 3,
+    }
+
+    /// <summary>
     /// 发起和接受通话时的参数
     /// </summary>
     public class NIMVChatInfo : NimUtility.NimJsonObject<NIMVChatInfo>
@@ -712,10 +735,16 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty(PropertyName = "uids", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 		public List<string> Uids { get; set; }
 
-		/// <summary>
-		/// 是否用自定义音频数据（PCM）
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("custom_audio")]
+        /// <summary>
+        /// 发起会话的标识id，将在创建通话及结束通话时有效，帮助针对无channelid的情况下进行映射
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "session_id", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SessionId { get; set; }
+
+        /// <summary>
+        /// 是否用自定义音频数据（PCM）
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("custom_audio")]
 		public int CustomAudio { get; set; }
 
 		/// <summary>
@@ -736,10 +765,16 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("video_record")]
 		public int ServerVideoRecord { get; set; }
 
-		/// <summary>
-		///  视频发送编码码率 [100000,600000]有效
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("max_video_rate")]
+        /// <summary>
+        /// 是否需要录制多人模式下的本人数据 >0表示是 （需要服务器配置支持，并且开ServerAudioRecord，ServerVideoRecord其中一个）
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("single_record")]
+        public int ServerSingleRecord { get; set; }
+
+        /// <summary>
+        ///  视频发送编码码率 [100000,600000]有效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("max_video_rate")]
 		public int MaxVideoRate { get; set; }
 
 		/// <summary>
@@ -754,10 +789,22 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("frame_rate")]
 		public int FrameRate { get; set; }
 
-		/// <summary>
-		/// 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("rtmp_url")]
+        /// <summary>
+        /// 是否使用语音高清模式 >0表示是（默认关闭）3.3.0 之前的版本无法加入已经开启高清语音的多人会议
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("high_rate")]
+        public int AudioHighRate { get; set; }
+
+        /// <summary>
+        /// 音频模式选择，非默认时kNIMVChatAudioHighRate无效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("audio_mode")]
+        public int AudioMode { get; set; }
+
+        /// <summary>
+        /// 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("rtmp_url")]
 		public string RtmpUrl { get; set; }
 
 		/// <summary>
@@ -778,10 +825,16 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("split_mode")]
 		public int SplitMode { get; set; }
 
-		/// <summary>
-		/// 是否需要推送 >0表示是 默认是
-		/// </summary>
-		[Newtonsoft.Json.JsonProperty("push_enable")]
+        /// <summary>
+        /// 自定义布局，当主播选择kNIMVChatSplitCustomLayout或kNIMVChatSplitAudioLayout模式时生效
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "custom_layout", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Layout { get; set; }
+
+        /// <summary>
+        /// 是否需要推送 >0表示是 默认是
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("push_enable")]
 		public int PushEnable { get; set; }
 
 		/// <summary>
@@ -795,10 +848,6 @@ namespace NIM
 		/// </summary>
 		[Newtonsoft.Json.JsonProperty("need_nick")]
 		public int NeedNick { get; set; }
-
-
-		[Newtonsoft.Json.JsonProperty("high_rate")]
-		public int AudioHighRate { get; set; }
 
 		/// <summary>
 		/// JSON格式,推送payload
@@ -818,11 +867,7 @@ namespace NIM
 		[Newtonsoft.Json.JsonProperty("keepcalling")]
 		public int KeepCalling { get; set; }
 
-        /// <summary>
-        /// 自定义布局，当主播选择kNIMVChatSplitCustomLayout或kNIMVChatSplitAudioLayout模式时生效
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("custom_layout")]
-		public string CustomLayout { get; set; }
+
 
         /// <summary>
         /// 无效已经默认支持
@@ -839,25 +884,29 @@ namespace NIM
 
 		public NIMVChatInfo()
 		{
-			CustomAudio = 0;
+            Uids = new List<string>();
+            SessionId = "";
+            CustomAudio = 0;
 			CustomVideo = 0;
 			ServerAudioRecord = 0;
 			ServerVideoRecord = 0;
-			AudioHighRate = 0;
-			MaxVideoRate = 0;
-			VideoQuality = 0;
-			FrameRate = 0;
+            ServerVideoRecord = 0;
+            MaxVideoRate = 0;
+            VideoQuality = 0;
+            FrameRate = 0;
+            AudioHighRate = 0;
 			RtmpUrl = "";
 			BypassRtmp = 0;
-			SplitMode = 0;
-			PushEnable = 1;
+            RtmpRecord = 0;
+            SplitMode = 0;
+            Layout = null;
+            PushEnable = 1;
 			NeedBadge = 1;
 			NeedNick = 1;
 			PayLoad = "";
 			Sound = "";
 			KeepCalling = 1;
-			Uids = new List<string>();
-			CustomLayout = "";
+		
 			//Webrtc = 0;
             VEncodeMode = 0;
 
@@ -1140,6 +1189,7 @@ namespace NIM
 
         [Newtonsoft.Json.JsonProperty(PropertyName = "position_y", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int PositionY { get; set; }
+
         [Newtonsoft.Json.JsonProperty(PropertyName = "width_rate", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int WidthRate { get; set; }
         public HostArea()
@@ -1201,13 +1251,15 @@ namespace NIM
 
         public CustomLayout()
         {
+            Background = null;
+            Hostarea = null;
+            NHostArea0 = null;
             MainHeight = 720;
             MainWidth = 1280;
             NHostAreaNumber = 1;
             SetHostAsMain = false;
             SpecialShowMode = true;
             version = 0;
-           
 
         }
     }
@@ -1256,10 +1308,17 @@ namespace NIM
 		public int BypassRtmp { get; set; }
 
         /// <summary>
+        /// 主播控制的直播推流时的分屏模式 NIMVChatVideoSplitMode
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("split_mode")]
+        public int SplitMode { get; set; }
+
+        /// <summary>
         /// 自定义布局
         /// </summary>
-        [Newtonsoft.Json.JsonProperty(PropertyName = "customLayout", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CustomLayout Layout { get; set; }
+        [Newtonsoft.Json.JsonProperty(PropertyName = "custom_layout", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Layout { get; set; }
+
 
 
         public NIMJoinRoomJsonEx()
@@ -1271,7 +1330,9 @@ namespace NIM
 			SessionId = "";
 			RtmpUrl = "";
 			BypassRtmp = 0;
-		}
+            SplitMode = 0;
+
+        }
 	}
 
 

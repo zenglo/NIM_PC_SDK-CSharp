@@ -43,7 +43,7 @@ namespace NimUtility
     public class SdkCommonSetting
     {
         /// <summary>
-        /// 数据库秘钥，必填，目前只支持最多32个字符的加密密钥！建议使用32个字符
+        /// 数据库秘钥，目前只支持最多32个字符的加密密钥！建议使用32个字符
         /// </summary>
         [Newtonsoft.Json.JsonProperty("db_encrypt_key")]
         public string DataBaseEncryptKey { get; set; }
