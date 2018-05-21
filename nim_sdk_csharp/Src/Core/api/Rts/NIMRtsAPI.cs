@@ -159,7 +159,27 @@ namespace NIM
             DelegateConverter.InvokeOnce<NimRtsJoinCbFunc>(user_data, code, session_id, json_extension, IntPtr.Zero);
         }
 
-#region 设置rts的通知回调
+
+        /// <summary>
+        /// 重连接口
+        /// </summary>
+        /// <param name="session_id">会话id</param>
+        /// <param name="channel_type">通道类型，暂时只支持白板类型</param>
+        /// <param name="json_extension">无效的扩展字段</param>
+        /// <param name="cb">返回重连操作结果</param>
+        //private static void ReLogin(string session_id,int channel_type,string json_extension, NimRtsOptCbFunc cb)
+        //{
+        //    var ptr = DelegateConverter.ConvertToIntPtr(cb);
+        //    RtsNativeMethods.nim_rts_relogin(session_id, channel_type, json_extension, OnReLoginCallback, ptr);
+        //}
+        private static NimRtsOptCbFunc ReLoginCallback = OnReLoginCallback;
+
+        private static void OnReLoginCallback(int code,string session_id,int channel_type,string json_extension,IntPtr user_data)
+        {
+            DelegateConverter.InvokeOnce<NimRtsOptCbFunc>(user_data, code, session_id, channel_type, json_extension, IntPtr.Zero);
+        }
+
+        #region 设置rts的通知回调
 
         public static void SetStartNotifyCallback(OnStartNotify cb)
         {

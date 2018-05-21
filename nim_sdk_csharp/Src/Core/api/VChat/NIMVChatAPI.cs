@@ -2,6 +2,7 @@
   * @brief NIM VChat提供的音视频相关接口，相关功能调用前需要先Init()
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author gq
+  * @modify lee
   * @date 2015/12/8
   */
 
@@ -95,9 +96,16 @@ namespace NIM
     {
        
         private static NIMVChatSessionStatus session_status;
+<<<<<<< HEAD
         private static nim_vchat_cb_func VChatStatusCb =VChatSessionStatusCallback;
         private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompletedCallback;
         private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreatedCallback;
+=======
+		private static nim_vchat_cb_func VChatStatusCb =VChatSessionStatusCallback;
+		private static nim_vchat_opt_cb_func VChatNormalOptCb = OnNormalOpCompletedCallback;
+		private static nim_vchat_opt2_cb_func VChatOpt2Cb = OnVchatRoomCreatedCallback;
+
+>>>>>>> pr/1
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         private static nim_vchat_mp4_record_opt_cb_func  VChatMP4RecordOptCb = OnMP4RecordOpCompletedCallback;
         private static nim_vchat_audio_record_opt_cb_func VChatAudioRecordStartCb = OnAudioRecordStartCallback;
@@ -324,7 +332,11 @@ namespace NIM
         /// <param name="path">nrtc等资源库路径，Unity下有效</param>
         /// <returns>初始化结果，如果是false则以下所有接口调用无效</returns>
         public static bool Init(string path)
+<<<<<<< HEAD
         {
+=======
+		{
+>>>>>>> pr/1
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY|| UNITY_STANDALONE_WIN
             string info = "";
             if(!String.IsNullOrEmpty(path))
@@ -555,7 +567,18 @@ namespace NIM
         {
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY || UNITY_STANDALONE_WIN
             if (joinRoomInfo == null)
+<<<<<<< HEAD
                 joinRoomInfo = new NIMJoinRoomJsonEx();
+=======
+            {
+                joinRoomInfo = new NIMJoinRoomJsonEx();
+                CustomLayout layout=new CustomLayout();
+                layout.Hostarea = new HostArea();
+                layout.Background = new BackGround();
+                joinRoomInfo.Layout = layout.Serialize();
+
+            }
+>>>>>>> pr/1
             string	json_extension = joinRoomInfo.Serialize();
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             return VChatNativeMethods.nim_vchat_join_room(mode, room_name, json_extension, VChatOpt2Cb, ptr);
@@ -750,6 +773,41 @@ namespace NIM
             int ret = VChatNativeMethods.nim_vchat_get_video_frame_scale_type();
             return (NIMVChatVideoFrameScaleType)Enum.ToObject(typeof(NIMVChatVideoFrameScaleType), ret);
         }
+
+        /// <summary>
+        /// 通话中修改视频编码模式
+        /// </summary>
+        /// <param name="mode">选用的策略模式</param>
+        /// <param name="json_extension">无效扩展字段</param>
+        /// <param name="cb">回调函数,code 见</param>
+        public static void NIMVChatSelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, string json_extension, NIMVChatOptHandler cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_select_video_adaptive_strategy(mode, json_extension, VChatNormalOptCb, ptr);
+        }
+
+        /// <summary>
+        ///  互动直播设置uid为房间主画面
+        /// </summary>
+        /// <param name="uid">用户uid</param>
+        /// <param name="json_extension">无效扩展字段</param>
+        /// <param name="cb">回调函数</param>
+        public static void NIMVChatSetUidPictureAsMain(string uid,string json_extension,NIMVChatOptHandler cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            VChatNativeMethods.nim_vchat_set_uid_picture_as_main(uid, json_extension, VChatNormalOptCb, ptr);
+        }
+
+        /// <summary>
+        /// 音视频通话重新连接，用于底层链接在上层认为异常时尝试重连
+        /// </summary>
+        /// <param name="json_extension">可扩展添加kNIMVChatSessionId，用于指定对应的通话</param>
+        /// <param name="cb">操作结果的回调函数，当通话通话不存在或通话</param>
+        //public static void NIMVChatRelogin(string json_extension,NIMVChatOptHandler cb)
+        //{
+        //    var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+        //    VChatNativeMethods.nim_vchat_relogin(json_extension, VChatNormalOptCb, ptr);
+        //}
 
 #endif
     }

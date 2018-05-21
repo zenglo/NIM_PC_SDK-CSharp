@@ -72,6 +72,46 @@ namespace NIM
             return _sdkInitialized;
         }
 
+#if UNITY_ANDROID
+        /// <summary>
+        /// 连接华为推送并获取token，必须集成华为推送SDK
+        /// </summary>
+        public static void InitHuaweiPush()
+        {
+            using (var actClass = new UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            {
+                UnityEngine.AndroidJavaObject curActivityContext = actClass.GetStatic<UnityEngine.AndroidJavaObject>("currentActivity");
+                if (curActivityContext != null)
+                {
+                    UnityEngine.AndroidJavaClass clsSystemUtil = new UnityEngine.AndroidJavaClass("com.netease.hwpushwrapper.HWPush");
+                    if (clsSystemUtil != null)
+                    {
+                        clsSystemUtil.CallStatic("initHuaweiPush", curActivityContext);
+                        UnityEngine.Debug.Log("call java method initHuaweiPush");
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("can't find class com.netease.hwpushwrapper.HWPush");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 设置接收华为推送设置结果的game object
+        /// </summary>
+        /// <param name="objName">game object 名称</param>
+        public static void SetHuaweiPushReceiverObject(string objName)
+        {
+            UnityEngine.AndroidJavaClass clsSystemUtil = new UnityEngine.AndroidJavaClass("com.netease.hwpushwrapper.HWPush");
+            if(clsSystemUtil != null)
+            {
+                clsSystemUtil.CallStatic("setReceiverObject", objName);
+            }
+        }
+
+#endif
+
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
         /// <summary>
         /// NIM SDK初始化 
@@ -114,8 +154,6 @@ namespace NIM
         }
 
 #endif
-
-        [Conditional("UNITY")]
         private static void InitSystemUtil()
         {
 #if UNITY_ANDROID

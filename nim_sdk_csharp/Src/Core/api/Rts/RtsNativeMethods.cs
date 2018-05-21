@@ -209,6 +209,12 @@ namespace NIM
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
             IntPtr user_data);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void NimRtsOptCbFunc(int code,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string session_id,int channel_type,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+            IntPtr user_data);
+
         internal class RtsNativeMethods
         {
             //引用C中的方法（考虑到不同平台下的C接口引用方式差异，如[DllImport("__Internal")]，[DllImport("nimapi")]等） 
@@ -281,7 +287,13 @@ namespace NIM
                 NimRtsJoinCbFunc cb, 
                 IntPtr user_data);
 
-#endregion
+            [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_rts_relogin", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+            public static extern void nim_rts_relogin([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string session_id,int channel_type,
+               [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string json_extension,
+               NimRtsOptCbFunc cb,
+               IntPtr user_data);
+
+            #endregion
         }
     }
 }

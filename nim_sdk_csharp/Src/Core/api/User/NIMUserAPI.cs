@@ -221,5 +221,16 @@ namespace NIM.User
         {
             userData.InvokeOnce<UpdateNameCardResultDelegate>(response);
         }
+
+        /// <summary>
+        /// 更新推送证书名和token
+        /// </summary>
+        /// <param name="certificateName">在云信管理后台配置的证书名</param>
+        /// <param name="token">推送token</param>
+        /// <param name="type">仅iOS需要 1 表示pushkit，0 表示apns</param>
+        public static void UpdatePushToken(string certificateName,string token,int type)
+        {
+            UserNativeMethods.nim_user_update_push_token(certificateName, token, type);
+        }
     }
 }

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace NIM.Team
 {
-    public class NIMTeamEvent:NimUtility.NimJsonObject<NIMTeamEvent>
+    public class NIMTeamEvent : NimUtility.NimJsonObject<NIMTeamEvent>
     {
         [JsonIgnore]
         public ResponseCode ResponseCode { get; set; }
@@ -48,6 +48,18 @@ namespace NIM.Team
         {
             get { return _mute == 1; }
         }
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        //群消息已读回执查询结果
+        [JsonProperty("client_msg_id")]
+        public string ClientMsgID { get; set; }
+
+        [JsonProperty("read")]
+        public List<string> ReadedMembersList { get; set; }
+
+        [JsonProperty("unread")]
+        public List<string> UnreadMembersListP { get; set; }
+#endif
     }
 
     public class NIMTeamEventData : NimUtility.NimJsonObject<NIMTeamEventData>

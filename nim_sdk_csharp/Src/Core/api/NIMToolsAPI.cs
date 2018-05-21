@@ -168,6 +168,28 @@ namespace NIM
             NimUtility.DelegateConverter.FreeMem(user_data);
         }
 
+
+
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 字符串是否匹配词库中的模式
+        /// </summary>
+        /// <param name="text">目标文本</param>
+        /// <param name="libName">词库名称</param>
+        /// <returns></returns>
+        public static bool IsTextMatchedKeywords(string text,string libName)
+        {
+            var ret = nim_tool_is_text_matched_keywords(text, libName);
+            return ret > 0;
+        }
+
+         /// <summary>
+        /// 替换在词库中匹配的字符串
+        /// </summary>
+        /// <param name="text">目标文本</param>
+        /// <param name="replace">替换字符串</param>
+        /// <param name="libName">词库名称</param>
+        /// <returns>替换后的字符串(WIN32平台 返回字符串为"2"时表明含有敏感词不允许发送；"3"表明需要将内容设置在消息结构的反垃圾字段里，由服务器过滤；其他内容可以作为消息正常发送)</returns>
         public static string ReplaceTextMatchedKeywords(string text,string replace,string libName)
         {
             var ptr = nim_tool_replace_text_matched_keywords(text, replace, libName);
@@ -177,11 +199,37 @@ namespace NIM
             return result;
         }
 
-        public static bool IsTextMatchedKeywords(string text,string libName)
+#else
+        /// <summary>
+        /// 客户端反垃圾回调
+        /// </summary>
+        /// <param name="succeed">本地反垃圾成功</param>
+        /// <param name="code">本地反垃圾状态，1-敏感词已被替换，替换后的内容可以发送
+        /// 2：表明含有敏感词不允许发送
+        /// 3：表明发送时需要将内容设置在消息结构的反垃圾字段里，由服务器过滤；</param>
+        /// <param name="result">反垃圾处理后的内容</param>
+        public delegate void AntispamFilterDelegate(bool succeed,int code,string result);
+
+        private static readonly nim_tool_filter_client_antispam_cb_func antispam_filter_cb = OnAntispamFilterCompleted;
+
+        private static void OnAntispamFilterCompleted(bool succeed, int ret, string text, string json_extension, IntPtr user_data)
         {
-            var ret = nim_tool_is_text_matched_keywords(text, libName);
-            return ret > 0;
+            DelegateConverter.InvokeOnce<AntispamFilterDelegate>(user_data,succeed, ret, text);
         }
+
+        /// <summary>
+        /// 客户端反垃圾
+        /// </summary>
+        /// <param name="text">文本内容</param>
+        /// <param name="replaceText">进行替换的字符串</param>
+        /// <param name="libName">词库名称</param>
+        /// <param name="cb">处理结果回调</param>
+        public static void FilterClientAntispamAsync(string text,string replaceText,string libName, AntispamFilterDelegate cb)
+        {
+            var ptr = DelegateConverter.ConvertToIntPtr(cb);
+            nim_tool_filter_client_antispam_async(text, replaceText, libName, null, antispam_filter_cb, ptr);
+        }
+#endif
 
         #region NIM C SDK native methods
 
@@ -209,14 +257,31 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_tool_get_audio_text_async", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern void nim_tool_get_audio_text_async(string json_audio_info, string json_extension, NIMTools.GetAudioTextCb cb, IntPtr user_data);
 
+
+
+#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int nim_tool_is_text_matched_keywords([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string lib_name);
+
         [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr nim_tool_replace_text_matched_keywords([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string replace_str,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string lib_name);
+#else
+        internal delegate void nim_tool_filter_client_antispam_cb_func(bool succeed, int ret,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,
+            IntPtr user_data);
 
         [DllImport(NIM.NativeConfig.NIMNativeDLL, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int nim_tool_is_text_matched_keywords([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8StringMarshaler))] string lib_name);
+        private static extern void nim_tool_filter_client_antispam_async([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string text,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string replace_str,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string lib_name,
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, 
+            nim_tool_filter_client_antispam_cb_func cb, 
+            IntPtr user_data);
+#endif
 
         #endregion
     }

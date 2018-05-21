@@ -147,6 +147,25 @@ namespace NIM.Team
     }
 
     /// <summary>
+    /// 群组禁言类型
+    /// </summary>
+    public enum NIMTeamMuteType
+    {
+        /// <summary>
+        /// 不禁言
+        /// </summary>
+        kNIMTeamMuteTypeNone = 0,
+        /// <summary>
+        /// 普通成员禁言
+        /// </summary>
+        kNIMTeamMuteTypeNomalMute = 1,  
+        /// <summary>
+        /// 全部禁言
+        /// </summary>
+        kNIMTeamMuteTypeAllMute = 3
+    }
+
+    /// <summary>
     /// 群组信息
     /// </summary>
     public class NIMTeamInfo : NimUtility.NimJsonObject<NIMTeamInfo>
@@ -288,6 +307,15 @@ namespace NIM.Team
         /// </summary>
         [JsonProperty("mute_all")]
         public int MuteAll { get; set; }
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+        /// <summary>
+        /// 群禁言类型
+        /// </summary>
+        [JsonProperty("mute_type")]
+        public NIMTeamMuteType? MuteType { get; set; }
+#endif
+
 
         /// <summary>
         /// 群有效性

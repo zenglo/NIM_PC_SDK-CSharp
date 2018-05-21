@@ -15,6 +15,10 @@ namespace NIM
         #region 通用错误码
 
         /// <summary>
+        /// 错误
+        /// </summary>
+        kNIMResError = 0,
+        /// <summary>
         /// 没有错误，一切正常
         /// </summary>
         kNIMResSuccess = 200,

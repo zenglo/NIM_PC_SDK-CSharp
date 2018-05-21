@@ -11,7 +11,10 @@ namespace NIM.DataSync
     /// <param name="jsonAttachment">输出的json字符串内容</param>
     /// <param name="userData">APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DataSyncCb(NIMDataSyncType syncType, NIMDataSyncStatus status, string jsonAttachment, IntPtr userData);
+    internal delegate void DataSyncCb(NIMDataSyncType syncType, 
+        NIMDataSyncStatus status, 
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string jsonAttachment, 
+        IntPtr userData);
 
     internal static class DataSyncNativeMethods
     {

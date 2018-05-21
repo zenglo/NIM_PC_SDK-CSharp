@@ -47,7 +47,7 @@ namespace NIM.SysMessage
         public long Timetag { get; set; }
 
         /// <summary>
-        /// 通知类型
+        /// 通知类型,如果值为<c>kNIMSysMsgTypeFriendAdd</c>通过Attach json串中"vt"键获取具体类型<see cref="NIM.Friend.NIMVerifyType "/>
         /// </summary>
         [JsonProperty("msg_type")]
         public NIMSysMsgType MsgType { get; set; }

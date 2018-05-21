@@ -69,11 +69,17 @@ namespace NIM.Team
 
         private static NIMTeamEventData ParseTeamEventData(int resCode, int nid, string tid, string result)
         {
-            NIMTeamEventData eventData = new NIMTeamEventData();
+            NIMTeamEventData eventData = null;
             if (!string.IsNullOrEmpty(result))
             {
                 eventData = NIMTeamEventData.Deserialize(result);
             }
+            if (eventData == null)
+            {
+                eventData = new NIMTeamEventData();
+                eventData.JSON = result;
+            }
+            eventData.NotificationId = (NIMNotificationType)nid;
             if (eventData.TeamEvent == null)
             {
                 eventData.TeamEvent = new NIMTeamEvent();
@@ -333,7 +339,6 @@ namespace NIM.Team
         /// <summary>
         /// 查询所有群信息，包含无效的群
         /// </summary>
-        /// <param name="includeInvalid"></param>
         /// <param name="action"></param>
         public static void QueryAllMyTeamsInfo(QueryMyTeamsInfoResultDelegate action)
         {
@@ -554,6 +559,45 @@ namespace NIM.Team
             var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
             TeamNativeMethods.nim_team_query_my_all_member_infos_async(null, QueryMyAllMemberInfoCallback, ptr);
         }
+
+        /// <summary>
+        /// 对群禁言/解除禁言
+        /// </summary>
+        /// <param name="tid">群组ID</param>
+        /// <param name="value">禁言(true)或解除禁言(false)</param>
+        /// <param name="cb">操作结果回调</param>
+        public static void MuteTeam(string tid,bool value, TeamChangedNotificationDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            TeamNativeMethods.nim_team_mute_async(tid, value, null, _teamChangedCallback, ptr);
+        }
+
+        /// <summary>
+        /// 发送群消息已读回执
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <param name="msgs"></param>
+        /// <param name="cb"></param>
+        public static void MsgAckRead(string tid,List<NIMIMMessage> msgs, TeamChangedNotificationDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var msgJson = NimUtility.Json.JsonParser.Serialize(msgs);
+            TeamNativeMethods.nim_team_msg_ack_read(tid, msgJson, null, _teamChangedCallback, ptr);
+        }
+
+        /// <summary>
+        /// 获取群消息未读成员列表
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <param name="msg"></param>
+        /// <param name="cb"></param>
+        public static void QueryMsgUnreadList(string tid,NIMIMMessage msg,TeamChangedNotificationDelegate cb)
+        {
+            var ptr = NimUtility.DelegateConverter.ConvertToIntPtr(cb);
+            var msgJson = msg.Serialize();
+            TeamNativeMethods.nim_team_msg_query_unread_list(tid, msgJson, null, _teamChangedCallback, ptr);
+        }
+
 #endif
     }
 }

@@ -243,8 +243,21 @@ namespace NIM
         [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_video_frame_scale", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void nim_vchat_set_video_frame_scale(NIMVChatVideoFrameScaleType type);
 
-        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_video_frame_scale_type", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int nim_vchat_get_video_frame_scale_type();
+		[DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_get_video_frame_scale_type", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int nim_vchat_get_video_frame_scale_type();
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_select_video_adaptive_strategy", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_select_video_adaptive_strategy(NIMVChatVideoEncodeMode mode, 
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data);
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_set_uid_picture_as_main", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_set_uid_picture_as_main([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string uid,
+          [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension, nim_vchat_opt_cb_func cb, IntPtr user_data);
+
+
+        [DllImport(NIM.NativeConfig.NIMNativeDLL, EntryPoint = "nim_vchat_relogin", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void nim_vchat_relogin([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(NimUtility.Utf8StringMarshaler))] string json_extension,nim_vchat_opt_cb_func cb, IntPtr user_data);
+
 #endif
 
         #endregion
